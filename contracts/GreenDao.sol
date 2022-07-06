@@ -10,8 +10,8 @@ struct DaoInfo {
     string daoName; //dao name
     string daoDesc; //dao description
     string daoWebsite; //dao website url link
-    string daoSocial; //dao social url link
     uint daoMember; //dao members
+    bool daoPublic; //dao public or not
 }
 
 contract GreenDao is ERC721Enumerable, ERC721URIStorage {   
@@ -49,7 +49,7 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
         return super.tokenURI(tokenId);
     }                 
 
-    function mint(string memory name, string memory desc, string memory website, string memory social, string memory url) public returns (uint256) {
+    function mint(string memory name, string memory desc, string memory website, string memory url, bool isPublic) public returns (uint256) {
         _daoId.increment();
         uint256 newId = _daoId.current();
         //mint nft as a new dao
@@ -57,8 +57,9 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
         //update dao member status
         _daoMemberStatus[newId][msg.sender] = true;
         _daoInfos[newId].daoMember = 1;
+        _daoInfos[newId].daoPublic = isPublic;
         //update dao infos
-        updateDao(newId, name, desc, website, social, url);
+        updateDao(newId, name, desc, website, url);
         //return new id
         return newId;
     }
@@ -75,7 +76,14 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
         return true;
     }
 
-    function updateDao(uint256 daoId, string memory name, string memory desc, string memory website, string memory social, string memory url) public returns (bool){
+    function setDaoPublic(uint256 daoId, bool isPublic)public returns (bool){
+        require(ownerOf(daoId) == msg.sender, "Only owner alowed!");
+
+        _daoInfos[daoId].daoPublic = isPublic;
+        return true;
+    }
+
+    function updateDao(uint256 daoId, string memory name, string memory desc, string memory website, string memory url) public returns (bool){
         require(ownerOf(daoId) == msg.sender, "Only owner alowed!");
 
         require(bytes(name).length > 0 && _daoNames[name] == false, "Invalid Dao Name!");
@@ -91,10 +99,6 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
             _daoInfos[daoId].daoWebsite = website;
         } 
 
-        if(bytes(social).length > 0){
-            _daoInfos[daoId].daoSocial = social;
-        }
-
         if(bytes(url).length > 0){
             _setTokenURI(daoId, url);
         }
@@ -102,19 +106,31 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
         return true;
     }
 
-   function joinDao(uint256 daoId) public returns (bool){
-        if(_daoMemberStatus[daoId][msg.sender] == false){
-            _daoMemberStatus[daoId][msg.sender] = true;
+    function joinDao(uint256 daoId, address user) public returns (bool){
+       if(_daoInfos[daoId].daoPublic){
+           user = msg.sender;
+       }else{
+           require(ownerOf(daoId) == msg.sender, "Only owner alowed!");
+       }
+
+        if(_daoMemberStatus[daoId][user] == false){
+            _daoMemberStatus[daoId][user] = true;
             _daoInfos[daoId].daoMember += 1;
         }
         return true;
     }
 
-    function leaveDao(uint256 daoId) public returns (bool){
-        require(ownerOf(daoId) != msg.sender, "Owner can't leave!");
+    function leaveDao(uint256 daoId, address user) public returns (bool){
+        if(_daoInfos[daoId].daoPublic){
+            user = msg.sender;
+        }else{
+            require(ownerOf(daoId) == msg.sender, "Only owner alowed!");
+        }
 
-        if(_daoMemberStatus[daoId][msg.sender] == true){
-            _daoMemberStatus[daoId][msg.sender] = false;
+        require(ownerOf(daoId) != user, "Owner can't leave!");
+
+        if(_daoMemberStatus[daoId][user] == true){
+            _daoMemberStatus[daoId][user] = false;
             _daoInfos[daoId].daoMember -= 1;
         }
         return true;
@@ -124,10 +140,10 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
         return _daoMemberStatus[daoId][msg.sender];
     }    
 
-    function getDaoInfoById(uint256 daoId) public view returns (uint, address, string memory, string memory, string memory, string memory, string memory){
+    function getDaoInfoById(uint256 daoId) public view returns (string memory, string memory, string memory, string memory, address, bool, uint){
         DaoInfo memory d = _daoInfos[daoId];
 
-        return (d.daoMember, ownerOf(daoId), d.daoName, d.daoDesc, d.daoWebsite, d.daoSocial, tokenURI(daoId));
+        return (d.daoName, d.daoDesc, d.daoWebsite, tokenURI(daoId), ownerOf(daoId), d.daoPublic, d.daoMember);
     }
 
     function getDaoTotalCount(bool onlyOwner) public view returns(uint){
