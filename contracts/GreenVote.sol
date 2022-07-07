@@ -141,7 +141,7 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
     }    
 
     //burn the vote
-    function burn(uint256 voteId) public payable returns (bool) {
+    function burn(uint256 voteId) public returns (bool) {
         require(ownerOf(voteId) == msg.sender, "only owner alowed!");
 
         require(_voteInfos[voteId].endTime > block.timestamp && _voteInfos[voteId].votePayed == false, "vote ended!");

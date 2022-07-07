@@ -66,7 +66,7 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
     }
 
     //burn the dao
-    function burn(uint256 daoId) public payable returns (bool) {
+    function burn(uint256 daoId) public returns (bool) {
         require(ownerOf(daoId) == msg.sender, "Only owner alowed!");
         //delete dao name
         delete _daoNames[_daoInfos[daoId].daoName];
