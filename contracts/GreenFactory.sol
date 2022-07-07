@@ -24,17 +24,13 @@ contract GreenFactory {
         _greenGrant = address(new GreenGrant());
         _greenLearning = address(new GreenLearning());
 
-        (bool success, ) = _greenVote.delegatecall(abi.encodeWithSignature("updateContracts(address)", _greenDao));
-        require(success);
+        _greenVote.delegatecall(abi.encodeWithSignature("updateContracts(address)", _greenDao));
 
-        (success, ) = _greenAuction.delegatecall(abi.encodeWithSignature("updateContracts(address, address)", _greenDao, _greenVote));
-        require(success);
+        _greenAuction.delegatecall(abi.encodeWithSignature("updateContracts(address, address)", _greenDao, _greenVote));
 
-        (success, ) = _greenGrant.delegatecall(abi.encodeWithSignature("updateContracts(address, address)", _greenDao, _greenVote));
-        require(success);
+        _greenGrant.delegatecall(abi.encodeWithSignature("updateContracts(address, address)", _greenDao, _greenVote));
         
-        (success, ) = _greenLearning.delegatecall(abi.encodeWithSignature("updateContracts(address)", _greenDao));
-        require(success);
+        _greenLearning.delegatecall(abi.encodeWithSignature("updateContracts(address)", _greenDao));
     }
 
     function getFactoryInfo() public view returns(address,address,address,address,address,address){
