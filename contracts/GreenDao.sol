@@ -173,6 +173,7 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
     //get dao indexs by page 
     function getDaoIndexsByPageCount(uint pageSize, uint pageCount, bool onlyOwner) public view returns(uint256[] memory){
         uint total = getDaoTotalCount(onlyOwner);
+        uint256[] memory indexList;
         uint count;
 
         if(pageSize > 100){
@@ -196,14 +197,13 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
             }
         }
 
-        if(count == 0){
-            return tmpList;
-        }else{
-            uint256[] memory indexList = new uint256[](count);
+        if(count > 0){
+            indexList = new uint256[](count);
             for(uint i = 0; i < count; i++){
                 indexList[i] = tmpList[i];
             }
-            return indexList;
         }
+
+        return indexList;
     }
 }

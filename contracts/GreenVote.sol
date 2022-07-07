@@ -88,11 +88,11 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
         return true;
     }
 
-    //update dao contract address, only owner support
-    function updateDaoContract(address addr) public returns (bool){
+    //update contracts address, only owner support
+    function updateContracts(address dao) public returns (bool){
         require(msg.sender == _owner, "only owner allowed!");
 
-        _daoContract = addr;
+        _daoContract = dao;
 
         return true;
     }
@@ -265,6 +265,7 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
     //get vote indexs by page
     function getVoteIndexsByPageCount(uint pageSize, uint pageCount, uint256 daoId, bool onlyOwner) public view returns(uint256[] memory){
         uint total = getVoteTotalCount(onlyOwner);
+        uint256[] memory indexList;
         uint count;
         uint m;
         uint256 index;
@@ -300,14 +301,13 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
             }
         }
 
-        if(m == 0){
-            return tmpList;
-        }else{
-            uint256[] memory indexList = new uint256[](m);
+        if(m > 0){
+            indexList = new uint256[](m);
             for(uint i = 0; i < m; i++){
                 indexList[i] = tmpList[i];
             }
-            return indexList;
         }
+
+        return indexList;
     }
 }
