@@ -3,7 +3,6 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
@@ -71,7 +70,7 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
     event sendTreassure(uint256 daoId, uint256 voteId, address to, address token, uint256 amount);
 
     //send dao treassure when vote success
-    function _sendDaoTreassure(uint256 daoId, uint256 voteId, address to, address token, uint256 amount) internal returns (bool){
+    function _sendDaoTreassure(uint256 daoId, uint256 voteId, address to, address token, uint256 amount) internal nonReentrant returns (bool){
         require(_voteInfos[voteId].voteSuccess == true, "vote not success!");
         require(_daoTreassures[daoId][token] > amount, "invalid transfer amount!");        
 
@@ -98,7 +97,7 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
     }
 
     //add dao treassure
-    function addDaoTreassure(uint256 daoId, address from, address token, uint256 amount) public payable returns (bool){
+    function addDaoTreassure(uint256 daoId, address from, address token, uint256 amount) public payable nonReentrant returns (bool){
         if(token == address(0x0)){
             require(msg.value > 0, "invalid transfer amount!");
             amount = msg.value;
@@ -179,7 +178,7 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
     }
 
     //vote for the dao members
-    function vote(uint256 voteId, VoteStatus status) public returns (bool){
+    function vote(uint256 voteId, VoteStatus status) public nonReentrant returns (bool){
         require(_voteInfos[voteId].endTime >= block.timestamp && _voteInfos[voteId].votePayed == false, "vote ended!");
 
         uint256 daoId = _voteInfos[voteId].daoId;
