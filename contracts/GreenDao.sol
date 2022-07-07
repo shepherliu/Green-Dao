@@ -49,6 +49,7 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
         return super.tokenURI(tokenId);
     }                 
 
+    //mint nft as a new dao
     function mint(string memory name, string memory desc, string memory website, string memory url, bool isPublic) public returns (uint256) {
         _daoId.increment();
         uint256 newId = _daoId.current();
@@ -64,6 +65,7 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
         return newId;
     }
 
+    //burn the dao
     function burn(uint256 daoId) public payable returns (bool) {
         require(ownerOf(daoId) == msg.sender, "Only owner alowed!");
         //delete dao name
@@ -76,20 +78,24 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
         return true;
     }
 
-    function setDaoPublic(uint256 daoId, bool isPublic)public returns (bool){
+    //set dao to public or private
+    function setDaoPublic(uint256 daoId, bool isPublic) public returns (bool){
         require(ownerOf(daoId) == msg.sender, "Only owner alowed!");
 
         _daoInfos[daoId].daoPublic = isPublic;
         return true;
     }
 
+    //update dao infos
     function updateDao(uint256 daoId, string memory name, string memory desc, string memory website, string memory url) public returns (bool){
         require(ownerOf(daoId) == msg.sender, "Only owner alowed!");
 
         require(bytes(name).length > 0 && _daoNames[name] == false, "Invalid Dao Name!");
 
-        _daoInfos[daoId].daoName = name;
+        //change dao name
+        _daoNames[_daoInfos[daoId].daoName] = false;
         _daoNames[name] = true;
+        _daoInfos[daoId].daoName = name;
 
         if(bytes(desc).length > 0){
             _daoInfos[daoId].daoDesc = desc;
@@ -106,6 +112,7 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
         return true;
     }
 
+    //join a dao, every user can join a public dao, but for private dao only owner can add members
     function joinDao(uint256 daoId, address user) public returns (bool){
        if(_daoInfos[daoId].daoPublic){
            user = msg.sender;
@@ -120,6 +127,7 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
         return true;
     }
 
+    //leave dao
     function leaveDao(uint256 daoId, address user) public returns (bool){
         if(_daoInfos[daoId].daoPublic){
             user = msg.sender;
@@ -136,24 +144,33 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
         return true;
     }
 
-    function checkInDao(uint256 daoId) public view returns (bool){
-        return _daoMemberStatus[daoId][msg.sender];
-    }    
+    //check a user is in dao or not
+    function checkInDao(uint256 daoId, address user) public view returns (bool){
+        return _daoMemberStatus[daoId][user];
+    }   
 
-    function getDaoInfoById(uint256 daoId) public view returns (string memory, string memory, string memory, string memory, address, bool, uint){
-        DaoInfo memory d = _daoInfos[daoId];
+    //get dao members count
+    function getDaoMembers(uint256 daoId) public view returns (uint){
+        return _daoInfos[daoId].daoMember;
+    } 
 
-        return (d.daoName, d.daoDesc, d.daoWebsite, tokenURI(daoId), ownerOf(daoId), d.daoPublic, d.daoMember);
-    }
-
+    //get dao total count
     function getDaoTotalCount(bool onlyOwner) public view returns(uint){
         if(onlyOwner){
             return balanceOf(msg.sender);
         }else{
             return totalSupply();
         }        
+    }    
+
+    //get dao info by id
+    function getDaoInfoById(uint256 daoId) public view returns (string memory, string memory, string memory, string memory, address, bool, uint){
+        DaoInfo memory d = _daoInfos[daoId];
+
+        return (d.daoName, d.daoDesc, d.daoWebsite, tokenURI(daoId), ownerOf(daoId), d.daoPublic, d.daoMember);
     }
 
+    //get dao indexs by page 
     function getDaoIndexsByPageCount(uint pageSize, uint pageCount, bool onlyOwner) public view returns(uint256[] memory){
         uint total = getDaoTotalCount(onlyOwner);
         uint count;
