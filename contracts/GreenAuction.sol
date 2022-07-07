@@ -137,6 +137,7 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
         return newId;
     }     
 
+    //cancel the auction
     function cancelAuction(uint256 aucId) public nonReentrant payable returns(bool){
         AucInfo memory auc = _aucInfos[aucId];     
 
@@ -169,21 +170,24 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
         AucInfo memory auc = _getAucInfoById(aucId);
 
         //check if the acution is finished or not
-        require(auc.status == Status.ONGOING, "auction not on going!");
+        require(auc.status == Status.ONGOING, "status not ongoing!");
 
         //check paytoken is erc20 or not
         if(auc.payContract == address(0x0)){
             amount = msg.value;
-        }
+        }else{
+            //receive tokens
+            ERC20(auc.payContract).transferFrom(msg.sender, address(this), amount);
+        }       
 
         if(auc.aucType == AucType.English){
             //check the bid price large than the start price or not
-            require(amount >= auc.startPrice, "bid price not enough!");
+            require(amount >= auc.startPrice, "price not enough!");
 
             //if no body bid a price yet
             if(auc.bidPrice > 0){
                 //must large than the old bid price + min bid increase
-                require(amount >= auc.bidPrice + auc.priceDelta, "bid price not enough!");
+                require(amount >= auc.bidPrice + auc.priceDelta, "price not enough!");
 
                 //send back the payment to the old bid address
                 if(auc.payContract == address(0x0)){
@@ -192,11 +196,6 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
                     ERC20(auc.payContract).transferFrom(address(this), auc.bidAddress, auc.bidPrice);
                 }
             }
-
-            //receive tokens
-            if(auc.payContract != address(0x0)){
-                ERC20(auc.payContract).transferFrom(msg.sender, address(this), amount);
-            }
         }else{
             //check bid price
             require(amount + (block.timestamp - auc.startTime)*auc.priceDelta/86400 >= auc.startPrice, "bid price not enough!");
@@ -204,34 +203,12 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
             //set the auction status, success if large than the reverse price and exchange tokens directly.
             if(amount >= auc.reversePrice){
                 //set status to claimed
-                _aucInfos[aucId].status = Status.CLAIMED;
-
-                //transfer nft to bid address
-                ERC721(auc.nftContract).transferFrom(address(this), msg.sender, auc.nftId);              
-
-                //send the payment to the treassure address
-                if(auc.payContract == address(0x0)){
-                    //add treassure to the treassure contract
-                    GreenTreassure(_treassureContract).addDaoTreassure{value: amount}(auc.daoId, msg.sender, auc.payContract, amount);
-                }else{
-                    //approve the amount
-                    ERC20(auc.payContract).approve(_treassureContract, amount);
-                    //add treassure to the treassure contract
-                    GreenTreassure(_treassureContract).addDaoTreassure(auc.daoId, msg.sender, auc.payContract, amount);
-                }         
+                _aucInfos[aucId].status = Status.SUCCESS;
             }else{
                 //set status to failed
-                _aucInfos[aucId].status = Status.RETURNBACK;
-
-                //if auction failed, send back the nft to the owner
-                ERC721(auc.nftContract).transferFrom(address(this), auc.nftOwner, auc.nftId);            
-
-                if(auc.payContract == address(0x0)){
-                    //if auction failed, send back payment to msg.sender
-                    payable(msg.sender).transfer(amount);
-                }
+                _aucInfos[aucId].status = Status.FAILED;
             }
-        }
+        }      
 
         //set new highest bid price and bid address
         _aucInfos[aucId].bidPrice = amount;
@@ -245,10 +222,10 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
         AucInfo memory auc = _getAucInfoById(aucId);
 
         //only success status can be claimed
-        require(auc.status == Status.SUCCESS || auc.status == Status.FAILED, "status not success or failed!");
+        require(auc.status == Status.SUCCESS || auc.status == Status.FAILED, "invalid status!");
 
         //only nft owner and bid address can be claimed
-        require(msg.sender == auc.bidAddress || msg.sender == auc.nftOwner, "user not allowed!");
+        require(msg.sender == auc.bidAddress || msg.sender == auc.nftOwner, "invalid user!");
 
         if(auc.status == Status.SUCCESS){
             //set auction status to success
@@ -257,18 +234,16 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
             //send nft to the bid address
             ERC721(auc.nftContract).transferFrom(address(this), auc.bidAddress, auc.nftId); 
 
-            if(auc.bidPrice > 0){
-                //send the payment to the treassure address
-                if(auc.payContract == address(0x0)){
-                    //add treassure to the treassure contract
-                    GreenTreassure(_treassureContract).addDaoTreassure{value: auc.bidPrice}(auc.daoId, auc.bidAddress, auc.payContract, auc.bidPrice);
-                }else{
-                    //approve the amount
-                    ERC20(auc.payContract).approve(_treassureContract, auc.bidPrice);
-                    //add treassure to the treassure contract
-                    GreenTreassure(_treassureContract).addDaoTreassure(auc.daoId, auc.bidAddress, auc.payContract, auc.bidPrice);
-                }       
-            }
+            //send the payment to the treassure address
+            if(auc.payContract == address(0x0)){
+                //add treassure to the treassure contract
+                GreenTreassure(_treassureContract).addDaoTreassure{value: auc.bidPrice}(auc.daoId, auc.bidAddress, auc.payContract, auc.bidPrice);
+            }else{
+                //approve the amount
+                ERC20(auc.payContract).approve(_treassureContract, auc.bidPrice);
+                //add treassure to the treassure contract
+                GreenTreassure(_treassureContract).addDaoTreassure(auc.daoId, auc.bidAddress, auc.payContract, auc.bidPrice);
+            }       
         } else{
             _aucInfos[aucId].status = Status.RETURNBACK;
 
@@ -323,6 +298,7 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
         return auc;
     }
 
+    //get auction total count
     function getAuctionTotalCount(bool onlyOwner) public view returns(uint){
         if(onlyOwner){
             return balanceOf(msg.sender);
