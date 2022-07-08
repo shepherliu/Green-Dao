@@ -49,22 +49,29 @@ export const bundlrTestUrl = "https://devnet.bundlr.network";
 //boba toekn testnet contract address 
 export const bobaTestContractAddress = "0xF5B97a4860c1D81A1e915C40EcCB5E4a5E6b8309";
 
-//file contract address
-export const fileContractAddress = {
-  4: "0x1FCCEc0056F29DB240D12Aca627E5AEa171bE1e0",
-  28: "0x65e6e482BF7cd0A1B454e6756Df9da24Fbe7d424",
-  83: "0xfB296908fDD00C655609B74C8BF418dB7cC5407b",
-  588: "0xA5a275096AA2512E2FC32c003e87dd9fae7515C3",
-  80001: "0x5755579e4ed12d114ccdab4ae69c99eb00479476",
+//green dao contract address
+export const greenDaoContractAddress = {
+  4: "0xA896d6EFd0328aa35e35CED25BBb3ABA029A5eDC",
 };
 
-//nft contract address
-export const nftContractAddress = {
-  4: "0x21efFF2e6B35a84B12DDa9103b14c5658a291C39",
-  28: "0xA2E46600506155b0E28E122CBE90a51a536fDBf0",
-  83: "0xCaa7d107e0bA48E09c208e0Df3Ac747536C394Fe",
-  588: "0x2cEaB43754E3d27cF6B965d75167656a988fB59C",
-  80001: "0xf2A3c567eA217115aa9aC52C1C7104b40c6031BB",
+//green vote contract address
+export const greenVoteContractAddress = {
+  4: "0x6d8C1c43693BF54E52c29FFA5A6d4Dd9e369e217",
+};
+
+//green auction contract address
+export const greenAuctionContractAddress = {
+  4: "0x09857FE738243F1A8AefB8aE4a91E939dA4CE2E8",
+};
+
+//green grant contract address
+export const greenGrantContractAddress = {
+  4: "0xD46556992caE22f214a0229c5B790BC52Bbc9BD9",
+};
+
+//green learning contract address
+export const greenLearningContractAddress = {
+  4: "0x85c11DA295c4eedFf6fA2C825dBC6E6043d13737",
 };
 
 //token List
