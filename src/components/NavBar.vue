@@ -22,6 +22,10 @@
         @select="handleSelect"
       >
         <el-menu-item index="1">Daos</el-menu-item>
+        <el-menu-item index="2">Learnings</el-menu-item>
+        <el-menu-item index="3">Auctions</el-menu-item>
+        <el-menu-item index="4">Grants</el-menu-item>
+        <el-menu-item index="5">Votes</el-menu-item>
       </el-menu>
     </el-col>
 

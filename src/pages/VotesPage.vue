@@ -15,7 +15,7 @@
 
 <script lang="ts">
 export default {
-  name: 'DaosPage',
+  name: 'VotesPage',
   props: {
   }
 }
