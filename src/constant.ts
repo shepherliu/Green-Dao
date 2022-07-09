@@ -12,6 +12,9 @@ export const CeramicApiHost = 'https://ceramic.passport-iam.gitcoin.co';
 //swarm ts-tar metafile name
 export const META_FILE_NAME = '.swarmgatewaymeta.json';
 
+//web3 storage url
+export const web3StorageHost = 'https://api.web3.storage';
+
 //web3 storage appkey
 export const web3StorageAppKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEJlY0Q2MDVmZGZiNWVFRTdhYUZlYmVhNzUxMjVCMDBCNDkzMDMxOUUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTEzNjE4MTAwNDIsIm5hbWUiOiJ0ZXN0In0.SqcXP8E9fJEQ_7AGjrHaliBsoKCl2l2mA2q1-Lejkp4';
 

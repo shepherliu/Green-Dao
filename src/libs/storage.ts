@@ -68,3 +68,4 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
   fileid = getFileLink(dirPath, filetype, fileid);
 
   return fileid;
+}
