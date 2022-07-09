@@ -47,7 +47,7 @@ export class GreenDao {
 		return new Contract(this.contractAddress, abi, connectState.signer);		
 	}	
 
-	public isApprovedForAll = async (owner:str, operator:str) => {
+	public isApprovedForAll = async (owner:string, operator:string) => {
 		const contract = await this.getContract();
 
 		return await contract.isApprovedForAll(owner, operator);
@@ -73,7 +73,7 @@ export class GreenDao {
 		return res.toNumber();
 	}
 
-	public balanceOf = async (address:str) => {
+	public balanceOf = async (address:string) => {
 		const contract = await this.getContract();
 
 		const res = await contract.balanceOf(address);
@@ -90,15 +90,15 @@ export class GreenDao {
 	public tokenByIndex = async (index:number) => {
 		const contract = await this.getContract();
 
-		res = await contract.tokenByIndex(index);
+		const res = await contract.tokenByIndex(index);
 
 		return res.toNumber();
 	}
 
-	public tokenOfOwnerByIndex = async (owner:str, index) => {
+	public tokenOfOwnerByIndex = async (owner:string, index:number) => {
 		const contract = await this.getContract();
 
-		res = await contract.tokenOfOwnerByIndex(owner, index);
+		const res = await contract.tokenOfOwnerByIndex(owner, index);
 
 		return res.toNumber();
 	}
@@ -109,7 +109,7 @@ export class GreenDao {
 		return await contract.tokenURI(tokenId);
 	}
 
-	public approve = async (to:str, tokenId:number) => {
+	public approve = async (to:string, tokenId:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.approve(to, tokenId);
@@ -125,7 +125,7 @@ export class GreenDao {
 		return await contract.getApproved(tokenId);
 	}
 
-	public safeTransferFrom = async (from:str, to:str, tokenId:number) => {
+	public safeTransferFrom = async (from:string, to:string, tokenId:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.safeTransferFrom(from, to, tokenId);
@@ -135,7 +135,7 @@ export class GreenDao {
 		return tx.hash;		
 	}
 
-	public transferFrom = async (from:str, to:str, tokenId:number) => {
+	public transferFrom = async (from:string, to:string, tokenId:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.transferFrom(from, to, tokenId);
@@ -145,7 +145,7 @@ export class GreenDao {
 		return tx.hash;		
 	}
 
-	public setApprovalForAll = async (operator:str, approved:boolean) => {
+	public setApprovalForAll = async (operator:string, approved:boolean) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.setApprovalForAll(operator, approved);
@@ -155,7 +155,7 @@ export class GreenDao {
 		return tx.hash;		
 	}	
 
-	public mint = async (name:str, desc:str, website:str, url:str, isPublic:boolean) => {
+	public mint = async (name:string, desc:string, website:string, url:string, isPublic:boolean) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.mint(name, desc, website, url, isPublic);
@@ -175,7 +175,7 @@ export class GreenDao {
 		return tx.hash;		
 	}
 
-	public joinDao = async (daoId:number, user:str) => {
+	public joinDao = async (daoId:number, user:string) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.joinDao(daoId, user);
@@ -185,7 +185,7 @@ export class GreenDao {
 		return tx.hash;			
 	}
 
-	public leaveDao = async (daoId:number, user:str) => {
+	public leaveDao = async (daoId:number, user:string) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.leaveDao(daoId, user);
@@ -205,7 +205,7 @@ export class GreenDao {
 		return tx.hash;			
 	}
 
-	public updateDao = async (daoId:number, name:str, desc:str, website:str, url:str) => {
+	public updateDao = async (daoId:number, name:string, desc:string, website:string, url:string) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.updateDao(daoId, name, desc, website, url);
@@ -215,7 +215,7 @@ export class GreenDao {
 		return tx.hash;		
 	}
 
-	public checkInDao = async (daoId:number, user:str) => {
+	public checkInDao = async (daoId:number, user:string) => {
 		const contract = await this.getContract();
 
 		return await contract.checkInDao(daoId, user);
@@ -226,7 +226,7 @@ export class GreenDao {
 
 		const indexList = [];
 
-		res = await contract.getDaoIndexsByPageCount(pageSize, pageCount, onlyOwner);
+		const res = await contract.getDaoIndexsByPageCount(pageSize, pageCount, onlyOwner);
 
 		for(const i in res){
 			indexList.push(res[i].toNumber());
@@ -239,7 +239,7 @@ export class GreenDao {
 	public getDaoInfoById = async (daoId:number) => {
 		const contract = await this.getContract();
 
-		res = await contract.getDaoInfoById(daoId);
+		const res = await contract.getDaoInfoById(daoId);
 
 		return res;
 	}
@@ -247,7 +247,7 @@ export class GreenDao {
 	public getDaoMembers = async (daoId:number) => {
 		const contract = await this.getContract();
 
-		res = await contract.getDaoMembers(daoId);
+		const res = await contract.getDaoMembers(daoId);
 
 		return res.toNumber();
 	}
@@ -255,7 +255,7 @@ export class GreenDao {
 	public getDaoTotalCount = async (onlyOwner:boolean) => {
 		const contract = await this.getContract();
 
-		res = await contract.getDaoTotalCount(onlyOwner);
+		const res = await contract.getDaoTotalCount(onlyOwner);
 
 		return res.toNumber();
 	}

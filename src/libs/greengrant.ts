@@ -49,7 +49,7 @@ export class GreenGrant {
 		return new Contract(this.contractAddress, abi, connectState.signer);		
 	}	
 
-	public isApprovedForAll = async (owner:str, operator:str) => {
+	public isApprovedForAll = async (owner:string, operator:string) => {
 		const contract = await this.getContract();
 
 		return await contract.isApprovedForAll(owner, operator);
@@ -75,7 +75,7 @@ export class GreenGrant {
 		return res.toNumber();
 	}
 
-	public balanceOf = async (address:str) => {
+	public balanceOf = async (address:string) => {
 		const contract = await this.getContract();
 
 		const res = await contract.balanceOf(address);
@@ -92,15 +92,15 @@ export class GreenGrant {
 	public tokenByIndex = async (index:number) => {
 		const contract = await this.getContract();
 
-		res = await contract.tokenByIndex(index);
+		const res = await contract.tokenByIndex(index);
 
 		return res.toNumber();
 	}
 
-	public tokenOfOwnerByIndex = async (owner:str, index) => {
+	public tokenOfOwnerByIndex = async (owner:string, index:number) => {
 		const contract = await this.getContract();
 
-		res = await contract.tokenOfOwnerByIndex(owner, index);
+		const res = await contract.tokenOfOwnerByIndex(owner, index);
 
 		return res.toNumber();
 	}
@@ -111,7 +111,7 @@ export class GreenGrant {
 		return await contract.tokenURI(tokenId);
 	}
 
-	public approve = async (to:str, tokenId:number) => {
+	public approve = async (to:string, tokenId:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.approve(to, tokenId);
@@ -127,7 +127,7 @@ export class GreenGrant {
 		return await contract.getApproved(tokenId);
 	}
 
-	public safeTransferFrom = async (from:str, to:str, tokenId:number) => {
+	public safeTransferFrom = async (from:string, to:string, tokenId:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.safeTransferFrom(from, to, tokenId);
@@ -137,7 +137,7 @@ export class GreenGrant {
 		return tx.hash;		
 	}
 
-	public transferFrom = async (from:str, to:str, tokenId:number) => {
+	public transferFrom = async (from:string, to:string, tokenId:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.transferFrom(from, to, tokenId);
@@ -147,7 +147,7 @@ export class GreenGrant {
 		return tx.hash;		
 	}
 
-	public setApprovalForAll = async (operator:str, approved:boolean) => {
+	public setApprovalForAll = async (operator:string, approved:boolean) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.setApprovalForAll(operator, approved);
@@ -157,20 +157,20 @@ export class GreenGrant {
 		return tx.hash;		
 	}	
 
-	public updateContracts = async (dao:str, treassure:str) => {
+	public updateContracts = async (dao:string, treassure:string) => {
 		const contract = await this.getContract();
 
-		const tx = async contract.updateContracts(dao, treassure);
+		const tx = await contract.updateContracts(dao, treassure);
 
 		await tx.wait();
 
 		return tx.hash;			
 	}
 
-	public mint = async (name:str, desc:str, git:str, website:str, token:str, daoId:number, endTime:number) => {
+	public mint = async (name:string, desc:string, git:string, website:string, token:string, daoId:number, endTime:number) => {
 		const contract = await this.getContract();
 
-		const tx = await contract.mint(name, desc, git, website, tokenId, daoId, endTime);
+		const tx = await contract.mint(name, desc, git, website, token, daoId, endTime);
 
 		await tx.wait();
 
@@ -187,7 +187,7 @@ export class GreenGrant {
 		return tx.hash;			
 	}
 
-	public updateGrant = async (grantId:number, name:str, desc:str, git:str, website:str, endTime:number) => {
+	public updateGrant = async (grantId:number, name:string, desc:string, git:string, website:string, endTime:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.updateGrant(grantId, name, desc, git, website, endTime);
@@ -197,10 +197,10 @@ export class GreenGrant {
 		return tx.hash;			
 	}
 
-	public supportGrant = async (grantId:number, payContract:str, amount:number) => {
+	public supportGrant = async (grantId:number, payContract:string, amount:number) => {
 		const contract = await this.getContract();
 
-		let value = 0;
+		let value;
 
 		if(payContract === zeroAddress){
 			value = utils.parseEther(String(amount));
@@ -226,7 +226,7 @@ export class GreenGrant {
 		return tx.hash;
 	}
 
-	public getGrantTreassure = async (grantId:number, payContract:str, onlyOwner:boolean) => {
+	public getGrantTreassure = async (grantId:number, payContract:string, onlyOwner:boolean) => {
 		const contract = await this.getContract();
 
 		const res = await contract.getGrantTreassure(grantId, onlyOwner);

@@ -60,7 +60,7 @@ export class ERC20 {
 		return Number(utils.formatUnits(res, await this.decimals()));
 	}
 
-	public balanceOf = async (address:str) => {
+	public balanceOf = async (address:string) => {
 		const contract = await this.getContract();
 
 		const res = await contract.balanceOf(address);
@@ -68,7 +68,7 @@ export class ERC20 {
 		return Number(utils.formatUnits(res, await this.decimals()));
 	}
 
-	public approve = async (address:str, amount:number) => {
+	public approve = async (address:string, amount:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.approve(address, utils.parseUnits(String(amount), await this.decimals()));
@@ -78,7 +78,7 @@ export class ERC20 {
 		return tx.hash;
 	}
 
-	public allowance = async (owner:str, spender:str) => {
+	public allowance = async (owner:string, spender:string) => {
 		const contract = await this.getContract();
 
 		const res = await contract.allowance(owner, spender);
@@ -86,7 +86,7 @@ export class ERC20 {
 		return Number(utils.formatUnits(res, await this.decimals()));
 	}
 
-	public safeTransferFrom = async (from:str, to:str, amount:number) => {
+	public safeTransferFrom = async (from:string, to:string, amount:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.safeTransferFrom(from, to, utils.parseUnits(String(amount), await this.decimals()));
@@ -96,7 +96,7 @@ export class ERC20 {
 		return tx.hash;		
 	}
 
-	public transferFrom = async (from:str, to:str, amount:number) => {
+	public transferFrom = async (from:string, to:string, amount:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.transferFrom(from, to, utils.parseUnits(String(amount), await this.decimals()));
@@ -106,7 +106,7 @@ export class ERC20 {
 		return tx.hash;		
 	}
 
-	public transfer = async (to:str, amount:number) => {
+	public transfer = async (to:string, amount:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.transfer(to, utils.parseUnits(String(amount), await this.decimals()));
@@ -116,7 +116,7 @@ export class ERC20 {
 		return tx.hash;		
 	}
 
-	public increaseAllowance = async (spender:str, amount:number) => {
+	public increaseAllowance = async (spender:string, amount:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.increaseAllowance(spender, utils.parseUnits(String(amount), await this.decimals()));
@@ -126,7 +126,7 @@ export class ERC20 {
 		return tx.hash;				
 	}
 
-	public decreaseAllowance = async (spender:str, amount:number) => {
+	public decreaseAllowance = async (spender:string, amount:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.decreaseAllowance(spender, utils.parseUnits(String(amount), await this.decimals()));

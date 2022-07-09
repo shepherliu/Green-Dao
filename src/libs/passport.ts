@@ -5,13 +5,13 @@ import { connectState } from "./connect"
 import * as constant from "../constant"
 
 //get passport infos
-export const getPassport = async (address:str) => {
+export const getPassport = async (address:string) => {
 
-	const resp = [];
+	const resp = new Array();
 
 	const chainId = connectState.chainId;
 
-	const passportReader = new PassportReader(constant.CeramicApiHost, chainId);
+	const passportReader = new PassportReader(constant.CeramicApiHost, String(chainId));
 
 	const res = await passportReader.getPassport(address);
 
@@ -37,7 +37,7 @@ export const getPassport = async (address:str) => {
 }
 
 //get scores
-export const getScore = async (name:str, address:str, issuer:str, score:number = 0.5) => {
+export const getScore = async (name:string, address:string, issuer:string, score:number = 0.5) => {
 
 	const chainId = connectState.chainId;
 
@@ -45,7 +45,7 @@ export const getScore = async (name:str, address:str, issuer:str, score:number =
           provider: name,
           issuer: issuer,
           score: score,
-       	}], constant.CeramicApiHost, chainId);
+       	}], constant.CeramicApiHost, String(chainId));
 
 	return await scorer.getScore(address);
 }

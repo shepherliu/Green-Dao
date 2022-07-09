@@ -5,7 +5,7 @@ import { connectState } from "./connect"
 
 const resolution = new Resolution();
 
-export const resolveName = async (name:str) => {
+export const resolveName = async (name:string) => {
 
   let address = null;
 

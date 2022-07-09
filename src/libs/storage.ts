@@ -1,12 +1,8 @@
 import * as path from "path"
 
 import * as web3storage from './web3storage'
-
-
 import { connectState } from './connect'
 import * as tools from "./tools"
-import * as filemanager from "./filemanager"
-
 import * as constant from "../constant"
 
 //get real file url link based on the storage type
@@ -71,6 +67,4 @@ export const uploadFolder = async (dirPath: string, files: any[]) => {
 
   fileid = getFileLink(dirPath, filetype, fileid);
 
-  //upload to the smart contract
-  return await filemanager.addFile(dirPath, filetype, fileid, size)
-}
+  return fileid;

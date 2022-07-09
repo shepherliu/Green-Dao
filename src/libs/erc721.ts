@@ -33,7 +33,7 @@ export class ERC721 {
 		return new Contract(this.contractAddress, abi, connectState.signer);		
 	}	
 
-	public isApprovedForAll = async (owner:str, operator:str) => {
+	public isApprovedForAll = async (owner:string, operator:string) => {
 		const contract = await this.getContract();
 
 		return await contract.isApprovedForAll(owner, operator);
@@ -59,7 +59,7 @@ export class ERC721 {
 		return res.toNumber();
 	}
 
-	public balanceOf = async (address:str) => {
+	public balanceOf = async (address:string) => {
 		const contract = await this.getContract();
 
 		const res = await contract.balanceOf(address);
@@ -76,15 +76,15 @@ export class ERC721 {
 	public tokenByIndex = async (index:number) => {
 		const contract = await this.getContract();
 
-		res = await contract.tokenByIndex(index);
+		const res = await contract.tokenByIndex(index);
 
 		return res.toNumber();
 	}
 
-	public tokenOfOwnerByIndex = async (owner:str, index) => {
+	public tokenOfOwnerByIndex = async (owner:string, index:number) => {
 		const contract = await this.getContract();
 
-		res = await contract.tokenOfOwnerByIndex(owner, index);
+		const res = await contract.tokenOfOwnerByIndex(owner, index);
 
 		return res.toNumber();
 	}
@@ -95,7 +95,7 @@ export class ERC721 {
 		return await contract.tokenURI(tokenId);
 	}
 
-	public approve = async (to:str, tokenId:number) => {
+	public approve = async (to:string, tokenId:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.approve(to, tokenId);
@@ -111,7 +111,7 @@ export class ERC721 {
 		return await contract.getApproved(tokenId);
 	}
 
-	public safeTransferFrom = async (from:str, to:str, tokenId:number) => {
+	public safeTransferFrom = async (from:string, to:string, tokenId:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.safeTransferFrom(from, to, tokenId);
@@ -121,7 +121,7 @@ export class ERC721 {
 		return tx.hash;		
 	}
 
-	public transferFrom = async (from:str, to:str, tokenId:number) => {
+	public transferFrom = async (from:string, to:string, tokenId:number) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.transferFrom(from, to, tokenId);
@@ -131,7 +131,7 @@ export class ERC721 {
 		return tx.hash;		
 	}
 
-	public setApprovalForAll = async (operator:str, approved:boolean) => {
+	public setApprovalForAll = async (operator:string, approved:boolean) => {
 		const contract = await this.getContract();
 
 		const tx = await contract.setApprovalForAll(operator, approved);

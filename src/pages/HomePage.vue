@@ -1,7 +1,10 @@
 <template>
+  <DaosPage v-if="activeIndex==='1'"/>  
 </template>
 
 <script lang="ts">
+
+import DaosPage from './DaosPage.vue';
 
 export default {
   name: 'HomePage',
