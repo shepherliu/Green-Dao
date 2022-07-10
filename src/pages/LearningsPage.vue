@@ -15,7 +15,7 @@
           <template #default>  
             <table style="margin-left: 10px;">
               <tr v-if="learningId > 0">
-                <td style="width:100px">Id
+                <td style="width:120px">Id
                   <el-popover
                     placement="top-start"
                     title="Learning Id"
@@ -37,7 +37,7 @@
                 </td>
               </tr>
               <tr>
-                <td style="width:100px">Dao Id
+                <td style="width:120px">Dao Id
                   <el-popover
                     placement="top-start"
                     title="Dao Id"
@@ -59,7 +59,7 @@
                 </td>
               </tr>    
               <tr>
-                <td style="width:100px">Dao Name
+                <td style="width:120px">Dao Name
                   <el-popover
                     placement="top-start"
                     title="Dao Name"
@@ -81,7 +81,7 @@
                 </td>                   
               </tr>   
               <tr>
-                <td style="width:100px">Learning Title
+                <td style="width:120px">Title
                   <el-popover
                     placement="top-start"
                     title="Learning Title"
@@ -103,7 +103,7 @@
                 </td>                   
               </tr>           
               <tr>
-                <td style="width:100px">Learning Description
+                <td style="width:120px">Description
                   <el-popover
                     placement="top-start"
                     title="Learning Description"
@@ -122,7 +122,7 @@
                 </td>                   
               </tr>  
               <tr>
-                <td style="width:100px">Resource Type
+                <td style="width:120px">Type
                   <el-popover
                     placement="top-start"
                     title="Learning Resource Type"
@@ -152,7 +152,7 @@
                 </td>                   
               </tr>   
               <tr>
-                <td style="width:100px">Learning Resource
+                <td style="width:120px">URL
                   <el-popover
                     placement="top-start"
                     title="Learning Resource"
@@ -174,10 +174,10 @@
                 </td>                   
               </tr>      
               <tr v-loading="loadResourceStatus">
-                <td style="width:100px"></td>
+                <td style="width:120px"></td>
                 <td style="width:300px">
                   <el-upload 
-                    style="width: 100px;height: 0px;float: right;margin-right: 80px;"
+                    style="width: 100px;height: 0px;float: right;margin-right: 100px;"
                     :drag="false"
                     :multiple="multiple"
                     class="upload-resource"
@@ -196,7 +196,7 @@
                     element-loading-background="#ffffff"
                   >
                     <template #trigger>
-                      <el-button type="primary" style="float: right;margin-right: 10px;width: 100%;">Select File</el-button>
+                      <el-button type="primary" style="float: right;margin-right: 10px;width: 100%;">Select Files</el-button>
                     </template>
                   </el-upload>
                   <el-button type="success" style="float: right;" @click="onUploadResourceFiles">Upload</el-button>

@@ -15,7 +15,7 @@
           <template #default>
             <table style="margin-left: 10px;">
               <tr v-if="daoId > 0">
-                <td style="width:100px">Id
+                <td style="width:120px">Id
                   <el-popover
                     placement="top-start"
                     title="Dao Id"
@@ -37,7 +37,7 @@
                 </td>
               </tr>
               <tr>
-                <td style="width:100px">Name
+                <td style="width:120px">Name
                   <el-popover
                     placement="top-start"
                     title="Dao Name"
@@ -59,7 +59,7 @@
                 </td>                   
               </tr>   
               <tr>
-                <td style="width:100px">Description
+                <td style="width:120px">Description
                   <el-popover
                     placement="top-start"
                     title="Dao Description"
@@ -78,7 +78,7 @@
                 </td>                   
               </tr>   
               <tr v-if="daoId <= 0">
-                <td style="width:100px">Type
+                <td style="width:120px">Type
                   <el-popover
                     placement="top-start"
                     title="Dao Type"
@@ -105,7 +105,7 @@
                 </td>                   
               </tr>                                                 
               <tr>
-                <td style="width:100px">Website
+                <td style="width:120px">Website
                   <el-popover
                     placement="top-start"
                     title="Dao Website"
@@ -127,10 +127,10 @@
                 </td>                   
               </tr>    
               <tr v-loading="loadWebsiteStatus">
-                <td style="width:100px"></td>
+                <td style="width:120px"></td>
                 <td style="width:300px">
                   <el-upload 
-                    style="width: 100px;height: 0px;float: right;margin-right: 80px;"
+                    style="width: 100px;height: 0px;float: right;margin-right: 100px;"
                     :drag="false"
                     :multiple="true"
                     class="upload-website"
@@ -148,14 +148,14 @@
                     element-loading-background="#ffffff"
                   >
                     <template #trigger>
-                      <el-button type="primary" style="float: right;margin-right: 10px;width: 100%;">Select File</el-button>
+                      <el-button type="primary" style="float: right;margin-right: 20px;width: 100%;">Select Folder</el-button>
                     </template>
                   </el-upload>
                   <el-button type="success" style="float: right;" @click="onUploadWebsiteFolder">Upload</el-button>
                 </td>
               </tr>
               <tr>
-                <td style="width:100px">Avatar
+                <td style="width:120px">Avatar
                   <el-popover
                     placement="top-start"
                     title="Dao Avatar"
@@ -177,10 +177,10 @@
                 </td>                   
               </tr>  
               <tr v-loading="loadAvatarStatus">
-                <td style="width:100px"></td>
+                <td style="width:120px"></td>
                 <td style="width:300px">
                   <el-upload 
-                    style="width: 100px;height: 0px;float: right;margin-right: 80px;"
+                    style="width: 100px;height: 0px;float: right;margin-right: 100px;"
                     :drag="false"
                     :multiple="false"
                     class="upload-avatar"
@@ -199,7 +199,7 @@
                     element-loading-background="#ffffff"
                   >
                     <template #trigger>
-                      <el-button type="primary" style="float: right;margin-right: 10px;width: 100%;">Select File</el-button>
+                      <el-button type="primary" style="float: right;margin-right: 10px;width: 100%;">Select Image</el-button>
                     </template>
                   </el-upload>
                   <el-button type="success" style="float: right;" @click="onUploadAvatarFile">Upload</el-button>
