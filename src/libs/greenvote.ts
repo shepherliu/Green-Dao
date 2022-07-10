@@ -24,14 +24,14 @@ const abi = [
 	"function setApprovalForAll(address operator, bool approved) public returns (bool)",
 	"function updateContracts(address dao) public returns (bool)",
 	"function addDaoTreassure(uint256 daoId, address from, address token, uint256 amount) public payable returns (bool)",
-	"function mint(string memory name, string memory desc, uint256 daoId, uint256 value, address token, address to, uint endTime) public returns (uint256)",
+	"function mint(string name, string desc, uint256 daoId, uint256 value, address token, address to, uint endTime) public returns (uint256)",
 	"function burn(uint256 voteId) public returns (bool)",
-	"function updateVote(uint256 voteId, string memory name, string memory desc, uint endTime) public returns (bool)",
-	"function vote(uint256 voteId, VoteStatus status) public returns (bool)",
+	"function updateVote(uint256 voteId, string name, string desc, uint endTime) public returns (bool)",
+	"function vote(uint256 voteId, uint8 status) public returns (bool)",
 	"function getDaoTreassure(uint256 daoId, address token) public view returns (uint256)",
 	"function getVoteTotalCount(bool onlyOwner) public view returns (uint)",
-	"function getVoteInfoById(uint256 voteId) public view returns (VoteInfo memory)",
-	"function getVoteIndexsByPageCount(uint pageSize, uint pageCount, uint256 daoId, bool onlyOwner) public view returns(uint256[] memory)",
+	"function getVoteInfoById(uint256 voteId) public view returns (string, string, uint256, uint256, address, address, uint, uint, uint, bool, bool)",
+	"function getVoteIndexsByPageCount(uint pageSize, uint pageCount, uint256 daoId, bool onlyOwner) public view returns(uint256[])",
 ];
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
@@ -262,7 +262,31 @@ export class GreenVote {
 
 		const res = await contract.getVoteInfoById(voteId);
 
-		return res;
+		const payContract = res[4];
+		let value;
+		if(payContract === zeroAddress){
+			value = Number(utils.formatEther(res[3]));
+		}else{
+			const erc20 = new ERC20(payContract);
+			const decimals = await erc20.decimals();
+
+			value = Number(utils.formatUnits(res[3], decimals));
+		}
+
+		return {
+			voteId: voteId,
+			voteName: res[0],
+			voteDesc: res[1],
+			daoId: res[2].toNumber(),
+			voteValue: value,
+			voteToken: payContract,
+			voteTo: res[5],
+			voteAggree: res[6].toNumber(),
+			voteAgainst: res[7].toNumber(),
+			endTime: res[8].toNumber(),
+			voteSuccess: res[9],
+			votePayed: res[10],
+		};
 	}
 
 	public getVoteIndexsByPageCount = async (pageSize:number, pageCount:number, daoId:number, onlyOwner:boolean) => {

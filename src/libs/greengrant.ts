@@ -23,14 +23,14 @@ const abi = [
 	"function transferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function setApprovalForAll(address operator, bool approved) public returns (bool)",
 	"function updateContracts(address dao, address treassure) public returns (bool)",
-	"function mint(string memory name, string memory desc, string memory git, string memory website, address token, uint256 daoId, uint endTime) public returns (uint256)",
+	"function mint(string name, string desc, string git, string website, address token, uint256 daoId, uint endTime) public returns (uint256)",
 	"function burn(uint256 grantId) public payable returns (bool)",
-	"function updateGrant(uint256 grantId, string memory name, string memory desc, string memory git, string memory website, uint endTime) public returns (bool)",
+	"function updateGrant(uint256 grantId, string name, string desc, string git, string website, uint endTime) public returns (bool)",
 	"function supportGrant(uint256 grantId, uint256 amount)public payable returns (bool)",
 	"function claimGrant(uint256 grantId) public payable returns (bool)",
 	"function getGrantTreassure(uint256 grantId, bool onlyOwner) public view returns (uint256)",
 	"function getGrantTotalCount(bool onlyOwner) public view returns(uint)",
-	"function getGrantInfoById(uint256 grantId) public view returns(GrantInfo memory)",
+	"function getGrantInfoById(uint256 grantId) public view returns(string, string, string, string, address, uint256, uint, bool)",
 	"function getGrantIndexsByPageCount(uint pageSize, uint pageCount, uint256 daoId, bool onlyOwner) public view returns (uint256 []memory)",
 ];
 
@@ -254,7 +254,17 @@ export class GreenGrant {
 
 		const res = await contract.getGrantInfoById(grantId);
 
-		return res.toNumber();
+		return {
+			grantId: grantId,
+			grantName: res[0],
+			grantDesc: res[1],
+			grantGitUrl: res[2],
+			grantWebsite: res[3],
+			grantToken: res[4],
+			daoId: res[5].toNumber(),
+			endTime: res[6].toNumber(),
+			grantPayed: res[7],
+		};
 	}
 
 	public getGrantIndexsByPageCount = async (pageSize:number, pageCount:number, daoId:number, onlyOwner:boolean) => {

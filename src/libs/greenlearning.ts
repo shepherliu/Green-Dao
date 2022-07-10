@@ -21,13 +21,13 @@ const abi = [
 	"function transferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function setApprovalForAll(address operator, bool approved) public returns (bool)",
 	"function updateContracts(address dao) public returns (bool)",
-	"function mint(string memory name, string memory desc, string memory url, uint256 daoId, LearningType learningType) public returns (uint256)",
+	"function mint(string name, string desc, string url, uint256 daoId, uint8 learningType) public returns (uint256)",
 	"function burn(uint256 learningId) public returns (bool)",
 	"function likeTheLearning(uint256 learningId) public returns (bool)",
 	"function hateTheLearning(uint256 learningId) public returns (bool)",
 	"function getLearningTotalCount(bool onlyOwner) public view returns(uint)",
-	"function getLearningInfoById(uint256 learningId) public view returns (LearningInfo memory)",
-	"function getLearningIndexsByPageCount(uint pageSize, uint pageCount, uint256 daoId, bool onlyOwner) public view returns(uint256[] memory)",
+	"function getLearningInfoById(uint256 learningId) public view returns (string, string, string, uint, uint256, uint, uint)",
+	"function getLearningIndexsByPageCount(uint pageSize, uint pageCount, uint256 daoId, bool onlyOwner) public view returns(uint256[])",
 ];
 
 
@@ -216,7 +216,16 @@ export class GreenLearning {
 
 		const res = await contract.getLearningInfoById(learningId);
 
-		return res;
+		return {
+			learningId: learningId,
+			learningName: res[0],
+			learningDesc: res[1],
+			learningUrl: res[2],
+			learningType: res[3].toNumber(),
+			daoId: res[4].toNumber(),
+			learningLikes: res[5].toNumber(),
+			learningHates: res[6].toNumber(),
+		};
 	}
 
 	public getLearningIndexsByPageCount = async (pageSize:number, pageCount:number, daoId:number, onlyOwner:boolean) => {

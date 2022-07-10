@@ -28,7 +28,7 @@ const abi = [
 	"function updateDao(uint256 daoId, string name, string desc, string website, string url)",
 	"function checkInDao(uint256 daoId, address user) public view returns (bool)",
 	"function getDaoIndexsByPageCount(uint256 pageSize, uint256 pageCount, bool onlyOwner) public view returns (uint256[])",
-	"function getDaoInfoById(uint256 daoId) public view returns (DaoInfo)",
+	"function getDaoInfoById(uint256 daoId) public view returns (string,string,string,string,address,bool,uint256)",
 	"function getDaoMembers(uint256 daoId) public view returns (uint)",
 	"function getDaoTotalCount(bool onlyOwner) public view returns (uint)",
 ];
@@ -241,7 +241,16 @@ export class GreenDao {
 
 		const res = await contract.getDaoInfoById(daoId);
 
-		return res;
+		return {
+			daoId: daoId,
+			daoName: res[0],
+			daoDesc: res[1],
+			daoWebsite: res[2],
+			daoAvatar: res[3],
+			daoOwner: res[4].toLowerCase(),
+			daoPublic: res[5],
+			daoMembers: res[6].toNumber(),
+		};
 	}
 
 	public getDaoMembers = async (daoId:number) => {

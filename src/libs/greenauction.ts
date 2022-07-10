@@ -23,13 +23,13 @@ const abi = [
 	"function transferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function setApprovalForAll(address operator, bool approved) public returns (bool)",
 	"function updateContracts(address dao, address treassure) public returns (bool)",
-	"function mint(uint startTime, uint endTime, uint256 startPrice, uint256 reversePrice, uint256 priceDelta, AucType aucType,uint256 daoId,uint256 nftId, address nftContract, address payContract) public returns (uint256)",
+	"function mint(uint startTime, uint endTime, uint256 startPrice, uint256 reversePrice, uint256 priceDelta, uint8 aucType, uint256 daoId, uint256 nftId, address nftContract, address payContract) public returns (uint256)",
 	"function cancelAuction(uint256 aucId) public payable returns(bool)",
 	"function bidForNft(uint256 aucId, uint256 amount) public payable returns(bool)",
 	"function claimAuction(uint256 aucId) public payable returns(bool)",
-	"function getAuctionInfoById(uint256 aucId) public view returns(AucInfo memory)",
+	"function getAuctionInfoById(uint256 aucId) public view returns(uint256, uint256, address, address, address, address, uint, uint, uint256, uint256, uint256, uint256, uint8, uint8)",
 	"function getAuctionTotalCount(bool onlyOwner) public view returns(uint)",
-	"function getAuctionIndexsByPage(uint pageSize, uint pageCount, uint256 daoId, Status aucStatus, bool onlyOwner) public view returns(uint256[] memory)",
+	"function getAuctionIndexsByPage(uint pageSize, uint pageCount, uint256 daoId, uint8 aucStatus, bool onlyOwner) public view returns(uint256[] memory)",
 ];
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
@@ -200,7 +200,6 @@ export class GreenAuction {
 		return tx.hash;				
 	}
 
-	//todo get payContract
 	public bidForNft = async (aucId:number, amount:number, payContract:string = zeroAddress) => {
 		const contract = await this.getContract();
 
@@ -235,7 +234,41 @@ export class GreenAuction {
 
 		const res = await contract.getAuctionInfoById(aucId);
 
-		return res;
+		const payContract = res[4];
+		let sPrice, rPrice, dPrice, bPrice;
+
+		if(payContract === zeroAddress){
+			sPrice = Number(utils.formatEther(res[8]));
+			rPrice = Number(utils.formatEther(res[9]));
+			dPrice = Number(utils.formatEther(res[10]));
+			bPrice = Number(utils.formatEther(res[11]));
+		}else{
+			const erc20 = new ERC20(payContract);
+			const decimals = await erc20.decimals();
+
+			sPrice = Number(utils.formatUnits(res[8], decimals));
+			rPrice = Number(utils.formatUnits(res[9], decimals));
+			dPrice = Number(utils.formatUnits(res[10], decimals));		
+			bPrice = Number(utils.formatUnits(res[11], decimals));		
+		}
+
+		return {
+			aucId: aucId,
+			daoId: res[0].toNumber(),
+			nftId: res[1].toNumber(),
+			nftContract: res[2],
+			nftOwner: res[3],
+			payContract: res[4],
+			bidAddress: res[5],
+			startTime: res[6].toNumber(),
+			endTime: res[7].toNumber(),
+			startPrice: sPrice,
+			reversePrice: rPrice,
+			priceDelta: dPrice,
+			bidPrice: bPrice,
+			aucStatus: res[12].toNumber(),
+			acuType: res[13].toNumber(),
+		};
 	}
 
 	public getAuctionTotalCount = async (onlyOwner:boolean) => {

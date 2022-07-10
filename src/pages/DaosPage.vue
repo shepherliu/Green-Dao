@@ -76,7 +76,34 @@
                   <el-input v-model="daoDesc" type="textarea" rows="5">
                   </el-input>
                 </td>                   
-              </tr>     
+              </tr>   
+              <tr v-if="daoId <= 0">
+                <td style="width:100px">Type
+                  <el-popover
+                    placement="top-start"
+                    title="Dao Type"
+                    :width="200"
+                    trigger="hover"
+                    content="The type of the green dao. A public dao that every one can join it. And a private dao only the onwer can add the members."
+                  >
+                    <template #reference>
+                     <el-icon><QuestionFilled /></el-icon>
+                    </template>
+                </el-popover>  
+                </td>
+                <td style="width:300px;margin-left:0px;">
+                  <el-select 
+                    v-model="daoPublic"
+                    style="width:100%;margin-left:0px;"
+                    placeholder="Select Dao Type"
+                    :teleported="false"
+                    filterable
+                  >
+                    <el-option key="public" label="Public" :value="true"/>
+                    <el-option key="private" label="Private" :value="false"/>
+                  </el-select> 
+                </td>                   
+              </tr>                                                 
               <tr>
                 <td style="width:100px">Website
                   <el-popover
@@ -177,34 +204,7 @@
                   </el-upload>
                   <el-button type="success" style="float: right;" @click="onUploadAvatarFile">Upload</el-button>
                 </td>
-              </tr>  
-              <tr v-if="daoId <= 0">
-                <td style="width:100px">Type
-                  <el-popover
-                    placement="top-start"
-                    title="Dao Type"
-                    :width="200"
-                    trigger="hover"
-                    content="The type of the green dao. A public dao that every one can join it. And a private dao only the onwer can add the members."
-                  >
-                    <template #reference>
-                     <el-icon><QuestionFilled /></el-icon>
-                    </template>
-                </el-popover>  
-                </td>
-                <td style="width:300px;margin-left:0px;">
-                  <el-select 
-                    v-model="daoPublic"
-                    style="width:100%;margin-left:0px;"
-                    placeholder="Select Dao Type"
-                    :teleported="false"
-                    filterable
-                  >
-                    <el-option key="public" label="Public" :value="true"/>
-                    <el-option key="private" label="Private" :value="false"/>
-                  </el-select> 
-                </td>                   
-              </tr>                                                     
+              </tr>                      
             </table>   
           </template>
           <template #footer>
@@ -362,7 +362,7 @@ const onSelectAvatarFile = async () => {
 
 //replace the avatar file from old selected to new one
 const handleAvtarExceed: UploadProps['onExceed'] = (files:any) => {
-  uploadAvatar.value!.clearFiles()
+  uploadAvatar.value!.clearFiles();
   const file = files[0] as UploadRawFile;
   file.uid = genFileId();
   uploadAvatar.value!.handleStart(file);
@@ -429,13 +429,14 @@ const confirmDaoUpdate = async () => {
       element.elMessage('success', msg, true);      
     }    
 
+    showAddNewDaoVisiable.value = false;
+
     handleClick();     
 
   }catch(e){
     element.alertMessage(e);
   }finally{
     loadDrawerStatus.value = false;
-    showAddNewDaoVisiable.value = false;
   }
 }
 
