@@ -308,7 +308,7 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
     }
 
     //get auction ids by Paginations
-    function getAuctionIndexsByPage(uint pageSize, uint pageCount, Status aucStatus, bool onlyOwner) public view returns(uint256[] memory){
+    function getAuctionIndexsByPage(uint pageSize, uint pageCount, uint256 daoId, Status aucStatus, bool onlyOwner) public view returns(uint256[] memory){
         uint total = getAuctionTotalCount(onlyOwner);  
         uint count;
         uint index;
@@ -333,7 +333,9 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
             }     
 
             AucInfo memory auc = _getAucInfoById(aucId);
-            if(aucStatus == Status.FINISHED && (auc.status == Status.UPCOMING || auc.status == Status.ONGOING)){
+            if(daoId > 0 && auc.daoId != daoId){
+                continue;
+            }else if(aucStatus == Status.FINISHED && (auc.status == Status.UPCOMING || auc.status == Status.ONGOING)){
                 continue;
             }else if(aucStatus != Status.FINISHED && aucStatus != auc.status){
                 continue;

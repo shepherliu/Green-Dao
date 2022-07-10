@@ -29,7 +29,7 @@ const abi = [
 	"function claimAuction(uint256 aucId) public payable returns(bool)",
 	"function getAuctionInfoById(uint256 aucId) public view returns(AucInfo memory)",
 	"function getAuctionTotalCount(bool onlyOwner) public view returns(uint)",
-	"function getAuctionIndexsByPage(uint pageSize, uint pageCount, Status aucStatus, bool onlyOwner) public view returns(uint256[] memory)",
+	"function getAuctionIndexsByPage(uint pageSize, uint pageCount, uint256 daoId, Status aucStatus, bool onlyOwner) public view returns(uint256[] memory)",
 ];
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
@@ -246,10 +246,10 @@ export class GreenAuction {
 		return res.toNumber();
 	}
 
-	public getAuctionIndexsByPage = async (pageSize:number, pageCount:number, aucStatus:number, onlyOwner:boolean) => {
+	public getAuctionIndexsByPage = async (pageSize:number, pageCount:number, daoId:number, aucStatus:number, onlyOwner:boolean) => {
 		const contract = await this.getContract();
 
-		const res = await contract.getAuctionIndexsByPage(pageSize, pageCount, aucStatus, onlyOwner);
+		const res = await contract.getAuctionIndexsByPage(pageSize, pageCount, daoId, aucStatus, onlyOwner);
 
 		const indexList = [];
 

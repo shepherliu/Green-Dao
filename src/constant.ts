@@ -54,27 +54,27 @@ export const bobaTestContractAddress = "0xF5B97a4860c1D81A1e915C40EcCB5E4a5E6b83
 
 //green dao contract address
 export const greenDaoContractAddress = {
-  4: "0xA896d6EFd0328aa35e35CED25BBb3ABA029A5eDC",
+  4: "0xA26762cc43e693A054a7b89077d3E863839f4602",
 };
 
 //green vote contract address
 export const greenVoteContractAddress = {
-  4: "0x6d8C1c43693BF54E52c29FFA5A6d4Dd9e369e217",
+  4: "0xD8Cc48542d0BE10C88e0f585C90E722e89cC19Fa",
 };
 
 //green auction contract address
 export const greenAuctionContractAddress = {
-  4: "0x09857FE738243F1A8AefB8aE4a91E939dA4CE2E8",
+  4: "0x84db1348408cA295FbdDE0a879BC783410Dd7645",
 };
 
 //green grant contract address
 export const greenGrantContractAddress = {
-  4: "0xD46556992caE22f214a0229c5B790BC52Bbc9BD9",
+  4: "0x685698830B301709dBc840A0F73107840b7b1678",
 };
 
 //green learning contract address
 export const greenLearningContractAddress = {
-  4: "0x85c11DA295c4eedFf6fA2C825dBC6E6043d13737",
+  4: "0xFaD7F0E007E1e8B9a7e5DA4c33C20c9481906ccA",
 };
 
 //token List
