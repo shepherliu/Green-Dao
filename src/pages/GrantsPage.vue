@@ -150,10 +150,10 @@
                 <td style="width:120px">Pay Token
                   <el-popover
                     placement="top-start"
-                    title="Grant Payment Token"
+                    title="Grant Pay Token"
                     :width="200"
                     trigger="hover"
-                    content="The token contract address to support for the green grant. You can choose the blockchain native token or the erc20 tokens."
+                    content="The payment token contract to support for the green grant. You can choose the blockchain native token or the erc20 tokens to receive the payments."
                   >
                     <template #reference>
                      <el-icon><QuestionFilled /></el-icon>
@@ -297,6 +297,7 @@ const zeroAddress = '0x0000000000000000000000000000000000000000';
 const timeFormat = "YYYY/MM/DD hh:mm:ss";
 
 const activeName = connectState.activeName;
+
 const loadStatus = ref(false);
 const loadDrawerStatus = ref(false);
 const loadWebsiteStatus = ref(false);
@@ -413,6 +414,7 @@ const onUploadWebsiteFolder = async () => {
     }
 }      
 
+//click to open the drawer to create a new grant
 const onAddNewGrantOpen = async () => {
   daoId.value = getDaoId();
   grantId.value = 0;
@@ -433,10 +435,12 @@ const onAddNewGrantOpen = async () => {
   await updateDaoName(daoId.value);
 }
 
+//click to cancel grant update
 const cancelGrantUpdate = async () => {
   showAddNewGrantVisiable.value = false;
 }
 
+//click to confirm to update or create the grant
 const confirmGrantUpdate = async () => {
 
   try{
@@ -469,6 +473,7 @@ const confirmGrantUpdate = async () => {
   }  
 }
 
+//handle page refresh
 const handleClick = async () => {
   connectState.activeName.value = activeName.value;
   tools.setUrlParamter('activeName', activeName.value);

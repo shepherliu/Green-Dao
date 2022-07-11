@@ -498,6 +498,7 @@ const confirmLearningUpdate = async () => {
   }
 }
 
+//handle page refresh
 const handleClick = async () => {
   connectState.activeName.value = activeName.value;
   tools.setUrlParamter('activeName', activeName.value);

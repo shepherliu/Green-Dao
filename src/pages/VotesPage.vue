@@ -153,7 +153,7 @@
                     title="Vote Payment Token"
                     :width="200"
                     trigger="hover"
-                    content="The token contract address for the green vote. You can choose the blockchain native token or the erc20 tokens based on the balance of the dao treassure."
+                    content="The token contract for the green vote. You can choose the blockchain native token or the erc20 tokens based on the balance of the dao treassure."
                   >
                     <template #reference>
                      <el-icon><QuestionFilled /></el-icon>
@@ -319,6 +319,7 @@ const updateDaoName = async (daoId:Number) => {
   daoName.value = daoInfo.daoName;
 }
 
+//click to open the drawer to create a new vote
 const onAddNewVoteOpen = async () => {
   daoId.value = getDaoId();
   voteId.value = 0;
@@ -336,10 +337,12 @@ const onAddNewVoteOpen = async () => {
   await updateDaoName(daoId.value);
 }
 
+//click to cancle vote update or create
 const cancelVoteUpdate = async () => {
   showAddNewVoteVisiable.value = false;
 }
 
+//click to confirm to update or create the vote
 const confirmVoteUpdate = async () => {
   try{
     loadDrawerStatus.value = true;
@@ -370,6 +373,7 @@ const confirmVoteUpdate = async () => {
   }
 }
 
+//handle page refresh
 const handleClick = async () => {
   connectState.activeName.value = activeName.value;
   tools.setUrlParamter('activeName', activeName.value);

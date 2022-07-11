@@ -276,6 +276,7 @@ const daoDesc = ref('');
 const daoWebsite = ref('');
 const daoAvatarUrl = ref('');
 const daoPublic = ref(true);
+
 const loadStatus = ref(false);
 const loadAvatarStatus = ref(false);
 const loadWebsiteStatus = ref(false);

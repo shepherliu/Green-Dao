@@ -402,6 +402,7 @@ const updateDaoName = async (daoId:Number) => {
   daoName.value = daoInfo.daoName;
 }
 
+//click to open the drawer to create a new auction
 const onAddNewAuctionOpen = async () => {
   daoId.value = getDaoId();
   auctionId.value = 0;
@@ -423,10 +424,12 @@ const onAddNewAuctionOpen = async () => {
   await updateDaoName(daoId.value);
 }
 
+//click to cancel auction create
 const cancelAuctionUpdate = async () => {
   showAddNewAuctionVisiable.value = false;
 }
 
+//click to approve the nft token to the auction contract
 const approveNftToken = async () => {
   if(auctionNftApproved.value === true){
     return true;
@@ -459,6 +462,7 @@ const approveNftToken = async () => {
   }
 }
 
+//click to confirm to create a new auction
 const confirmAuctionUpdate = async () => {
   try{
     loadDrawerStatus.value = true;
@@ -482,6 +486,7 @@ const confirmAuctionUpdate = async () => {
   }
 }
 
+//handle page refresh
 const handleClick = async () => {
   connectState.activeName.value = activeName.value;
   tools.setUrlParamter('activeName', activeName.value);
