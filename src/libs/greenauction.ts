@@ -6,6 +6,7 @@ import { greenAuctionContractAddress } from "../constant"
 import { networkConnect, connectState } from "./connect"
 
 import { ERC20 } from "./erc20"
+import { ERC721 } from "./erc721"
 
 const abi = [
 	"function isApprovedForAll(address owner, address operator) public view returns (bool)",
@@ -82,12 +83,20 @@ export class GreenAuction {
 	}
 
 	public ownerOf = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.ownerOf(tokenId);
 	}
 
 	public tokenByIndex = async (index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenByIndex(index);
@@ -96,6 +105,10 @@ export class GreenAuction {
 	}
 
 	public tokenOfOwnerByIndex = async (owner:string, index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenOfOwnerByIndex(owner, index);
@@ -104,12 +117,20 @@ export class GreenAuction {
 	}
 
 	public tokenURI = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.tokenURI(tokenId);
 	}
 
 	public approve = async (to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.approve(to, tokenId);
@@ -120,12 +141,20 @@ export class GreenAuction {
 	}
 
 	public getApproved = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.getApproved(tokenId);
 	}
 
 	public safeTransferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.safeTransferFrom(from, to, tokenId);
@@ -136,6 +165,10 @@ export class GreenAuction {
 	}
 
 	public transferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+				
 		const contract = await this.getContract();
 
 		const tx = await contract.transferFrom(from, to, tokenId);
@@ -153,9 +186,17 @@ export class GreenAuction {
 		await tx.wait();
 
 		return tx.hash;		
-	}	
+	}
 
 	public updateContracts = async (dao:string, treassure:string) => {
+		if(dao === zeroAddress || dao === this.contractAddress){
+			throw new Error("invalid dao address!");
+		}
+
+		if(treassure === zeroAddress || dao === this.contractAddress){
+			throw new Error("invalid treassure address!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.updateContracts(dao, treassure);
@@ -166,6 +207,45 @@ export class GreenAuction {
 	}
 
 	public mint = async (start:number, end:number, startPrice:number, reversePrice:number, priceDelta:number, aucType:number, daoId:number, nftId:number, nftContract:string, payContract:string) => {
+		if(start <= 0){
+			throw new Error("invalid start time!");
+		}
+
+		if(end < (new Date()).getTime()/1000){
+			throw new Error("invalid end time!");
+		}
+
+		if(start >= end){
+			throw new Error("invalid end time!");
+		}
+
+		if(startPrice <= 0){
+			throw new Error("invalid start price!");
+		}
+
+		if(reversePrice <= 0){
+			throw new Error("invalid reverse price!");
+		}
+
+		if(aucType != 0 && aucType != 1){
+			throw new Error("invalid auction type!");
+		}
+
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
+		if(nftId <= 0){
+			throw new Error("invalid nft id!");
+		}
+
+		const erc721 = new ERC721(nftContract);
+		const owner = (await erc721.ownerOf(nftId)).toLowerCase();
+
+		if(owner != connectState.userAddr.value.toLowerCase()){
+			throw new Error("you are not the nft owner!");
+		}
+
 		const contract = await this.getContract();
 
 		let sPrice, rPrice, dPrice;
@@ -191,6 +271,10 @@ export class GreenAuction {
 	}
 
 	public cancelAuction = async (aucId:number) => {
+		if(aucId <= 0){
+			throw new Error("invalid auction id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.cancelAuction(aucId);
@@ -200,25 +284,43 @@ export class GreenAuction {
 		return tx.hash;				
 	}
 
-	public bidForNft = async (aucId:number, amount:number, payContract:string = zeroAddress) => {
-		const contract = await this.getContract();
+	public bidForNft = async (aucId:number, amount:number) => {
+		if(aucId <= 0){
+			throw new Error("invalid auction id!");
+		}
+
+		if(amount <= 0){
+			throw new Error("invalid bid price!");
+		}
+
+		const payContract = (await this.getAuctionInfoById(aucId)).payContract;
+
+		const options = {
+			value: utils.parseEther('0'),
+		}
 
 		let value;
 
 		if(payContract === zeroAddress){
 			value = utils.parseEther(String(amount));
+			options.value = value;
 		}else{
 			const erc20 = new ERC20(payContract);
 			value = utils.parseUnits(String(amount), await erc20.decimals());	
 		}	
 
-		const tx = await contract.bidForNft(aucId, value);
+		const contract = await this.getContract();
+		const tx = await contract.bidForNft(aucId, value, options);
 
 		await tx.wait();
 		return tx.hash;			
 	}
 
 	public claimAuction = async (aucId:number) => {
+		if(aucId <= 0){
+			throw new Error("invalid auction id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.claimAuction(aucId);
@@ -230,6 +332,10 @@ export class GreenAuction {
 
 	//todo parse auction info
 	public getAuctionInfoById = async (aucId:number) => {
+		if(aucId <= 0){
+			throw new Error("invalid auction id!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.getAuctionInfoById(aucId);
@@ -280,6 +386,22 @@ export class GreenAuction {
 	}
 
 	public getAuctionIndexsByPage = async (pageSize:number, pageCount:number, daoId:number, aucStatus:number, onlyOwner:boolean) => {
+		if(pageSize <= 0 || pageSize > 100){
+			throw new Error("invalid page size!");
+		}
+
+		if(pageCount < 0){
+			throw new Error("invalid page count!");
+		}
+
+		if(daoId < 0){
+			daoId = 0;
+		}
+
+		if(aucStatus < 0){
+			aucStatus = 0;
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.getAuctionIndexsByPage(pageSize, pageCount, daoId, aucStatus, onlyOwner);

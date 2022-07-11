@@ -327,7 +327,7 @@ const onAddNewVoteOpen = async () => {
   voteDescription.value = '';
   voteToken.value = zeroAddress;
   voteValue.value = 0;
-  voteTo.value = '';
+  voteTo.value = zeroAddress;
 
   const now = new Date();
   now.setTime(now.getTime() + 30*24*3600*1000);

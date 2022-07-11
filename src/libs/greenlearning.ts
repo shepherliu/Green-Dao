@@ -79,12 +79,20 @@ export class GreenLearning {
 	}
 
 	public ownerOf = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.ownerOf(tokenId);
 	}
 
 	public tokenByIndex = async (index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenByIndex(index);
@@ -93,6 +101,10 @@ export class GreenLearning {
 	}
 
 	public tokenOfOwnerByIndex = async (owner:string, index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenOfOwnerByIndex(owner, index);
@@ -101,12 +113,20 @@ export class GreenLearning {
 	}
 
 	public tokenURI = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.tokenURI(tokenId);
 	}
 
 	public approve = async (to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.approve(to, tokenId);
@@ -117,12 +137,20 @@ export class GreenLearning {
 	}
 
 	public getApproved = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.getApproved(tokenId);
 	}
 
 	public safeTransferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.safeTransferFrom(from, to, tokenId);
@@ -133,6 +161,10 @@ export class GreenLearning {
 	}
 
 	public transferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+				
 		const contract = await this.getContract();
 
 		const tx = await contract.transferFrom(from, to, tokenId);
@@ -150,7 +182,7 @@ export class GreenLearning {
 		await tx.wait();
 
 		return tx.hash;		
-	}	
+	}
 
 	public updateContracts = async (dao:string) => {
 		const contract = await this.getContract();
@@ -163,6 +195,34 @@ export class GreenLearning {
 	}
 
 	public mint = async (name:string, desc:string, url:string, daoId:number, learningType:number) => {
+		name = name.trim();
+		desc = desc.trim();
+		url = url.trim();
+
+		if(name.length <= 0){
+			throw new Error("invalid learning name!");
+		}
+
+		if(desc.length <= 0){
+			throw new Error("invalid learning description!");
+		}
+
+		if(url.length <= 0){
+			throw new Error("invalid learning url link!");
+		}
+
+		if(url.search("https://") != 0){
+			throw new Error("learning url link must started with 'https://'!");
+		}
+
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
+		if(learningType < 0 || learningType > 3){
+			throw new Error("invalid learning type!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.mint(name, desc, url, daoId, learningType);
@@ -173,6 +233,10 @@ export class GreenLearning {
 	}
 
 	public burn = async (learningId:number) => {
+		if(learningId <= 0){
+			throw new Error("invalid learning id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.burn(learningId);
@@ -183,6 +247,10 @@ export class GreenLearning {
 	}
 
 	public likeTheLearning = async (learningId:number) => {
+		if(learningId <= 0){
+			throw new Error("invalid learning id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.likeTheLearning(learningId);
@@ -193,6 +261,10 @@ export class GreenLearning {
 	}
 
 	public hateTheLearning = async (learningId:number) => {
+		if(learningId <= 0){
+			throw new Error("invalid learning id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.hateTheLearning(learningId);
@@ -212,6 +284,10 @@ export class GreenLearning {
 
 	//todo parse learning info
 	public getLearningInfoById = async (learningId:number) => {
+		if(learningId <= 0){
+			throw new Error("invalid learning id!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.getLearningInfoById(learningId);
@@ -229,6 +305,18 @@ export class GreenLearning {
 	}
 
 	public getLearningIndexsByPageCount = async (pageSize:number, pageCount:number, daoId:number, onlyOwner:boolean) => {
+		if(pageSize <= 0 || pageSize > 100){
+			throw new Error("invalid page size!");
+		}
+
+		if(pageCount < 0){
+			throw new Error("invalid page count!");
+		}
+
+		if(daoId < 0){
+			daoId = 0;
+		}
+
 		const contract = await this.getContract();
 
 		const indexList = [];

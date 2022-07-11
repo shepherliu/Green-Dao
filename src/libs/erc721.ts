@@ -68,12 +68,20 @@ export class ERC721 {
 	}
 
 	public ownerOf = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.ownerOf(tokenId);
 	}
 
 	public tokenByIndex = async (index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenByIndex(index);
@@ -82,6 +90,10 @@ export class ERC721 {
 	}
 
 	public tokenOfOwnerByIndex = async (owner:string, index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenOfOwnerByIndex(owner, index);
@@ -90,12 +102,20 @@ export class ERC721 {
 	}
 
 	public tokenURI = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.tokenURI(tokenId);
 	}
 
 	public approve = async (to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.approve(to, tokenId);
@@ -106,12 +126,20 @@ export class ERC721 {
 	}
 
 	public getApproved = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.getApproved(tokenId);
 	}
 
 	public safeTransferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.safeTransferFrom(from, to, tokenId);
@@ -122,6 +150,10 @@ export class ERC721 {
 	}
 
 	public transferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+				
 		const contract = await this.getContract();
 
 		const tx = await contract.transferFrom(from, to, tokenId);

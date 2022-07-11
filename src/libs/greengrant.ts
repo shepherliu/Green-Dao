@@ -84,12 +84,20 @@ export class GreenGrant {
 	}
 
 	public ownerOf = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.ownerOf(tokenId);
 	}
 
 	public tokenByIndex = async (index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenByIndex(index);
@@ -98,6 +106,10 @@ export class GreenGrant {
 	}
 
 	public tokenOfOwnerByIndex = async (owner:string, index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenOfOwnerByIndex(owner, index);
@@ -106,12 +118,20 @@ export class GreenGrant {
 	}
 
 	public tokenURI = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.tokenURI(tokenId);
 	}
 
 	public approve = async (to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.approve(to, tokenId);
@@ -122,12 +142,20 @@ export class GreenGrant {
 	}
 
 	public getApproved = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.getApproved(tokenId);
 	}
 
 	public safeTransferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.safeTransferFrom(from, to, tokenId);
@@ -138,6 +166,10 @@ export class GreenGrant {
 	}
 
 	public transferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+				
 		const contract = await this.getContract();
 
 		const tx = await contract.transferFrom(from, to, tokenId);
@@ -155,7 +187,7 @@ export class GreenGrant {
 		await tx.wait();
 
 		return tx.hash;		
-	}	
+	}
 
 	public updateContracts = async (dao:string, treassure:string) => {
 		const contract = await this.getContract();
@@ -168,6 +200,42 @@ export class GreenGrant {
 	}
 
 	public mint = async (name:string, desc:string, git:string, website:string, token:string, daoId:number, endTime:number) => {
+		name = name.trim();
+		if(name.length <= 0){
+			throw new Error("invalid grant name!");
+		}
+
+		desc = desc.trim();
+		if(desc.length <= 0){
+			throw new Error("invalid grant description!");
+		}
+
+		git = git.trim();
+		if(git.length <= 0){
+			throw new Error("invalid github url link!");
+		}
+
+		if(git.search("https://") != 0){
+			throw new Error("github url must started with 'https://'!");
+		}
+
+		website = website.trim();
+		if(website.length <= 0){
+			throw new Error("invalid grant website!");
+		}
+
+		if(website.search("https://") != 0){
+			throw new Error("website url must started with 'https://'!");
+		}
+
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
+		if(endTime < (new Date()).getTime()/1000){
+			throw new Error("invalid grant end time!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.mint(name, desc, git, website, token, daoId, endTime);
@@ -178,6 +246,10 @@ export class GreenGrant {
 	}
 
 	public burn = async (grantId:number) => {
+		if(grantId <= 0){
+			throw new Error("invalid grant id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.burn(grantId);
@@ -188,6 +260,33 @@ export class GreenGrant {
 	}
 
 	public updateGrant = async (grantId:number, name:string, desc:string, git:string, website:string, endTime:number) => {
+		if(grantId <= 0){
+			throw new Error("invalid grant id!");
+		}
+
+		name = name.trim();
+		desc = desc.trim();
+		git = git.trim();
+		website = website.trim();
+
+		if(name.length <= 0){
+			throw new Error("invalid grant name!");
+		}
+
+		if(git.length > 0 && git.search("https://") != 0){
+			throw new Error("github url must started with 'https://'!");
+		}		
+
+		if(website.length > 0 && website.search("https://") != 0){
+			throw new Error("website url must started with 'https://'!");
+		}
+
+		if(endTime > 0 && endTime < (new Date()).getTime()/1000){
+			throw new Error("invalid grant end time!");
+		}else{
+			endTime = 0;
+		}		
+
 		const contract = await this.getContract();
 
 		const tx = await contract.updateGrant(grantId, name, desc, git, website, endTime);
@@ -197,19 +296,34 @@ export class GreenGrant {
 		return tx.hash;			
 	}
 
-	public supportGrant = async (grantId:number, payContract:string, amount:number) => {
-		const contract = await this.getContract();
+	public supportGrant = async (grantId:number, amount:number) => {
+		if(grantId <= 0){
+			throw new Error("invalid grant id!");
+		}
+
+		if(amount <= 0){
+			throw new Error("invalid amount!");
+		}
+
+		const payContract = (await this.getGrantInfoById(grantId)).grantToken;
+
+		const options = {
+			value: utils.parseEther('0'),
+		}
 
 		let value;
 
 		if(payContract === zeroAddress){
 			value = utils.parseEther(String(amount));
+			options.value = value;
 		}else{
 			const erc20 = new ERC20(payContract);
 			value = utils.parseUnits(String(amount), await erc20.decimals());	
 		}	
 
-		const tx = await contract.supportGrant(grantId, value);
+		const contract = await this.getContract();
+
+		const tx = await contract.supportGrant(grantId, value, options);
 
 		await tx.wait();
 
@@ -217,6 +331,10 @@ export class GreenGrant {
 	}
 
 	public claimGrant = async (grantId:number) => {
+		if(grantId <= 0){
+			throw new Error("invalid grant id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.claimGrant(grantId);
@@ -226,7 +344,13 @@ export class GreenGrant {
 		return tx.hash;
 	}
 
-	public getGrantTreassure = async (grantId:number, payContract:string, onlyOwner:boolean) => {
+	public getGrantTreassure = async (grantId:number, onlyOwner:boolean) => {
+		if(grantId <= 0){
+			throw new Error("invalid grant id!");
+		}
+
+		const payContract = (await this.getGrantInfoById(grantId)).grantToken;
+
 		const contract = await this.getContract();
 
 		const res = await contract.getGrantTreassure(grantId, onlyOwner);
@@ -250,6 +374,10 @@ export class GreenGrant {
 
 	//todo parse grant info
 	public getGrantInfoById = async (grantId:number) => {
+		if(grantId <= 0){
+			throw new Error("invalid grant id!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.getGrantInfoById(grantId);
@@ -268,6 +396,18 @@ export class GreenGrant {
 	}
 
 	public getGrantIndexsByPageCount = async (pageSize:number, pageCount:number, daoId:number, onlyOwner:boolean) => {
+		if(pageSize <= 0 || pageSize > 100){
+			throw new Error("invalid page size!");
+		}
+
+		if(pageCount < 0){
+			throw new Error("invalid page count!");
+		}
+
+		if(daoId < 0){
+			daoId = 0;
+		}	
+
 		const contract = await this.getContract();
 
 		const indexList = [];

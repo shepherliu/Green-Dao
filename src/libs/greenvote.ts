@@ -84,12 +84,20 @@ export class GreenVote {
 	}
 
 	public ownerOf = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.ownerOf(tokenId);
 	}
 
 	public tokenByIndex = async (index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenByIndex(index);
@@ -98,6 +106,10 @@ export class GreenVote {
 	}
 
 	public tokenOfOwnerByIndex = async (owner:string, index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenOfOwnerByIndex(owner, index);
@@ -106,12 +118,20 @@ export class GreenVote {
 	}
 
 	public tokenURI = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.tokenURI(tokenId);
 	}
 
 	public approve = async (to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.approve(to, tokenId);
@@ -122,12 +142,20 @@ export class GreenVote {
 	}
 
 	public getApproved = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.getApproved(tokenId);
 	}
 
 	public safeTransferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.safeTransferFrom(from, to, tokenId);
@@ -138,6 +166,10 @@ export class GreenVote {
 	}
 
 	public transferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+				
 		const contract = await this.getContract();
 
 		const tx = await contract.transferFrom(from, to, tokenId);
@@ -155,7 +187,7 @@ export class GreenVote {
 		await tx.wait();
 
 		return tx.hash;		
-	}	
+	}
 
 	public updateContracts = async (dao:string) => {
 		const contract = await this.getContract();
@@ -168,18 +200,31 @@ export class GreenVote {
 	} 
 
 	public addDaoTreassure = async (daoId:number, from:string, token:string, amount:number) => {
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
+		if(amount <= 0){
+			throw new Error("invalid amount!");
+		}
+
 		const contract = await this.getContract();
+
+		const options = {
+			value: utils.parseEther('0'),
+		}
 
 		let value;
 
 		if(token === zeroAddress){
 			value = utils.parseEther(String(amount));
+			options.value = value;
 		}else{
 			const erc20 = new ERC20(token);
 			value = utils.parseUnits(String(amount), await erc20.decimals());
 		}
 
-		const tx = await contract.addDaoTreassure(daoId, from, token, value);
+		const tx = await contract.addDaoTreassure(daoId, from, token, value, options);
 
 		await tx.wait();
 
@@ -187,6 +232,25 @@ export class GreenVote {
 	}
 
 	public mint = async (name:string, desc:string, daoId:number, amount:number, token:string, to:string, endTime:number) => {
+		name = name.trim();
+		desc = desc.trim();
+
+		if(name.length <= 0){
+			throw new Error("invalid vote name!");
+		}
+
+		if(desc.length <= 0){
+			throw new Error("invalid vote description!");
+		}
+
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
+		if(endTime < (new Date()).getTime()/1000){
+			throw new Error("invalid grant end time!");
+		}		
+
 		const contract = await this.getContract();
 
 		let value;
@@ -206,6 +270,10 @@ export class GreenVote {
 	}
 
 	public burn = async (voteId:number) => {
+		if(voteId <= 0){
+			throw new Error("invalid vote id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.burn(voteId);
@@ -216,6 +284,22 @@ export class GreenVote {
 	}
 
 	public updateVote = async (voteId:number, name:string, desc:string, endTime:number) => {
+		if(voteId <= 0){
+			throw new Error("invalid vote id!");
+		}
+
+		name = name.trim();
+		desc = desc.trim();
+		if(name.length <= 0){
+			throw new Error("invalid vote name!");
+		}		
+
+		if(endTime > 0 && endTime < (new Date()).getTime()/1000){
+			throw new Error("invalid grant end time!");
+		}else{
+			endTime = 0;
+		}	
+
 		const contract = await this.getContract();
 
 		const tx = await contract.updateVote(voteId, name, desc, endTime);
@@ -226,6 +310,14 @@ export class GreenVote {
 	}
 
 	public vote = async (voteId:number, status:number) => {
+		if(voteId <= 0){
+			throw new Error("invalid vote id!");
+		}
+
+		if(status < 0 || status > 2){
+			throw new Error("invalid vote status!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.vote(voteId, status);
@@ -236,6 +328,10 @@ export class GreenVote {
 	}
 
 	public getDaoTreassure = async (daoId:number, token:string) => {
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.getDaoTreassure(daoId, token);
@@ -258,6 +354,10 @@ export class GreenVote {
 
 	//todo parse vote info
 	public getVoteInfoById = async (voteId:number) => {
+		if(voteId <= 0){
+			throw new Error("invalid vote id!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.getVoteInfoById(voteId);
@@ -290,6 +390,18 @@ export class GreenVote {
 	}
 
 	public getVoteIndexsByPageCount = async (pageSize:number, pageCount:number, daoId:number, onlyOwner:boolean) => {
+		if(pageSize <= 0 || pageSize > 100){
+			throw new Error("invalid page size!");
+		}
+
+		if(pageCount < 0){
+			throw new Error("invalid page count!");
+		}
+
+		if(daoId < 0){
+			daoId = 0;
+		}
+
 		const contract = await this.getContract();
 
 		const indexList = [];

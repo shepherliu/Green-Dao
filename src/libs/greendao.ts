@@ -20,12 +20,12 @@ const abi = [
 	"function safeTransferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function transferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function setApprovalForAll(address operator, bool approved) public returns (bool)",
-	"function mint(string name, string desc, string website, string url, bool isPublic) public returns (uint256)",
+	"function mint(string name, string desc, string website, string avatar, bool isPublic) public returns (uint256)",
 	"function burn(uint256 tokenId) public returns (bool)",
 	"function joinDao(uint256 daoId, address user) public returns (bool)",
 	"function leaveDao(uint256 daoId, address user) public returns (bool)",
 	"function setDaoPublic(uint256 daoId, bool isPublic) public returns (bool)",
-	"function updateDao(uint256 daoId, string name, string desc, string website, string url)",
+	"function updateDao(uint256 daoId, string name, string desc, string website, string avatar)",
 	"function checkInDao(uint256 daoId, address user) public view returns (bool)",
 	"function getDaoIndexsByPageCount(uint256 pageSize, uint256 pageCount, bool onlyOwner) public view returns (uint256[])",
 	"function getDaoInfoById(uint256 daoId) public view returns (string,string,string,string,address,bool,uint256)",
@@ -82,12 +82,20 @@ export class GreenDao {
 	}
 
 	public ownerOf = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.ownerOf(tokenId);
 	}
 
 	public tokenByIndex = async (index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenByIndex(index);
@@ -96,6 +104,10 @@ export class GreenDao {
 	}
 
 	public tokenOfOwnerByIndex = async (owner:string, index:number) => {
+		if(index < 0){
+			throw new Error("invalid token index!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.tokenOfOwnerByIndex(owner, index);
@@ -104,12 +116,20 @@ export class GreenDao {
 	}
 
 	public tokenURI = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.tokenURI(tokenId);
 	}
 
 	public approve = async (to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.approve(to, tokenId);
@@ -120,12 +140,20 @@ export class GreenDao {
 	}
 
 	public getApproved = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.getApproved(tokenId);
 	}
 
 	public safeTransferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.safeTransferFrom(from, to, tokenId);
@@ -136,6 +164,10 @@ export class GreenDao {
 	}
 
 	public transferFrom = async (from:string, to:string, tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+				
 		const contract = await this.getContract();
 
 		const tx = await contract.transferFrom(from, to, tokenId);
@@ -153,12 +185,40 @@ export class GreenDao {
 		await tx.wait();
 
 		return tx.hash;		
-	}	
+	}
 
-	public mint = async (name:string, desc:string, website:string, url:string, isPublic:boolean) => {
+	public mint = async (name:string, desc:string, website:string, avatar:string, isPublic:boolean) => {
+		name = name.trim();
+		if(name.length <= 0){
+			throw new Error("invalid dao name!");
+		}
+
+		desc = desc.trim();
+		if(desc.length <= 0){
+			throw new Error("invalid dao description!");
+		}
+
+		website = website.trim();
+		if(website.length <= 0){
+			throw new Error("invalid dao website url link!");
+		}
+
+		if(website.search("https://") != 0 ){
+			throw new Error("dao website url must started with 'https://'!");
+		}
+
+		avatar = avatar.trim();
+		if(avatar.length <= 0){
+			throw new Error("invalid dao avatar url link!");
+		}
+
+		if(avatar.search("https://") != 0 ){
+			throw new Error("dao avatar url must started with 'https://'!");
+		}
+
 		const contract = await this.getContract();
 
-		const tx = await contract.mint(name, desc, website, url, isPublic);
+		const tx = await contract.mint(name, desc, website, avatar, isPublic);
 
 		await tx.wait();
 
@@ -166,6 +226,10 @@ export class GreenDao {
 	}
 
 	public burn = async (tokenId:number) => {
+		if(tokenId <= 0){
+			throw new Error("invalid token id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.burn(tokenId);
@@ -176,6 +240,10 @@ export class GreenDao {
 	}
 
 	public joinDao = async (daoId:number, user:string) => {
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.joinDao(daoId, user);
@@ -186,6 +254,10 @@ export class GreenDao {
 	}
 
 	public leaveDao = async (daoId:number, user:string) => {
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.leaveDao(daoId, user);
@@ -196,6 +268,10 @@ export class GreenDao {
 	}
 
 	public setDaoPublic = async (daoId:number, isPublic:boolean) => {
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.setDaoPublic(daoId, isPublic);
@@ -205,10 +281,31 @@ export class GreenDao {
 		return tx.hash;			
 	}
 
-	public updateDao = async (daoId:number, name:string, desc:string, website:string, url:string) => {
+	public updateDao = async (daoId:number, name:string, desc:string, website:string, avatar:string) => {
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
+		name = name.trim();
+		desc = desc.trim();
+		website = website.trim();
+		avatar = avatar.trim();
+
+		if(name.length <= 0){
+			throw new Error("invalid dao name!");
+		}
+
+		if(website.length > 0 && website.search("https://") != 0 ){
+			throw new Error("dao website url must started with 'https://'!");
+		}
+
+		if(avatar.length > 0 && avatar.search("https://") != 0 ){
+			throw new Error("dao avatar url must started with 'https://'!");
+		}		
+
 		const contract = await this.getContract();
 
-		const tx = await contract.updateDao(daoId, name, desc, website, url);
+		const tx = await contract.updateDao(daoId, name, desc, website, avatar);
 
 		await tx.wait();
 
@@ -216,12 +313,24 @@ export class GreenDao {
 	}
 
 	public checkInDao = async (daoId:number, user:string) => {
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
 		const contract = await this.getContract();
 
 		return await contract.checkInDao(daoId, user);
 	}
 
 	public getDaoIndexsByPageCount = async (pageSize:number, pageCount:number, onlyOwner:boolean) => {
+		if(pageSize <=0 || pageSize > 100){
+			throw new Error("invalid page size!");
+		}
+
+		if(pageCount < 0){
+			throw new Error("invalid page count!");
+		}
+
 		const contract = await this.getContract();
 
 		const indexList = [];
@@ -237,6 +346,10 @@ export class GreenDao {
 
 	//todo parse dao info
 	public getDaoInfoById = async (daoId:number) => {
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.getDaoInfoById(daoId);
@@ -254,6 +367,10 @@ export class GreenDao {
 	}
 
 	public getDaoMembers = async (daoId:number) => {
+		if(daoId <= 0){
+			throw new Error("invalid dao id!");
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.getDaoMembers(daoId);

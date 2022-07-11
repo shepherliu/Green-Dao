@@ -69,6 +69,10 @@ export class ERC20 {
 	}
 
 	public approve = async (address:string, amount:number) => {
+		if(amount <= 0){
+			throw new Error("invalid approve amount!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.approve(address, utils.parseUnits(String(amount), await this.decimals()));
@@ -87,6 +91,10 @@ export class ERC20 {
 	}
 
 	public safeTransferFrom = async (from:string, to:string, amount:number) => {
+		if(amount <= 0){
+			throw new Error("invalid transfer amount!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.safeTransferFrom(from, to, utils.parseUnits(String(amount), await this.decimals()));
@@ -97,6 +105,10 @@ export class ERC20 {
 	}
 
 	public transferFrom = async (from:string, to:string, amount:number) => {
+		if(amount <= 0){
+			throw new Error("invalid transfer amount!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.transferFrom(from, to, utils.parseUnits(String(amount), await this.decimals()));
@@ -107,6 +119,10 @@ export class ERC20 {
 	}
 
 	public transfer = async (to:string, amount:number) => {
+		if(amount <= 0){
+			throw new Error("invalid transfer amount!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.transfer(to, utils.parseUnits(String(amount), await this.decimals()));
@@ -117,6 +133,10 @@ export class ERC20 {
 	}
 
 	public increaseAllowance = async (spender:string, amount:number) => {
+		if(amount <= 0){
+			throw new Error("invalid allowance amount!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.increaseAllowance(spender, utils.parseUnits(String(amount), await this.decimals()));
@@ -127,6 +147,10 @@ export class ERC20 {
 	}
 
 	public decreaseAllowance = async (spender:string, amount:number) => {
+		if(amount <= 0){
+			throw new Error("invalid allowance amount!");
+		}
+				
 		const contract = await this.getContract();
 
 		const tx = await contract.decreaseAllowance(spender, utils.parseUnits(String(amount), await this.decimals()));
