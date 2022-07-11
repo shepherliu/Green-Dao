@@ -8,7 +8,12 @@
         </el-tabs>     
         <el-button type="primary" size="small" style="float: right;margin-right: 50px;" @click="showAddNewDaoVisiable = true;">NEW+
         </el-button>    
-        <el-drawer v-model="showAddNewDaoVisiable" v-loading="loadDrawerStatus" direction="rtl" destroy-on-close @opened="onAddNewDaoOpen">
+        <el-drawer 
+          v-model="showAddNewDaoVisiable"
+          direction="rtl" 
+          destroy-on-close 
+          @opened="onAddNewDaoOpen"
+        >
           <template #header>
             <h4>Create A New Green Dao.</h4>   
           </template>
@@ -126,7 +131,13 @@
                   </el-input>
                 </td>                   
               </tr>    
-              <tr v-loading="loadWebsiteStatus">
+              <tr 
+                v-loading="loadWebsiteStatus"
+                element-loading-text="Uploading..."
+                :element-loading-spinner="svg"
+                element-loading-svg-view-box="-10, -10, 50, 50"
+                element-loading-background="#ffffff"
+              >
                 <td style="width:120px"></td>
                 <td style="width:300px">
                   <el-upload 
@@ -142,10 +153,6 @@
                     :limit="0"
                     :show-file-list="false"
                     :auto-upload="false"
-                    element-loading-text="Uploading..."
-                    :element-loading-spinner="svg"
-                    element-loading-svg-view-box="-10, -10, 50, 50"
-                    element-loading-background="#ffffff"
                   >
                     <template #trigger>
                       <el-button type="primary" style="float: right;margin-right: 20px;width: 100%;">Select Folder</el-button>
@@ -176,7 +183,13 @@
                   </el-input>
                 </td>                   
               </tr>  
-              <tr v-loading="loadAvatarStatus">
+              <tr 
+                v-loading="loadAvatarStatus"
+                element-loading-text="Uploading..."
+                :element-loading-spinner="svg"
+                element-loading-svg-view-box="-10, -10, 50, 50"
+                element-loading-background="#ffffff"
+              >
                 <td style="width:120px"></td>
                 <td style="width:300px">
                   <el-upload 
@@ -193,10 +206,6 @@
                     :show-file-list="false"
                     :on-exceed="handleAvtarExceed"
                     :auto-upload="false"
-                    element-loading-text="Uploading..."
-                    :element-loading-spinner="svg"
-                    element-loading-svg-view-box="-10, -10, 50, 50"
-                    element-loading-background="#ffffff"
                   >
                     <template #trigger>
                       <el-button type="primary" style="float: right;margin-right: 10px;width: 100%;">Select Image</el-button>
@@ -208,7 +217,14 @@
             </table>   
           </template>
           <template #footer>
-            <div style="flex: auto">
+            <div 
+              style="flex: auto"
+              v-loading="loadDrawerStatus" 
+              element-loading-text="Submitting..."
+              :element-loading-spinner="svg"
+              element-loading-svg-view-box="-10, -10, 50, 50"
+              element-loading-background="#ffffff"
+            >
               <el-button @click="cancelDaoUpdate">cancel</el-button>
               <el-button type="primary" @click="confirmDaoUpdate">confirm</el-button>
             </div>

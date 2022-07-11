@@ -8,7 +8,7 @@
         </el-tabs>     
         <el-button type="primary" size="small" style="float: right;margin-right: 50px;" @click="showAddNewVoteVisiable = true;">NEW+
         </el-button>    
-        <el-drawer v-model="showAddNewVoteVisiable" v-loading="loadDrawerStatus" direction="rtl" destroy-on-close @opened="onAddNewVoteOpen">
+        <el-drawer v-model="showAddNewVoteVisiable" direction="rtl" destroy-on-close @opened="onAddNewVoteOpen">
           <template #header>
             <h4>Create A New Green Vote.</h4>   
           </template>
@@ -215,7 +215,14 @@
             </table>
           </template>
           <template #footer>
-            <div style="flex: auto">
+            <div 
+              style="flex: auto"
+              v-loading="loadDrawerStatus" 
+              element-loading-text="Submitting..."
+              :element-loading-spinner="svg"
+              element-loading-svg-view-box="-10, -10, 50, 50"
+              element-loading-background="#ffffff"
+            >
               <el-button @click="cancelVoteUpdate">cancel</el-button>
               <el-button type="primary" @click="confirmVoteUpdate">confirm</el-button>
             </div>
@@ -267,6 +274,17 @@ const voteEndTime = ref('');
 const zeroAddress = '0x0000000000000000000000000000000000000000';
 const timeFormat = "YYYY/MM/DD hh:mm:ss";
 
+const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `;
+      
 //transaction explore url
 const transactionExplorerUrl = (transaction:string) => {
   for(const i in constant.chainList){

@@ -8,7 +8,7 @@
         </el-tabs>     
         <el-button type="primary" size="small" style="float: right;margin-right: 50px;" @click="showAddNewLearningVisiable = true;">NEW+
         </el-button>   
-        <el-drawer v-model="showAddNewLearningVisiable" v-loading="loadDrawerStatus" direction="rtl" destroy-on-close @opened="onAddNewLearningOpen">
+        <el-drawer v-model="showAddNewLearningVisiable" direction="rtl" destroy-on-close @opened="onAddNewLearningOpen">
           <template #header>
             <h4>Create A New Green Learning.</h4>   
           </template>
@@ -173,7 +173,13 @@
                   </el-input>
                 </td>                   
               </tr>      
-              <tr v-loading="loadResourceStatus">
+              <tr 
+                v-loading="loadResourceStatus"
+                element-loading-text="Uploading..."
+                :element-loading-spinner="svg"
+                element-loading-svg-view-box="-10, -10, 50, 50"
+                element-loading-background="#ffffff"
+              >
                 <td style="width:120px"></td>
                 <td style="width:300px">
                   <el-upload 
@@ -190,10 +196,6 @@
                     :on-exceed="handleResourceExceed"
                     :show-file-list="false"
                     :auto-upload="false"
-                    element-loading-text="Uploading..."
-                    :element-loading-spinner="svg"
-                    element-loading-svg-view-box="-10, -10, 50, 50"
-                    element-loading-background="#ffffff"
                   >
                     <template #trigger>
                       <el-button type="primary" style="float: right;margin-right: 10px;width: 100%;">Select Files</el-button>
@@ -205,7 +207,14 @@
             </table>
           </template>
           <template #footer>
-            <div style="flex: auto">
+            <div 
+              style="flex: auto"
+              v-loading="loadDrawerStatus" 
+              element-loading-text="Submitting..."
+              :element-loading-spinner="svg"
+              element-loading-svg-view-box="-10, -10, 50, 50"
+              element-loading-background="#ffffff"
+            >
               <el-button @click="cancelLearningUpdate">cancel</el-button>
               <el-button type="primary" @click="confirmLearningUpdate">confirm</el-button>
             </div>

@@ -8,7 +8,7 @@
         </el-tabs>     
         <el-button type="primary" size="small" style="float: right;margin-right: 50px;" @click="showAddNewAuctionVisiable = true;">NEW+
         </el-button>    
-        <el-drawer v-model="showAddNewAuctionVisiable" v-loading="loadDrawerStatus" direction="rtl" destroy-on-close @opened="onAddNewAuctionOpen">
+        <el-drawer v-model="showAddNewAuctionVisiable" direction="rtl" destroy-on-close @opened="onAddNewAuctionOpen">
           <template #header>
             <h4>Create A New Green Auction.</h4>   
           </template>
@@ -18,7 +18,7 @@
                 <td style="width:135px">Id
                   <el-popover
                     placement="top-start"
-                    title="Vote Id"
+                    title="Auction Id"
                     :width="200"
                     trigger="hover"
                     content="The id of the green auction."
@@ -43,7 +43,7 @@
                     title="Dao Id"
                     :width="200"
                     trigger="hover"
-                    content="The dao id of the green dao. The grant must be published through the dao."
+                    content="The dao id of the green dao. The auction must be published through the dao."
                   >
                     <template #reference>
                      <el-icon><QuestionFilled /></el-icon>
@@ -51,7 +51,7 @@
                 </el-popover>
                 </td>
                 <td style="width:300px">
-                  <el-input v-model="daoId" @change="updateDaoName(daoId)" :disabled="grantId > 0">
+                  <el-input v-model="daoId" @change="updateDaoName(daoId)" :disabled="auctionId > 0">
                     <template #append>
                       <el-icon @click="onClickToCopy(daoId)"><document-copy /></el-icon>
                     </template>
@@ -230,7 +230,7 @@
                     title="Auction Nft Id"
                     :width="200"
                     trigger="hover"
-                    content="The nft id of the auction."
+                    content="The nft id of the auction to sell."
                   >
                     <template #reference>
                      <el-icon><QuestionFilled /></el-icon>
@@ -249,10 +249,10 @@
                 <td style="width:135px">Nft Contract
                   <el-popover
                     placement="top-start"
-                    title="Vote Nft Contract"
+                    title="Auction Nft Contract"
                     :width="200"
                     trigger="hover"
-                    content="The nft contract of the auction."
+                    content="The nft contract of the auction to sell."
                   >
                     <template #reference>
                      <el-icon><QuestionFilled /></el-icon>
@@ -274,7 +274,7 @@
                     title="Auction Payment Token"
                     :width="200"
                     trigger="hover"
-                    content="The token contract address for the green vote. You can choose the blockchain native token or the erc20 tokens based on the balance of the dao treassure."
+                    content="The token contract address for the green auction. You can choose the blockchain native token or the erc20 tokens to receive the payment."
                   >
                     <template #reference>
                      <el-icon><QuestionFilled /></el-icon>
@@ -292,7 +292,14 @@
             </table>
           </template>
           <template #footer>
-            <div style="flex: auto">
+            <div 
+              style="flex: auto"
+              v-loading="loadDrawerStatus" 
+              element-loading-text="Submitting..."
+              :element-loading-spinner="svg"
+              element-loading-svg-view-box="-10, -10, 50, 50"
+              element-loading-background="#ffffff"
+            >
               <el-button @click="cancelAuctionUpdate">cancel</el-button>
               <el-button type="primary" v-if="auctionNftApproved === false" @click="approveNftToken">approve</el-button>
               <el-button type="primary" v-if="auctionNftApproved === true" @click="confirmAuctionUpdate">confirm</el-button>
@@ -349,6 +356,17 @@ const auctionType = ref(0);
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
 const timeFormat = "YYYY/MM/DD hh:mm:ss";
+
+const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `;
 
 //transaction explore url
 const transactionExplorerUrl = (transaction:string) => {
@@ -419,9 +437,9 @@ const approveNftToken = async () => {
 
     const erc721 = new ERC721(auctionNftContract.value);
 
-    const contractAddress = (constant.greenAuctionContractAddress as any)[connectState.chainId];
+    const contractAddress = (constant.greenAuctionContractAddress as any)[connectState.chainId].toLowerCase();
 
-    const approvedAddress = await erc721.getApproved(auctionNftId.value);
+    const approvedAddress = (await erc721.getApproved(auctionNftId.value)).toLowerCase();
 
     if(approvedAddress === contractAddress){
       auctionNftApproved.value = true;
@@ -460,7 +478,7 @@ const confirmAuctionUpdate = async () => {
   }catch(e){
     element.alertMessage(e);
   }finally{
-    loadDrawerStatus.value = true;
+    loadDrawerStatus.value = false;
   }
 }
 

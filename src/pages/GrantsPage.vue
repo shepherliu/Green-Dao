@@ -8,7 +8,7 @@
         </el-tabs>     
         <el-button type="primary" size="small" style="float: right;margin-right: 50px;" @click="showAddNewGrantVisiable = true;">NEW+
         </el-button>    
-        <el-drawer v-model="showAddNewGrantVisiable" v-loading="loadDrawerStatus" direction="rtl" destroy-on-close @opened="onAddNewGrantOpen">
+        <el-drawer v-model="showAddNewGrantVisiable" direction="rtl" destroy-on-close @opened="onAddNewGrantOpen">
           <template #header>
             <h4>Create A New Green Grant.</h4>   
           </template>
@@ -212,7 +212,13 @@
                   </el-input>
                 </td>                   
               </tr>      
-              <tr v-loading="loadWebsiteStatus">
+              <tr 
+                v-loading="loadWebsiteStatus"
+                element-loading-text="Uploading..."
+                :element-loading-spinner="svg"
+                element-loading-svg-view-box="-10, -10, 50, 50"
+                element-loading-background="#ffffff"
+              >
                 <td style="width:120px"></td>
                 <td style="width:300px">
                   <el-upload 
@@ -227,10 +233,6 @@
                     :limit="0"
                     :show-file-list="false"
                     :auto-upload="false"
-                    element-loading-text="Uploading..."
-                    :element-loading-spinner="svg"
-                    element-loading-svg-view-box="-10, -10, 50, 50"
-                    element-loading-background="#ffffff"
                   >
                     <template #trigger>
                       <el-button type="primary" style="float: right;margin-right: 10px;width: 100%;">Select Folder</el-button>
@@ -242,7 +244,14 @@
             </table>
           </template>
           <template #footer>
-            <div style="flex: auto">
+            <div 
+              style="flex: auto"
+              v-loading="loadDrawerStatus" 
+              element-loading-text="Submitting..."
+              :element-loading-spinner="svg"
+              element-loading-svg-view-box="-10, -10, 50, 50"
+              element-loading-background="#ffffff"
+            >
               <el-button @click="cancelGrantUpdate">cancel</el-button>
               <el-button type="primary" @click="confirmGrantUpdate">confirm</el-button>
             </div>
