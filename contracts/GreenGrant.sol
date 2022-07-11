@@ -58,6 +58,9 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
     address private _treassureContract;     
 
     constructor() ERC721("Green Grant", "GRANT") {
+        _owner = msg.sender;
+        _daoContract = address(this);
+        _treassureContract = address(this);    
     } 
 
     //update contracts address, only owner support

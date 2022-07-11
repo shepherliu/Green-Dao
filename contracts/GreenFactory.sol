@@ -26,9 +26,9 @@ contract GreenFactory {
 
         _greenVote.call(abi.encodeWithSignature("updateContracts(address)", _greenDao));
 
-        _greenAuction.call(abi.encodeWithSignature("updateContracts(address, address)", _greenDao, _greenVote));
+        _greenAuction.call(abi.encodeWithSignature("updateContracts(address,address)", _greenDao, _greenVote));
 
-        _greenGrant.call(abi.encodeWithSignature("updateContracts(address, address)", _greenDao, _greenVote));
+        _greenGrant.call(abi.encodeWithSignature("updateContracts(address,address)", _greenDao, _greenVote));
         
         _greenLearning.call(abi.encodeWithSignature("updateContracts(address)", _greenDao));
     }

@@ -158,7 +158,7 @@
                     title="Learning Resource"
                     :width="200"
                     trigger="hover"
-                    content="The resource url link of the green learning."
+                    content="The resource url link of the green learning. You can input the url link directly or upload the resource files through the upload button."
                   >
                     <template #reference>
                      <el-icon><QuestionFilled /></el-icon>
@@ -360,6 +360,7 @@ const onSelectResourceFiles = async () => {
   uploadResource.value!.clearFiles();
 }
 
+//handle file exceed
 const handleResourceExceed: UploadProps['onExceed'] = (files:any) => {
   if(multiple.value === false){
     uploadResource.value!.clearFiles();
@@ -447,7 +448,7 @@ const onAddNewLearningOpen = async () => {
 
   await onLearningResourceTypeChange();
 
-  daoName.value = (await updateDaoName(daoId.value)).daoName;
+  await updateDaoName(daoId.value);
 }
 
 //cancle create the learning
