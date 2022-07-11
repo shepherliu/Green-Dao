@@ -51,7 +51,7 @@
                 </el-popover>
                 </td>
                 <td style="width:300px">
-                  <el-input v-model="daoId" @change="updateDaoName(daoId)">
+                  <el-input v-model="daoId" @change="updateDaoName(daoId)" :disabled="grantId > 0">
                     <template #append>
                       <el-icon @click="onClickToCopy(daoId)"><document-copy /></el-icon>
                     </template>
@@ -161,7 +161,7 @@
                 </el-popover>
                 </td>
                 <td style="width:300px">
-                  <el-input v-model="grantToken">
+                  <el-input v-model="grantToken" :disabled="grantId > 0">
                     <template #append>
                       <el-icon @click="onClickToCopy(grantToken)"><document-copy /></el-icon>
                     </template>
@@ -472,4 +472,20 @@ const handleClick = async () => {
     loadStatus.value = false;
   }
 }
+
+//clean search content and bind search callback function
+connectState.search = '';
+connectState.searchCallback = handleClick;
+//try get activeName from the url paramter
+try{
+  activeName.value = tools.getUrlParamter('activeName');
+  if(activeName.value != 'all' && 
+    activeName.value != 'mine'){
+    activeName.value = 'all';
+  }
+}catch(e){
+  activeName.value = 'all';
+}
+//update page size
+handleClick();
 </script>

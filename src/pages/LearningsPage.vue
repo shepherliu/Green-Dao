@@ -51,7 +51,7 @@
                 </el-popover>
                 </td>
                 <td style="width:300px">
-                  <el-input v-model="daoId" @change="updateDaoName(daoId)">
+                  <el-input v-model="daoId" @change="updateDaoName(daoId)" :disabled="learningId > 0">
                     <template #append>
                       <el-icon @click="onClickToCopy(daoId)"><document-copy /></el-icon>
                     </template>
