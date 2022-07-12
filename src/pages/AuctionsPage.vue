@@ -372,10 +372,10 @@
                 <el-row>
                   <embed type="text/html" :src="info.nftUrl" style="width: 250px;height: 200px;" />
                 </el-row>
-                <el-row style="float: right;">
+                <el-row v-if="info.aucStatus === 0" style="float: right;">
                   <span>Starttime: {{(new Date(info.startTime*1000)).toLocaleString()}}</span>
                 </el-row>
-                <el-row style="float: right;">
+                <el-row v-if="info.aucStatus > 0" style="float: right;">
                   <span>Endtime: {{(new Date(info.endTime*1000)).toLocaleString()}}</span>
                 </el-row>
                 <el-row style="float: right;">
