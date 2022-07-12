@@ -90,12 +90,14 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
     function updateDao(uint256 daoId, string memory name, string memory desc, string memory website, string memory url) public returns (bool){
         require(ownerOf(daoId) == msg.sender, "Only owner alowed!");
 
-        require(bytes(name).length > 0 && _daoNames[name] == false, "Invalid Dao Name!");
+        require(bytes(name).length > 0, "Invalid Dao Name!");
 
         //change dao name
-        delete _daoNames[_daoInfos[daoId].daoName];
-        _daoNames[name] = true;
-        _daoInfos[daoId].daoName = name;
+        if(_daoNames[name] == false){
+            delete _daoNames[_daoInfos[daoId].daoName];
+            _daoNames[name] = true;
+            _daoInfos[daoId].daoName = name;
+        }
 
         if(bytes(desc).length > 0){
             _daoInfos[daoId].daoDesc = desc;

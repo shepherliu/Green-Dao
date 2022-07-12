@@ -187,9 +187,9 @@ contract GreenLearning is ERC721Enumerable, ERC721URIStorage {
 
         for(uint i = 0; i < total; i++){
             if(onlyOwner){
-                index = tokenOfOwnerByIndex(msg.sender, i);
+                index = tokenOfOwnerByIndex(msg.sender, total - i - 1);
             }else{
-                index = tokenByIndex(i);
+                index = tokenByIndex(total -i - 1);
             }
 
             if(daoId > 0 && _learningInfos[index].daoId != daoId){

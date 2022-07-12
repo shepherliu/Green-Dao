@@ -160,13 +160,15 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
     function updateVote(uint256 voteId, string memory name, string memory desc, uint endTime) public returns (bool){
         require(ownerOf(voteId) == msg.sender, "only owner alowed!");
 
-        require(bytes(name).length > 0 && _voteNames[name] == false, "invalid vote name!");
+        require(bytes(name).length > 0, "invalid vote name!");
 
         require(endTime >= block.timestamp + 86400, "invalid end time!");
 
-        delete _voteNames[_voteInfos[voteId].voteName];
-        _voteNames[name] = true;
-        _voteInfos[voteId].voteName = name;
+        if(_voteNames[name] == false){
+            delete _voteNames[_voteInfos[voteId].voteName];
+            _voteNames[name] = true;
+            _voteInfos[voteId].voteName = name;
+        }
 
         if(bytes(desc).length > 0){
             _voteInfos[voteId].voteDesc = desc;
@@ -279,10 +281,10 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
         uint256[] memory tmpList = new uint256[](pageSize);   
 
         for(uint i = 0; i < total; i++){
-            if(onlyOwner){
-                index = tokenOfOwnerByIndex(msg.sender, i);
+           if(onlyOwner){
+                index = tokenOfOwnerByIndex(msg.sender, total - i - 1);
             }else{
-                index = tokenByIndex(i);
+                index = tokenByIndex(total -i - 1);
             }
 
             if(daoId > 0 && _voteInfos[index].daoId != daoId){

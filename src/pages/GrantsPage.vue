@@ -6,7 +6,7 @@
           <el-tab-pane label="All" name="all"></el-tab-pane>
           <el-tab-pane label="Mine" name="mine"></el-tab-pane>
         </el-tabs>     
-        <el-button type="primary" size="small" style="float: right;margin-right: 50px;" @click="showAddNewGrantVisiable = true;">NEW+
+        <el-button type="primary" size="small" style="float: right;margin-right: 50px;" @click="onAddGreenGrant">NEW+
         </el-button>    
         <el-drawer v-model="showAddNewGrantVisiable" direction="rtl" destroy-on-close @opened="onAddNewGrantOpen">
           <template #header>
@@ -15,7 +15,7 @@
           <template #default>  
             <table style="margin-left: 10px;">
               <tr v-if="grantId > 0">
-                <td style="width:120px">Id
+                <td style="width:120px">Grant Id
                   <el-popover
                     placement="top-start"
                     title="Grant Id"
@@ -258,6 +258,81 @@
           </template>
         </el-drawer>  
       </el-header>
+      <el-main
+        style="height: 450px;margin-top: 20px;" 
+        v-loading="loadStatus"
+        element-loading-text="Loading..."
+        :element-loading-spinner="svg"
+        element-loading-svg-view-box="-10, -10, 50, 50"
+        element-loading-background="#ffffff"
+      >
+        <el-row :gutter="20">
+          <template v-for="info in greenGrantList" :key="info.grantId">
+            <el-col :span="8">
+              <el-card class="box-card">
+                <template #header>
+                  <div class="card-header">
+                    <el-popover placement="bottom-start" :width="230" title="Dao Info">
+                      <template #reference>
+                        <el-link type="success" target="_blank" :href="info.daoWebsite">
+                          <el-avatar :src="info.daoAvatar" size="small"></el-avatar>
+                        </el-link>
+                      </template>
+                      <h4>Name: {{info.daoName}}</h4>
+                      <h4>Id: 
+                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoId}}</el-link>
+                      </h4>
+                      <h4>Owner:
+                        <el-link type="success" target="_blank" :href="addressExplorerUrl(info.daoOwner)">{{info.daoOwner}}</el-link>
+                      </h4>
+                      <h4>Members: {{info.daoMembers}}</h4>
+                      <h4>Public: {{info.daoPublic}}</h4>
+                      <h4>Description: {{info.daoDesc}}</h4>
+                    </el-popover>
+                    <el-popover placement="bottom-start" :width="230" title="Grant Info">
+                      <template #reference>
+                        <span>
+                          <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenGrantContractAddress,info.grantId)">{{info.grantName}}
+                          </el-link>
+                        </span>
+                      </template>
+                      <h4>Title: {{info.grantName}}</h4>
+                      <h4>Owner: 
+                        <el-link type="success" target="_blank" :href="addressExplorerUrl(info.grantOwner)">{{info.grantOwner}}</el-link>
+                      </h4>
+                      <h4>Description: {{info.grantDesc}}</h4>
+                    </el-popover>
+                    <span>
+                      <el-button v-if="activeName === 'mine'" type="danger" style="float: right;" size="small" @click="onDeleteGreenGrant(info.grantId)"><el-icon><Delete /></el-icon></el-button>
+                      <el-button v-if="activeName === 'mine'" type="primary" style="float: right;" size="small" @click="onEditGreenGrant(info)"><el-icon><Edit /></el-icon></el-button>
+                    </span>  
+                  </div>
+                </template>
+                <el-row>
+                  <embed type="text/html" :src="info.grantWebsite" style="width: 250px;height: 200px;" />
+                </el-row>
+                <el-row style="float: right;">
+                  <span>Endtime: {{(new Date(info.endTime*1000)).toLocaleString()}}</span>
+                </el-row>
+                <el-row style="float: right;">
+                  <el-link type="primary" style="float: right;" href="javascript:void(0);">Received : {{info.grantTreassure}}</el-link>
+                  <el-link v-if="info.grantEnded === false && info.grantPayed === false" type="primary" style="float: right;" @click="onSupportGrant(info)">Support</el-link>
+                  <el-link v-if="info.isOwner === true && info.grantEnded === true && info.grantPayed === false" type="primary" style="float: right;" @click="onClaimGrant(info.grantId)">Claim</el-link>
+                  <el-link type="primary" style="float: right;" :href="info.grantGitUrl" target="_blank">Github</el-link>
+                </el-row>
+              </el-card>
+            </el-col>
+          </template>
+        </el-row>
+      </el-main>
+      <el-footer>
+        <div>
+          <el-button type="primary" style="margin-top: 10px;" @click="onHandlePrev">Prev
+          </el-button>
+          <el-button type="primary" style="margin-top: 10px;" @click="onHandleNext" :disabled="!hasMore">Next
+          </el-button>          
+      </div>
+      </el-footer>
     </el-container>
   </div>
 </template>
@@ -272,7 +347,7 @@ export default {
 
 <script setup lang="ts">
   
-import { getCurrentInstance, ComponentInternalInstance, ref } from 'vue'
+import { getCurrentInstance, ComponentInternalInstance, h, ref } from 'vue'
 
 import { toRaw } from '@vue/reactivity'
 import * as path from "path"
@@ -283,6 +358,8 @@ import * as constant from "../constant"
 import * as element from "../libs/element"
 import * as tools from "../libs/tools"
 import * as storage from '../libs/storage'
+
+import { ERC20 } from "../libs/erc20"
 import { GreenDao } from "../libs/greendao"
 import { GreenGrant } from "../libs/greengrant"
 
@@ -292,6 +369,9 @@ const uploadWebsite = ref<UploadInstance>();
 
 const greendao = new GreenDao();
 const greengrant = new GreenGrant();
+
+const greenDaoContractAddress = (constant.greenDaoContractAddress as any)[connectState.chainId];
+const greenGrantContractAddress = (constant.greenGrantContractAddress as any)[connectState.chainId];
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
 const timeFormat = "YYYY/MM/DD hh:mm:ss";
@@ -315,6 +395,11 @@ const grantEndTime = ref('');
 const showAddNewGrantVisiable = ref(false);
 const websiteFileList = ref(new Array());
 
+const greenGrantList = ref(new Array());
+const hasMore = ref(false);
+const pageSize = ref(6);
+const pageCount = ref(0);
+
 const svg = `
         <path class="path" d="
           M 30 15
@@ -326,6 +411,31 @@ const svg = `
         " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
       `;
 
+//address explore url
+const tokenExplorerUrl = (address:string, tokenId:string = '') => {
+  for(const i in constant.chainList){
+    if(connectState.chainId === constant.chainList[i].chainId){
+      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+      if(tokenId != ''){
+        return `${blockExplorerUrls}/token/${address}?a=${tokenId}#inventory`
+      }
+      return `${blockExplorerUrls}/token/${address}`
+    }
+  }
+  return address;
+}
+
+//address explore url
+const addressExplorerUrl = (address:string) => {
+  for(const i in constant.chainList){
+    if(connectState.chainId === constant.chainList[i].chainId){
+      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+      return `${blockExplorerUrls}/address/${address}`
+    }
+  }
+  return address;
+}
+
 //transaction explore url
 const transactionExplorerUrl = (transaction:string) => {
   for(const i in constant.chainList){
@@ -335,6 +445,20 @@ const transactionExplorerUrl = (transaction:string) => {
     }
   }
   return transaction;
+}
+
+//get block chain native currency
+const getTokenCurencyName = async (token:string) => {
+  if(token === zeroAddress){
+    for(const i in constant.chainList){
+      if(constant.chainList[i].chainId === connectState.chainId){
+        return constant.chainList[i].nativeCurrency;
+      }
+    }
+  }else{
+    const erc20 = new ERC20(token);
+    return await erc20.symbol();
+  }
 }
 
 //on click to copy address
@@ -416,6 +540,29 @@ const onUploadWebsiteFolder = async () => {
 
 //click to open the drawer to create a new grant
 const onAddNewGrantOpen = async () => {
+  const currentClass = (proxy as any).$el.parentNode.querySelector(".upload-website");
+
+  (currentClass.querySelector(".el-upload__input") as any).webkitdirectory = true;  
+
+  await updateDaoName(daoId.value);
+}
+
+//click to edit the green grant
+const onEditGreenGrant = async(grantInfo:any) => {
+  daoId.value = grantInfo.daoId;
+  grantId.value = grantInfo.grantId;
+  grantTitle.value = grantInfo.grantName;
+  grantDescription.value = grantInfo.grantDesc;
+  grantGitUrl.value = grantInfo.grantGitUrl;
+  grantWebsite.value = grantInfo.grantWebsite;
+  grantToken.value = grantInfo.grantToken;
+  grantEndTime.value = (new Date(grantInfo.endTime*1000)).toLocaleString();
+
+  showAddNewGrantVisiable.value = true;
+}
+
+//click to add a new green grant
+const onAddGreenGrant = async () => {
   daoId.value = getDaoId();
   grantId.value = 0;
   grantTitle.value = '';
@@ -428,11 +575,7 @@ const onAddNewGrantOpen = async () => {
   now.setTime(now.getTime() + 30*24*3600*1000);
   grantEndTime.value = now.toLocaleString();
 
-  const currentClass = (proxy as any).$el.parentNode.querySelector(".upload-website");
-
-  (currentClass.querySelector(".el-upload__input") as any).webkitdirectory = true;  
-
-  await updateDaoName(daoId.value);
+  showAddNewGrantVisiable.value = true;
 }
 
 //click to cancel grant update
@@ -449,7 +592,7 @@ const confirmGrantUpdate = async () => {
     const endTime = new Date(grantEndTime.value).getTime()/1000;
 
     if(grantId.value > 0){
-      const tx = await greengrant.updateDao(grantId.value, grantTitle.value, grantDescription.value, grantGitUrl.value, grantWebsite.value, endTime);
+      const tx = await greengrant.updateGrant(grantId.value, grantTitle.value, grantDescription.value, grantGitUrl.value, grantWebsite.value, endTime);
       connectState.transactions.value.unshift(tx);
       connectState.transactionCount.value++;
             const msg = `<div><span>Update grant success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
@@ -473,6 +616,153 @@ const confirmGrantUpdate = async () => {
   }  
 }
 
+//click to delete a green grant
+const onDeleteGreenGrant = async (grantId:number) => {
+  try{
+    const tx = await greengrant.burn(grantId);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
+          const msg = `<div><span>Delete grant success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    element.elMessage('success', msg, true);       
+
+    handleClick();
+  }catch(e){
+    element.alertMessage(e);
+  }
+}
+
+//click to support the grant
+const onSupportGrant = async (grantInfo:any) => {
+  const opts = {
+    message: '',
+    confirmButtonText: 'Send',
+    cancelButtonText: 'Cancel',
+    inputType: 'number',
+    inputValue: '1',
+    inputPlaceholder: '0',
+    inputErrorMessage: 'Invalid value',
+  };
+
+  const erc20 = new ERC20(grantInfo.grantToken);
+
+  const tokenSymbol = await getTokenCurencyName(grantInfo.grantToken);
+  const tokenBalance = await erc20.balanceOf(connectState.userAddr.value);
+
+  if(grantInfo.grantToken === zeroAddress){
+    opts.message =  h('p', null, [
+      h('p', null, 'Please enter the token amount to support the grant:'),
+      h('p', { style: 'color: teal' }, `dao id: ${grantInfo.daoId}`),
+      h('p', { style: 'color: teal' }, `dao name: ${grantInfo.daoName}`),
+      h('p', { style: 'color: teal' }, `grant id: ${grantInfo.grantId}`),
+      h('p', { style: 'color: teal' }, `grant name: ${grantInfo.grantName}`),
+      h('p', { style: 'color: teal' }, `token name: ${tokenSymbol}`),
+      h('p', { style: 'color: teal' }, `token balance: ${tokenBalance}`),
+    ]);
+  }else{
+    opts.message =  h('p', null, [
+      h('p', null, 'Please enter the token amount to support the grant:'),
+      h('p', { style: 'color: teal' }, `dao id: ${grantInfo.daoId}`),
+      h('p', { style: 'color: teal' }, `dao name: ${grantInfo.daoName}`),
+      h('p', { style: 'color: teal' }, `grant id: ${grantInfo.grantId}`),
+      h('p', { style: 'color: teal' }, `grant name: ${grantInfo.grantName}`),
+      h('p', { style: 'color: teal' }, `token name: ${tokenSymbol}`),
+      h('p', { style: 'color: teal' }, `token contract: ${grantInfo.grantToken}`),
+      h('p', { style: 'color: teal' }, `token balance: ${tokenBalance}`),
+    ]);
+  }
+
+  element.elMessageBox('Please enter address to send the Token:', 'Send Token', opts, async (value:number) => {
+    if(value <= 0){
+      element.alertMessage("support token value must large than zero!");
+      return;
+    }
+
+    try{
+      if(grantInfo.grantToken != zeroAddress){
+        const tx = await erc20.approve(greenGrantContractAddress, value);
+        connectState.transactions.value.unshift(tx);
+        connectState.transactionCount.value++;
+        const msg = `<div><span>Approve token success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+      }
+
+      const tx = await greengrant.supportGrant(grantInfo.grantId, value);
+      connectState.transactions.value.unshift(tx);
+      connectState.transactionCount.value++;
+      const msg = `<div><span>Support the grant success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    }catch(e){
+      element.alertMessage(e);
+    }
+
+  });  
+}
+
+//click to claim the grant treassure
+const onClaimGrant = async (grantId: number) => {
+  try{
+    const tx = await greengrant.claimGrant(grantId);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
+    const msg = `<div><span>Claim grant success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    element.elMessage('success', msg, true);       
+
+    handleClick();
+  }catch(e){
+    element.alertMessage(e);
+  }
+}
+
+//on click for prev page
+const onHandlePrev = async () => {
+  if(pageCount.value > 0){
+    pageCount.value--;
+  }
+  handleClick();
+}
+
+//on click for next page
+const onHandleNext = async () => {
+  if(hasMore.value){
+    pageCount.value++;
+  }
+  handleClick();
+}
+
+//get green grant infos by page size and page count
+const getGreenGrantCount = async (onlyOwner:boolean) => {
+  daoId.value = getDaoId();
+
+  const indexs = await greengrant.getGrantIndexsByPageCount(pageSize.value, pageCount.value, daoId.value, onlyOwner);
+
+  if(indexs.length < pageSize.value){
+    hasMore.value = false;
+  }else{
+    hasMore.value = true;
+  }
+
+  const infoList = new Array();
+  for(const i in indexs){
+    const res = await greengrant.getGrantInfoById(indexs[i]);
+
+    res.grantEnded = res.endTime < (new Date().getTime()/1000);
+    res.grantOwner = await greengrant.ownerOf(indexs[i]);
+    res.grantTreassure = (await greengrant.getGrantTreassure(indexs[i], false)).toPrecision(4);
+    res.isOwner = res.grantOwner.toLowerCase() === connectState.userAddr.value.toLowerCase();
+
+    const daoInfo = await greendao.getDaoInfoById(res.daoId);
+    res.daoName = daoInfo.daoName;
+    res.daoAvatar = daoInfo.daoAvatar;
+    res.daoWebsite = daoInfo.daoWebsite;
+    res.daoDesc = daoInfo.daoDesc;
+    res.daoOwner = daoInfo.daoOwner;
+    res.daoPublic = daoInfo.daoPublic;
+    res.daoMembers = daoInfo.daoMembers;
+
+    infoList.push(res);
+  }
+
+  greenGrantList.value = infoList;
+}
+
 //handle page refresh
 const handleClick = async () => {
   //wait for the active name change
@@ -483,8 +773,20 @@ const handleClick = async () => {
   try{
     loadStatus.value = true;
     if (!(await connected())){
+      greenGrantList.value = new Array();
       return;
     }
+
+    if(pageCount.value < 0){
+      pageCount.value = 0;
+    }
+
+    const onlyOwner = activeName.value === 'mine';
+
+    await getGreenGrantCount(onlyOwner);
+
+  }catch(e){
+    greenGrantList.value = new Array();
   }finally{
     loadStatus.value = false;
   }

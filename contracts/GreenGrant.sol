@@ -60,7 +60,7 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
     constructor() ERC721("Green Grant", "GRANT") {
         _owner = msg.sender;
         _daoContract = address(this);
-        _treassureContract = address(this);    
+        _treassureContract = address(this);
     } 
 
     //update contracts address, only owner support
@@ -143,13 +143,15 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
     function updateGrant(uint256 grantId, string memory name, string memory desc, string memory git, string memory website, uint endTime) public returns (bool){
         require(ownerOf(grantId) == msg.sender, "only owner alowed!");
 
-        require(bytes(name).length > 0 && _grantNames[name] == false, "invalid grant name!");
+        require(bytes(name).length > 0, "invalid grant name!");
 
         require(endTime >= block.timestamp + 86400, "invalid end time!");
 
-        delete _grantNames[_grantInfos[grantId].grantName];
-        _grantNames[name] = true;
-        _grantInfos[grantId].grantName = name;
+        if(_grantNames[name] == false){
+            delete _grantNames[_grantInfos[grantId].grantName];
+            _grantNames[name] = true;
+            _grantInfos[grantId].grantName = name;
+        }
 
         if(bytes(desc).length > 0){
             _grantInfos[grantId].grantDesc = desc;
@@ -258,9 +260,9 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
 
         for(uint i = 0; i < total; i++){
             if(onlyOwner){
-                index = tokenOfOwnerByIndex(msg.sender, i);
+                index = tokenOfOwnerByIndex(msg.sender, total - i - 1);
             }else{
-                index = tokenByIndex(i);
+                index = tokenByIndex(total -i - 1);
             }
 
             if(daoId > 0 && _grantInfos[index].daoId != daoId){

@@ -18,6 +18,7 @@ const abi = [
 	"function decreaseAllowance(address spender, uint256 subtractedValue) public returns (bool)"
 ];
 
+const zeroAddress = '0x0000000000000000000000000000000000000000';
 
 export class ERC20 {
 	private contractAddress: string;
@@ -45,6 +46,10 @@ export class ERC20 {
 	}
 
 	public decimals = async () => {
+		if(this.contractAddress === zeroAddress){
+			return 18;
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.decimals();
@@ -61,6 +66,12 @@ export class ERC20 {
 	}
 
 	public balanceOf = async (address:string) => {
+		if(this.contractAddress === zeroAddress){
+			const res = await connectState.provider.getBalance(address);
+
+			return Number(utils.formatEther(res));
+		}
+
 		const contract = await this.getContract();
 
 		const res = await contract.balanceOf(address);
@@ -122,6 +133,16 @@ export class ERC20 {
 		if(amount <= 0){
 			throw new Error("invalid transfer amount!");
 		}
+
+		if(this.contractAddress === zeroAddress){
+			const transaction = { to: to, value: utils.parseEther(String(amount))};
+
+			const tx = await connectState.provider.sendTransaction(transaction);
+
+			await tx.wait();
+
+			return tx.hash;		
+		}		
 
 		const contract = await this.getContract();
 

@@ -327,10 +327,10 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
         for(uint i = 0; i < total; i++){
             //get own auction or not
             if(onlyOwner){
-                aucId = tokenOfOwnerByIndex(msg.sender, i);
+                aucId = tokenOfOwnerByIndex(msg.sender, total - i - 1);
             }else{
-                aucId = tokenByIndex(i);
-            }     
+                aucId = tokenByIndex(total -i - 1);
+            }
 
             AucInfo memory auc = _getAucInfoById(aucId);
             if(daoId > 0 && auc.daoId != daoId){
