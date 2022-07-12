@@ -229,61 +229,59 @@
         element-loading-svg-view-box="-10, -10, 50, 50"
         element-loading-background="#ffffff"
       >
-        
-      <el-row :gutter="20">
-        <template v-for="info in greenLearningList" :key="info.learningId">
-          <el-col :span="8">
-            <el-card class="box-card">
-              <template #header>
-                <div class="card-header">
-                  <el-popover placement="bottom-start" :width="230" title="Dao Info">
-                    <template #reference>
-                      <el-link type="success" target="_blank" :href="info.daoWebsite">
-                        <el-avatar :src="info.daoAvatar" size="small"></el-avatar>
-                      </el-link>
-                    </template>
-                    <h4>Name: {{info.daoName}}</h4>
-                    <h4>Id: 
-                      <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoId}}</el-link>
-                    </h4>
-                    <h4>Owner:
-                      <el-link type="success" target="_blank" :href="addressExplorerUrl(info.daoOwner)">{{info.daoOwner}}</el-link>
-                    </h4>
-                    <h4>Members: {{info.daoMembers}}</h4>
-                    <h4>Public: {{info.daoPublic}}</h4>
-                    <h4>Description: {{info.daoDesc}}</h4>
-                  </el-popover>
-                  <el-popover placement="bottom-start" :width="230" title="Learning Info">
-                    <template #reference>
-                      <span>
-                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenLearningContractAddress,info.learningId)">{{info.learningName}}
+        <el-row :gutter="20">
+          <template v-for="info in greenLearningList" :key="info.learningId">
+            <el-col :span="8">
+              <el-card class="box-card">
+                <template #header>
+                  <div class="card-header">
+                    <el-popover placement="bottom-start" :width="230" title="Dao Info">
+                      <template #reference>
+                        <el-link type="success" target="_blank" :href="info.daoWebsite">
+                          <el-avatar :src="info.daoAvatar" size="small"></el-avatar>
                         </el-link>
-                      </span>
-                    </template>
-                    <h4>Title: {{info.learningName}}</h4>
-                    <h4>Description: {{info.learningDesc}}</h4>
-                  </el-popover>
-                  <span>
-                    <el-button v-if="activeName === 'mine'" type="danger" style="float: right;" size="small" @click="onDeleteGreenLearning(info.learningId)"><el-icon><Delete /></el-icon></el-button>
-                  </span>  
-                </div>
-              </template>
-              <el-row>
-                <img v-if="info.learningType === 0" :src="info.learningUrl" style="width: 250px;height: 200px;" />
-                <audio v-if="info.learningType === 1" :src="info.learningUrl" controls preload style="width: 250px;height: 200px;" />
-                <video v-if="info.learningType === 2" :src="info.learningUrl" controls preload style="width: 250px;height: 200px;" />
-                <embed v-if="info.learningType === 3" type="text/html" :src="info.learningUrl" style="width: 250px;height: 200px;" />
-              </el-row>
-              <el-row style="margin-top: 5px;float: right;">
-                <el-link type="primary" style="float: right;" @click="onLikeLearning(info.learningId)">Likes : {{info.learningLikes}}</el-link>
-                <el-link type="warning" style="float: right;" @click="onHateLearning(info.learningId)">Hates : {{info.learningHates}}</el-link>
-                <el-link type="success" style="float: right;" size="small" :href="info.learningUrl" target="_blank">View</el-link>
-              </el-row>
-            </el-card>
-          </el-col>
-        </template>
-      </el-row>
-        
+                      </template>
+                      <h4>Name: {{info.daoName}}</h4>
+                      <h4>Id: 
+                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoId}}</el-link>
+                      </h4>
+                      <h4>Owner:
+                        <el-link type="success" target="_blank" :href="addressExplorerUrl(info.daoOwner)">{{info.daoOwner}}</el-link>
+                      </h4>
+                      <h4>Members: {{info.daoMembers}}</h4>
+                      <h4>Public: {{info.daoPublic}}</h4>
+                      <h4>Description: {{info.daoDesc}}</h4>
+                    </el-popover>
+                    <el-popover placement="bottom-start" :width="230" title="Learning Info">
+                      <template #reference>
+                        <span>
+                          <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenLearningContractAddress,info.learningId)">{{info.learningName}}
+                          </el-link>
+                        </span>
+                      </template>
+                      <h4>Title: {{info.learningName}}</h4>
+                      <h4>Description: {{info.learningDesc}}</h4>
+                    </el-popover>
+                    <span>
+                      <el-button v-if="activeName === 'mine'" type="danger" style="float: right;" size="small" @click="onDeleteGreenLearning(info.learningId)"><el-icon><Delete /></el-icon></el-button>
+                    </span>  
+                  </div>
+                </template>
+                <el-row>
+                  <img v-if="info.learningType === 0" :src="info.learningUrl" style="width: 250px;height: 200px;" />
+                  <audio v-if="info.learningType === 1" :src="info.learningUrl" controls preload style="width: 250px;height: 200px;" />
+                  <video v-if="info.learningType === 2" :src="info.learningUrl" controls preload style="width: 250px;height: 200px;" />
+                  <embed v-if="info.learningType === 3" type="text/html" :src="info.learningUrl" style="width: 250px;height: 200px;" />
+                </el-row>
+                <el-row style="margin-top: 5px;float: right;">
+                  <el-link type="primary" style="float: right;" @click="onLikeLearning(info.learningId)">Likes : {{info.learningLikes}}</el-link>
+                  <el-link type="warning" style="float: right;" @click="onHateLearning(info.learningId)">Hates : {{info.learningHates}}</el-link>
+                  <el-link type="success" style="float: right;" size="small" :href="info.learningUrl" target="_blank">View</el-link>
+                </el-row>
+              </el-card>
+            </el-col>
+          </template>
+        </el-row>
       </el-main>
       <el-footer>
         <div>
@@ -603,6 +601,7 @@ const confirmLearningUpdate = async () => {
   }
 }
 
+//click to delete a green learning
 const onDeleteGreenLearning = async (learningId:number) => {
   try{
     const tx = await greenlearning.burn(learningId);
@@ -617,6 +616,7 @@ const onDeleteGreenLearning = async (learningId:number) => {
   }
 }
 
+//click to like a green learning
 const onLikeLearning = async (learningId:number) => {
   try{
     const tx = await greenlearning.likeTheLearning(learningId);
@@ -631,6 +631,7 @@ const onLikeLearning = async (learningId:number) => {
   }  
 }
 
+//click to hate a green learning
 const onHateLearning = async (learningId:number) => {
   try{
     const tx = await greenlearning.hateTheLearning(learningId);
@@ -645,6 +646,7 @@ const onHateLearning = async (learningId:number) => {
   }  
 }
 
+//get green learning infos by page size and page count
 const getGreenLearningCount = async (onlyOwner:boolean) => {
   daoId.value = getDaoId();
 

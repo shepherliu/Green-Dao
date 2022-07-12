@@ -6,8 +6,106 @@
           <el-tab-pane label="All" name="all"></el-tab-pane>
           <el-tab-pane label="Mine" name="mine"></el-tab-pane>
         </el-tabs>     
-        <el-button type="primary" size="small" style="float: right;margin-right: 50px;" @click="showAddNewDaoVisiable = true;">NEW+
-        </el-button>    
+        <el-button type="primary" size="small" style="float: right;margin-right: 50px;" @click="onAddGreenDao">NEW+
+        </el-button>
+        <el-drawer 
+          v-model="showManageDaoMemberVisiable"
+          direction="rtl" 
+          destroy-on-close 
+          @opened="onManageDaoMemberOpen"
+        >
+          <template #header>
+            <h4>Manage Your Dao Members.</h4>   
+          </template>
+          <template #default>
+            <table style="margin-left: 10px;">
+              <tr>
+                <td style="width:120px">Dao Id
+                  <el-popover
+                    placement="top-start"
+                    title="Dao Id"
+                    :width="200"
+                    trigger="hover"
+                    content="The id of the green dao."
+                  >
+                    <template #reference>
+                     <el-icon><QuestionFilled /></el-icon>
+                    </template>
+                </el-popover>
+                </td>
+                <td style="width:300px">
+                  <el-input v-model="daoId" disabled>
+                    <template #append>
+                      <el-icon @click="onClickToCopy(daoId)"><document-copy /></el-icon>
+                    </template>
+                  </el-input>
+                </td>
+              </tr>
+              <tr>
+                <td style="width:120px">Dao Name
+                  <el-popover
+                    placement="top-start"
+                    title="Dao Name"
+                    :width="200"
+                    trigger="hover"
+                    content="The name of the green dao."
+                  >
+                    <template #reference>
+                     <el-icon><QuestionFilled /></el-icon>
+                    </template>
+                </el-popover>
+                </td>
+                <td style="width:300px">
+                  <el-input v-model="daoName" disabled>
+                    <template #append>
+                      <el-icon @click="onClickToCopy(daoName)"><document-copy /></el-icon>
+                    </template>
+                  </el-input>
+                </td>                   
+              </tr>   
+              <tr>
+                <td style="width:120px">Operator
+                </td>
+                <td style="width:300px;margin-left:0px;">
+                  <el-select 
+                    v-model="daoMemberOperator"
+                    style="width:100%;margin-left:0px;"
+                    placeholder="Select Member Operator"
+                    :teleported="false"
+                    filterable
+                  >
+                    <el-option key="add" label="Add Members" value="add"/>
+                    <el-option key="delete" label="Delete Members" value="delete"/>
+                  </el-select> 
+                </td>
+              </tr>
+              <tr>
+                <td style="width:120px">Address
+                </td>
+                <td style="width:300px">
+                  <el-input v-model="daoMemberAddress">
+                    <template #append>
+                      <el-icon @click="onClickToCopy(daoMemberAddress)"><document-copy /></el-icon>
+                    </template>
+                  </el-input>
+                </td>                   
+              </tr>
+            </table>
+          </template>
+          <template #footer>
+            <div 
+              style="flex: auto"
+              v-loading="loadDrawerStatus" 
+              element-loading-text="Submitting..."
+              :element-loading-spinner="svg"
+              element-loading-svg-view-box="-10, -10, 50, 50"
+              element-loading-background="#ffffff"
+            >
+              <el-button @click="cancelDaoMemberUpdate">cancel</el-button>
+              <el-button type="primary" @click="confirmDaoMemberUpdate">confirm</el-button>
+            </div>
+          </template>
+        </el-drawer>            
         <el-drawer 
           v-model="showAddNewDaoVisiable"
           direction="rtl" 
@@ -231,6 +329,72 @@
           </template>          
         </el-drawer>
       </el-header>
+      <el-main
+        style="height: 450px;margin-top: 20px;" 
+        v-loading="loadStatus"
+        element-loading-text="Loading..."
+        :element-loading-spinner="svg"
+        element-loading-svg-view-box="-10, -10, 50, 50"
+        element-loading-background="#ffffff"
+      > 
+        <el-row :gutter="20">
+          <template v-for="info in greenDaoList" :key="info.daoId">
+            <el-col :span="8">
+              <el-card class="box-card">
+                <template #header>
+                  <el-popover placement="bottom-start" :width="230" title="Dao Info">
+                    <template #reference>
+                      <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoName}}
+                      </el-link>
+                    </template>
+                    <h4>Name: {{info.daoName}}</h4>
+                    <h4>Id: 
+                      <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoId}}</el-link>
+                    </h4>
+                    <h4>Owner:
+                      <el-link type="success" target="_blank" :href="addressExplorerUrl(info.daoOwner)">{{info.daoOwner}}</el-link>
+                    </h4>
+                    <h4>Members: {{info.daoMembers}}</h4>
+                    <h4>Public: {{info.daoPublic}}</h4>
+                    <h4>Description: {{info.daoDesc}}</h4>
+                  </el-popover>
+                  <span>
+                    <el-button v-if="activeName === 'mine'" type="danger" style="float: right;" size="small" @click="onDeleteGreenDao(info.daoId)"><el-icon><Delete /></el-icon></el-button>
+                    <el-button v-if="activeName === 'mine'" type="primary" style="float: right;" size="small" @click="onEditGreenDao(info)"><el-icon><Edit /></el-icon></el-button>                    
+                  </span>  
+                </template>
+                <el-row>
+                  <span>{{info.daoDesc}}</span>
+                </el-row>
+                <el-row>
+                  <el-link type="success" target="_blank" :href="info.daoWebsite" style="margin-left: 70px;">
+                    <el-badge :value="info.daoMembers" class="item" type="primary">
+                      <el-avatar :src="info.daoAvatar" :size="100"></el-avatar>
+                    </el-badge>
+                  </el-link>
+                </el-row>
+                <el-row style="margin-top: 20px;">
+                  <el-link v-if="info.daoPublic && !info.daoIn && !info.isOwner" type="success" href="javascript:void(0);" @click="onJoinDao(info.daoId)">Join</el-link>
+                  <el-link v-if="info.daoPublic && info.daoIn && !info.isOwner" type="success" href="javascript:void(0);" @click="onLeaveDao(info.daoId)">Leave</el-link>
+                  <el-link v-if="!info.daoPublic && info.isOwner" type="success" href="javascript:void(0);" @click="onManageDao(info)">Manage</el-link>
+                  <el-link type="success" :href="redirectUrl(`?activeIndex=2&activeName=all&daoId=${info.daoId}`)">Learn</el-link>
+                  <el-link type="success" :href="redirectUrl(`?activeIndex=3&activeName=all&daoId=${info.daoId}`)">Auction</el-link>
+                  <el-link type="success" :href="redirectUrl(`?activeIndex=4&activeName=all&daoId=${info.daoId}`)">Grant</el-link>
+                  <el-link type="success" :href="redirectUrl(`?activeIndex=5&activeName=all&daoId=${info.daoId}`)">Vote</el-link>
+                </el-row>
+              </el-card>
+            </el-col>
+          </template>
+        </el-row>
+      </el-main>
+      <el-footer>
+        <div>
+          <el-button type="primary" style="margin-top: 10px;" @click="onHandlePrev">Prev
+          </el-button>
+          <el-button type="primary" style="margin-top: 10px;" @click="onHandleNext" :disabled="!hasMore">Next
+          </el-button>          
+      </div>
+      </el-footer>
     </el-container>
   </div>
 </template>
@@ -262,6 +426,7 @@ const { proxy } = getCurrentInstance() as ComponentInternalInstance;
 
 const activeName = connectState.activeName;
 const showAddNewDaoVisiable = ref(false);
+const showManageDaoMemberVisiable = ref(false);
 
 const uploadAvatar = ref<UploadInstance>();
 const uploadWebsite = ref<UploadInstance>();
@@ -277,10 +442,20 @@ const daoWebsite = ref('');
 const daoAvatarUrl = ref('');
 const daoPublic = ref(true);
 
+const daoMemberOperator = ref('');
+const daoMemberAddress = ref('');
+
 const loadStatus = ref(false);
 const loadAvatarStatus = ref(false);
 const loadWebsiteStatus = ref(false);
 const loadDrawerStatus = ref(false);
+
+const greenDaoContractAddress = (constant.greenDaoContractAddress as any)[connectState.chainId];
+
+const greenDaoList = ref(new Array());
+const hasMore = ref(false);
+const pageSize = ref(6);
+const pageCount = ref(0);
 
 const svg = `
         <path class="path" d="
@@ -293,6 +468,31 @@ const svg = `
         " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
       `;
 
+//address explore url
+const tokenExplorerUrl = (address:string, tokenId:string = '') => {
+  for(const i in constant.chainList){
+    if(connectState.chainId === constant.chainList[i].chainId){
+      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+      if(tokenId != ''){
+        return `${blockExplorerUrls}/token/${address}?a=${tokenId}#inventory`
+      }
+      return `${blockExplorerUrls}/token/${address}`
+    }
+  }
+  return address;
+}
+
+//address explore url
+const addressExplorerUrl = (address:string) => {
+  for(const i in constant.chainList){
+    if(connectState.chainId === constant.chainList[i].chainId){
+      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+      return `${blockExplorerUrls}/address/${address}`
+    }
+  }
+  return address;
+}      
+
 //transaction explore url
 const transactionExplorerUrl = (transaction:string) => {
   for(const i in constant.chainList){
@@ -302,6 +502,13 @@ const transactionExplorerUrl = (transaction:string) => {
     }
   }
   return transaction;
+}
+
+//parse the redirect url
+const redirectUrl = (path:string) => {
+  const origin = (window as any).location.origin;
+
+  return `${origin}/${path}`;
 }
 
 //on click to copy address
@@ -404,21 +611,70 @@ const onUploadAvatarFile = async () => {
     }
 }
 
+//on click to open the drawer to add or delete a dao member
+const onManageDaoMemberOpen = async () => {
+  daoMemberOperator.value = 'add';
+  daoMemberAddress.value = connectState.userAddr.value;
+}
+
+//click to cancel dao member update
+const cancelDaoMemberUpdate = async () => {
+  showManageDaoMemberVisiable.value = false;
+}
+
+//click to confirm to update dao members
+const confirmDaoMemberUpdate = async () => {
+  try{
+
+      loadDrawerStatus.value = true;
+
+      if(daoMemberOperator.value === 'add'){
+        await onJoinDao(daoId.value, daoMemberAddress.value);
+      }else if(daoMemberOperator.value === 'delete'){
+        await onLeaveDao(daoId.value, daoMemberAddress.value);
+      }else{
+        element.alertMessage("invalid operator type!");
+      }
+
+  }catch(e){
+    element.alertMessage(e);
+  }finally{
+    loadDrawerStatus.value = false;
+  }
+}
+
 //on click to open the drawer to create a new dao
 const onAddNewDaoOpen = async () => {
-  daoId.value = 0;
-  daoName.value = '';
-  daoDesc.value = '';
-  daoWebsite.value = '';
-  daoAvatarUrl.value = '';
-  daoPublic.value = true;
-
   uploadAvatar.value!.clearFiles();
   uploadWebsite.value!.clearFiles();
 
   const currentClass = (proxy as any).$el.parentNode.querySelector(".upload-website");
 
   (currentClass.querySelector(".el-upload__input") as any).webkitdirectory = true;  
+}
+
+//on click to open the drawer to add new dao
+const onAddGreenDao = async () => {
+  daoId.value = 0;
+  daoName.value = '';
+  daoDesc.value = '';
+  daoWebsite.value = '';
+  daoAvatarUrl.value = '';
+  daoPublic.value = true;  
+
+  showAddNewDaoVisiable.value = true;
+}
+
+//on click to open the drawer to edit the dao
+const onEditGreenDao = async (daoInfo:any) => {
+  daoId.value = daoInfo.daoId;
+  daoName.value = daoInfo.daoName;
+  daoDesc.value = daoInfo.daoDesc;
+  daoWebsite.value = daoInfo.daoWebsite;
+  daoAvatarUrl.value = daoInfo.daoAvatar;
+  daoPublic.value = daoInfo.daoPublic;   
+
+  showAddNewDaoVisiable.value = true;
 }
 
 //on click to cancel dao update
@@ -457,6 +713,99 @@ const confirmDaoUpdate = async () => {
   }
 }
 
+//click to delete green dao
+const onDeleteGreenDao = async (daoId:number) => {
+  try{
+    const tx = await greendao.burn(daoId);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
+          const msg = `<div><span>Delete dao success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    element.elMessage('success', msg, true);       
+
+    handleClick();
+  }catch(e){
+    element.alertMessage(e);
+  }  
+}
+
+//click to join a green dao
+const onJoinDao = async (daoId:number, address:string = connectState.userAddr.value) => {
+  try{
+    const tx = await greendao.joinDao(daoId, address);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
+          const msg = `<div><span>Join dao success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    element.elMessage('success', msg, true);       
+
+    handleClick();
+  }catch(e){
+    element.alertMessage(e);
+  }  
+}
+
+//click to leave a green dao
+const onLeaveDao = async (daoId:number, address:string = connectState.userAddr.value) => {
+  try{
+    const tx = await greendao.leaveDao(daoId, address);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
+          const msg = `<div><span>Leave dao success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    element.elMessage('success', msg, true);       
+
+    handleClick();
+  }catch(e){
+    element.alertMessage(e);
+  }  
+}
+
+//click to open the drawer to manage the dao members
+const onManageDao = async (daoInfo:any) => {
+  daoId.value = daoInfo.daoId;
+  daoName.value = daoInfo.daoName;
+
+  showManageDaoMemberVisiable.value = true;
+}
+
+//get green dao infos by page size and page count
+const getGreenDaoCount = async (onlyOwner:boolean) => {
+
+  const indexs = await greendao.getDaoIndexsByPageCount(pageSize.value, pageCount.value, onlyOwner);
+
+  if(indexs.length < pageSize.value){
+    hasMore.value = false;
+  }else{
+    hasMore.value = true;
+  }
+
+  const infoList = new Array();
+  for(const i in indexs){
+    const res = await greendao.getDaoInfoById(indexs[i]);
+
+    res.daoIn = await greendao.checkInDao(res.daoId, connectState.userAddr.value);
+    res.isOwner = res.daoOwner.toLowerCase() === connectState.userAddr.value.toLowerCase();
+
+    infoList.push(res);
+  }
+
+  greenDaoList.value = infoList;
+}
+
+//on click for prev page
+const onHandlePrev = async () => {
+  if(pageCount.value > 0){
+    pageCount.value--;
+  }
+  handleClick();
+}
+
+//on click for next page
+const onHandleNext = async () => {
+  if(hasMore.value){
+    pageCount.value++;
+  }
+  handleClick();
+}
+
 //on refresh page
 const handleClick = async () => {
   //wait for the active name change
@@ -467,8 +816,20 @@ const handleClick = async () => {
   try{
     loadStatus.value = true;
     if (!(await connected())){
+      greenDaoList.value = new Array();
       return;
     }
+
+    if(pageCount.value < 0){
+      pageCount.value = 0;
+    }
+
+    const onlyOwner = activeName.value === 'mine';
+
+    await getGreenDaoCount(onlyOwner);
+
+  }catch(e){
+    greenDaoList.value = new Array();
   }finally{
     loadStatus.value = false;
   }
