@@ -768,6 +768,11 @@ const getGreenAuctionCount = async (aucStatus:number, onlyOwner:boolean) => {
     const res = await greenauction.getAuctionInfoById(indexs[i]);
     const erc721 = new ERC721(res.nftContract);
 
+    //canceled, skip it
+    if(res.aucStatus === 2){
+      continue;
+    }
+
     res.tokenSymbol = await getTokenCurencyName(res.payContract);
     res.nftUrl = await erc721.tokenURI(res.nftId);
     res.nftName = await erc721.name();
