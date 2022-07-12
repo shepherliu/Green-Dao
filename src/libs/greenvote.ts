@@ -30,7 +30,7 @@ const abi = [
 	"function vote(uint256 voteId, uint8 status) public returns (bool)",
 	"function getDaoTreassure(uint256 daoId, address token) public view returns (uint256)",
 	"function getVoteTotalCount(bool onlyOwner) public view returns (uint)",
-	"function getVoteInfoById(uint256 voteId) public view returns (string, string, uint256, uint256, address, address, uint, uint, uint, bool, bool)",
+	"function getVoteInfoById(uint256 voteId) public view returns (tuple(string, string, uint256, uint256, address, address, uint, uint, uint, bool, bool))",
 	"function getVoteIndexsByPageCount(uint pageSize, uint pageCount, uint256 daoId, bool onlyOwner) public view returns(uint256[])",
 ];
 

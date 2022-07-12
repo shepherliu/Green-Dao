@@ -30,7 +30,7 @@ const abi = [
 	"function claimGrant(uint256 grantId) public payable returns (bool)",
 	"function getGrantTreassure(uint256 grantId, bool onlyOwner) public view returns (uint256)",
 	"function getGrantTotalCount(bool onlyOwner) public view returns(uint)",
-	"function getGrantInfoById(uint256 grantId) public view returns(string, string, string, string, address, uint256, uint, bool)",
+	"function getGrantInfoById(uint256 grantId) public view returns(tuple(string, string, string, string, address, uint256, uint, bool))",
 	"function getGrantIndexsByPageCount(uint pageSize, uint pageCount, uint256 daoId, bool onlyOwner) public view returns (uint256 []memory)",
 ];
 

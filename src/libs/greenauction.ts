@@ -28,7 +28,7 @@ const abi = [
 	"function cancelAuction(uint256 aucId) public payable returns(bool)",
 	"function bidForNft(uint256 aucId, uint256 amount) public payable returns(bool)",
 	"function claimAuction(uint256 aucId) public payable returns(bool)",
-	"function getAuctionInfoById(uint256 aucId) public view returns(uint256, uint256, address, address, address, address, uint, uint, uint256, uint256, uint256, uint256, uint8, uint8)",
+	"function getAuctionInfoById(uint256 aucId) public view returns(tuple(uint256, uint256, address, address, address, address, uint, uint, uint256, uint256, uint256, uint256, uint8, uint8))",
 	"function getAuctionTotalCount(bool onlyOwner) public view returns(uint)",
 	"function getAuctionIndexsByPage(uint pageSize, uint pageCount, uint256 daoId, uint8 aucStatus, bool onlyOwner) public view returns(uint256[] memory)",
 ];
@@ -372,8 +372,8 @@ export class GreenAuction {
 			reversePrice: rPrice,
 			priceDelta: dPrice,
 			bidPrice: bPrice,
-			aucStatus: res[12].toNumber(),
-			acuType: res[13].toNumber(),
+			aucStatus: res[12],
+			acuType: res[13],
 		};
 	}
 

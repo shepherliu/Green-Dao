@@ -221,6 +221,78 @@
           </template>          
         </el-drawer>       
       </el-header>
+      <el-main
+        style="height: 450px;margin-top: 20px;" 
+        v-loading="loadStatus"
+        element-loading-text="Loading..."
+        :element-loading-spinner="svg"
+        element-loading-svg-view-box="-10, -10, 50, 50"
+        element-loading-background="#ffffff"
+      >
+        
+      <el-row :gutter="20">
+        <template v-for="info in greenLearningList" :key="info.learningId">
+          <el-col :span="8">
+            <el-card class="box-card">
+              <template #header>
+                <div class="card-header">
+                  <el-popover placement="bottom-start" :width="230" title="Dao Info">
+                    <template #reference>
+                      <el-link type="success" target="_blank" :href="info.daoWebsite">
+                        <el-avatar :src="info.daoAvatar" size="small"></el-avatar>
+                      </el-link>
+                    </template>
+                    <h4>Name: {{info.daoName}}</h4>
+                    <h4>Id: 
+                      <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoId}}</el-link>
+                    </h4>
+                    <h4>Owner:
+                      <el-link type="success" target="_blank" :href="addressExplorerUrl(info.daoOwner)">{{info.daoOwner}}</el-link>
+                    </h4>
+                    <h4>Members: {{info.daoMembers}}</h4>
+                    <h4>Public: {{info.daoPublic}}</h4>
+                    <h4>Description: {{info.daoDesc}}</h4>
+                  </el-popover>
+                  <el-popover placement="bottom-start" :width="230" title="Learning Info">
+                    <template #reference>
+                      <span>
+                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenLearningContractAddress,info.learningId)">{{info.learningName}}
+                        </el-link>
+                      </span>
+                    </template>
+                    <h4>Title: {{info.learningName}}</h4>
+                    <h4>Description: {{info.learningDesc}}</h4>
+                  </el-popover>
+                  <span>
+                    <el-button v-if="activeName === 'mine'" type="danger" style="float: right;" size="small" @click="onDeleteGreenLearning(info.learningId)"><el-icon><Delete /></el-icon></el-button>
+                  </span>  
+                </div>
+              </template>
+              <el-row>
+                <img v-if="info.learningType === 0" :src="info.learningUrl" style="width: 250px;height: 200px;" />
+                <audio v-if="info.learningType === 1" :src="info.learningUrl" controls preload style="width: 250px;height: 200px;" />
+                <video v-if="info.learningType === 2" :src="info.learningUrl" controls preload style="width: 250px;height: 200px;" />
+                <embed v-if="info.learningType === 3" type="text/html" :src="info.learningUrl" style="width: 250px;height: 200px;" />
+              </el-row>
+              <el-row style="margin-top: 5px;float: right;">
+                <el-link type="primary" style="float: right;" @click="onLikeLearning(info.learningId)">Likes : {{info.learningLikes}}</el-link>
+                <el-link type="warning" style="float: right;" @click="onHateLearning(info.learningId)">Hates : {{info.learningHates}}</el-link>
+                <el-link type="success" style="float: right;" size="small" :href="info.learningUrl" target="_blank">View</el-link>
+              </el-row>
+            </el-card>
+          </el-col>
+        </template>
+      </el-row>
+        
+      </el-main>
+      <el-footer>
+        <div>
+          <el-button type="primary" style="margin-top: 10px;" @click="onHandlePrev">Prev
+          </el-button>
+          <el-button type="primary" style="margin-top: 10px;" @click="onHandleNext" :disabled="!hasMore">Next
+          </el-button>          
+      </div>
+      </el-footer>
     </el-container>
   </div>
 </template>
@@ -259,6 +331,9 @@ const loadResourceStatus = ref(false);
 const greendao = new GreenDao();
 const greenlearning = new GreenLearning();
 
+const greenDaoContractAddress = (constant.greenDaoContractAddress as any)[connectState.chainId];
+const greenLearningContractAddress = (constant.greenLearningContractAddress as any)[connectState.chainId];
+
 const multiple = ref(false);
 const limits = ref(1);
 const resourceAccept = ref('');
@@ -275,6 +350,11 @@ const learningDescription = ref('');
 const learningResource = ref('');
 const learningResourceType = ref('image');
 
+const greenLearningList = ref(new Array());
+const hasMore = ref(false);
+const pageSize = ref(6);
+const pageCount = ref(0);
+
 const svg = `
         <path class="path" d="
           M 30 15
@@ -285,6 +365,31 @@ const svg = `
           L 15 15
         " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
       `;
+
+//address explore url
+const tokenExplorerUrl = (address:string, tokenId:string = '') => {
+  for(const i in constant.chainList){
+    if(connectState.chainId === constant.chainList[i].chainId){
+      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+      if(tokenId != ''){
+        return `${blockExplorerUrls}/token/${address}?a=${tokenId}#inventory`
+      }
+      return `${blockExplorerUrls}/token/${address}`
+    }
+  }
+  return address;
+}
+
+//address explore url
+const addressExplorerUrl = (address:string) => {
+  for(const i in constant.chainList){
+    if(connectState.chainId === constant.chainList[i].chainId){
+      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+      return `${blockExplorerUrls}/address/${address}`
+    }
+  }
+  return address;
+}
 
 //transaction explore url
 const transactionExplorerUrl = (transaction:string) => {
@@ -498,15 +603,119 @@ const confirmLearningUpdate = async () => {
   }
 }
 
+const onDeleteGreenLearning = async (learningId:number) => {
+  try{
+    const tx = await greenlearning.burn(learningId);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
+          const msg = `<div><span>Delete learning success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    element.elMessage('success', msg, true);       
+
+    handleClick();
+  }catch(e){
+    element.alertMessage(e);
+  }
+}
+
+const onLikeLearning = async (learningId:number) => {
+  try{
+    const tx = await greenlearning.likeTheLearning(learningId);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
+          const msg = `<div><span>Like the learning success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    element.elMessage('success', msg, true);       
+
+    handleClick();
+  }catch(e){
+    element.alertMessage(e);
+  }  
+}
+
+const onHateLearning = async (learningId:number) => {
+  try{
+    const tx = await greenlearning.hateTheLearning(learningId);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
+          const msg = `<div><span>Hate the learning success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    element.elMessage('success', msg, true);       
+
+    handleClick();
+  }catch(e){
+    element.alertMessage(e);
+  }  
+}
+
+const getGreenLearningCount = async (onlyOwner:boolean) => {
+  daoId.value = getDaoId();
+
+  const indexs = await greenlearning.getLearningIndexsByPageCount(pageSize.value, pageCount.value, daoId.value, onlyOwner);
+
+  if(indexs.length < pageSize.value){
+    hasMore.value = false;
+  }else{
+    hasMore.value = true;
+  }
+
+  const infoList = new Array();
+  for(const i in indexs){
+    const res = await greenlearning.getLearningInfoById(indexs[i]);
+
+    const daoInfo = await greendao.getDaoInfoById(res.daoId);
+    res.daoName = daoInfo.daoName;
+    res.daoAvatar = daoInfo.daoAvatar;
+    res.daoWebsite = daoInfo.daoWebsite;
+    res.daoDesc = daoInfo.daoDesc;
+    res.daoOwner = daoInfo.daoOwner;
+    res.daoPublic = daoInfo.daoPublic;
+    res.daoMembers = daoInfo.daoMembers;
+
+    infoList.push(res);
+  }
+
+  greenLearningList.value = infoList;
+}
+
+//on click for prev page
+const onHandlePrev = async () => {
+  if(pageCount.value > 0){
+    pageCount.value--;
+  }
+  handleClick();
+}
+
+//on click for next page
+const onHandleNext = async () => {
+  if(hasMore.value){
+    pageCount.value++;
+  }
+  handleClick();
+}
+
 //handle page refresh
 const handleClick = async () => {
+  //wait for the active name change
+  await tools.sleep(100);
+
   connectState.activeName.value = activeName.value;
   tools.setUrlParamter('activeName', activeName.value);
+
   try{
     loadStatus.value = true;
     if (!(await connected())){
+      greenLearningList.value = new Array();
       return;
     }
+
+    if(pageCount.value < 0){
+      pageCount.value = 0;
+    }
+
+    const onlyOwner = activeName.value === 'mine';
+
+    await getGreenLearningCount(onlyOwner);
+
+  }catch(e){
+    greenLearningList.value = new Array();
   }finally{
     loadStatus.value = false;
   }
