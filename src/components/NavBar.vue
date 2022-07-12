@@ -456,6 +456,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
   activeIndex.value = key;
 
   tools.setUrlParamter('activeIndex', activeIndex.value);
+  tools.setUrlParamter('daoId', 0);
 };    
 
 //login to wallet and switch to the target chain.

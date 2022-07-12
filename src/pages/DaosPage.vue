@@ -373,7 +373,7 @@
                     </el-badge>
                   </el-link>
                 </el-row>
-                <el-row style="margin-top: 20px;">
+                <el-row style="margin-top: 20px;float: right;">
                   <el-link v-if="info.daoPublic && !info.daoIn && !info.isOwner" type="success" href="javascript:void(0);" @click="onJoinDao(info.daoId)">Join</el-link>
                   <el-link v-if="info.daoPublic && info.daoIn && !info.isOwner" type="success" href="javascript:void(0);" @click="onLeaveDao(info.daoId)">Leave</el-link>
                   <el-link v-if="!info.daoPublic && info.isOwner" type="success" href="javascript:void(0);" @click="onManageDao(info)">Manage</el-link>
