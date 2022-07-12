@@ -752,12 +752,10 @@ const onHandleNext = async () => {
 }
 
 //get green auctions infos by page size and page count
-const getGreenAuctionCount = async (onlyOwner:boolean) => {
+const getGreenAuctionCount = async (aucStatus:number, onlyOwner:boolean) => {
   daoId.value = getDaoId();
 
-  const auctionStatus = 1;
-
-  const indexs = await greenauction.getAuctionIndexsByPage(pageSize.value, pageCount.value, daoId.value, auctionStatus, onlyOwner);
+  const indexs = await greenauction.getAuctionIndexsByPage(pageSize.value, pageCount.value, daoId.value, aucStatus, onlyOwner);
 
   if(indexs.length < pageSize.value){
     hasMore.value = false;
@@ -811,7 +809,16 @@ const handleClick = async () => {
 
     const onlyOwner = false;
 
-    await getGreenAuctionCount(onlyOwner);
+    let aucStatus = 0;
+    if(activeName.value === 'upcoming'){
+      aucStatus = 0;
+    }else if(activeName.value === 'ongoing'){
+      aucStatus = 1;
+    }else{
+      aucStatus = 7;
+    }
+
+    await getGreenAuctionCount(aucStatus, onlyOwner);
 
   }catch(e){
     greenAuctionList.value = new Array();
