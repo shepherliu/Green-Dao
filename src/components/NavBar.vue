@@ -8,7 +8,7 @@
     </el-col> 
 
     <!-- project menus -->
-    <el-col :span="10">
+    <el-col :span="14">
       <el-menu
         :default-active="activeIndex"
         class="el-menu-demo"
@@ -28,19 +28,6 @@
         <el-menu-item index="5">Votes</el-menu-item>
       </el-menu>
     </el-col>
-
-    <!-- search component -->
-    <el-col :span="3">
-      <el-input size="large" v-model="searchContent" placeholder="Search" style="margin-top: 10px;">
-      </el-input>
-    </el-col>
-    
-    <el-col :span="1">
-      <el-button circle color="#606266" size="large" style="margin-top: 10px;" @click="onSearchContent">
-        <el-icon :size="20"><search /></el-icon>
-      </el-button>
-    </el-col>  
-    
     <!-- notify component -->
     <el-col :span="4">
       <el-popover
@@ -233,7 +220,6 @@ const shortName = connect.connectState.shortName;
 const userAddr = connect.connectState.userAddr;
 const shortAddr = connect.connectState.shortAddr;
 const networkName = ref("");
-const searchContent = ref("");
 const activeIndex = connect.connectState.activeIndex;
 const connectStatus = ref("Connect Wallet");
 const showSwitchNetwork = ref(false);
@@ -427,14 +413,6 @@ const onClickToCopy = async (content:string) => {
 //on click notify
 const onClickNotify = async () => {
   transactionCount.value = 0;
-}
-
-//on content search
-const onSearchContent = async () => {
-  connect.connectState.search = searchContent.value.trim();
-  await connect.connectState.searchCallback();
-  searchContent.value = '';
-  connect.connectState.search = '';
 }
 
 //on connect clicked
