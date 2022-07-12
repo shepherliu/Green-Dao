@@ -692,7 +692,7 @@ const confirmDaoUpdate = async () => {
       const tx = await greendao.updateDao(daoId.value, daoName.value, daoDesc.value, daoWebsite.value, daoAvatarUrl.value);
       connectState.transactions.value.unshift(tx);
       connectState.transactionCount.value++;
-            const msg = `<div><span>Update dao success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+      const msg = `<div><span>Update dao success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
       element.elMessage('success', msg, true);        
     }else{
       const tx = await greendao.mint(daoName.value, daoDesc.value, daoWebsite.value, daoAvatarUrl.value, daoPublic.value);
@@ -719,7 +719,7 @@ const onDeleteGreenDao = async (daoId:number) => {
     const tx = await greendao.burn(daoId);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
-          const msg = `<div><span>Delete dao success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    const msg = `<div><span>Delete dao success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
     element.elMessage('success', msg, true);       
 
     handleClick();
@@ -734,7 +734,7 @@ const onJoinDao = async (daoId:number, address:string = connectState.userAddr.va
     const tx = await greendao.joinDao(daoId, address);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
-          const msg = `<div><span>Join dao success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    const msg = `<div><span>Join dao success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
     element.elMessage('success', msg, true);       
 
     handleClick();
@@ -749,7 +749,7 @@ const onLeaveDao = async (daoId:number, address:string = connectState.userAddr.v
     const tx = await greendao.leaveDao(daoId, address);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
-          const msg = `<div><span>Leave dao success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    const msg = `<div><span>Leave dao success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
     element.elMessage('success', msg, true);       
 
     handleClick();

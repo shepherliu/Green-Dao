@@ -595,7 +595,7 @@ const confirmGrantUpdate = async () => {
       const tx = await greengrant.updateGrant(grantId.value, grantTitle.value, grantDescription.value, grantGitUrl.value, grantWebsite.value, endTime);
       connectState.transactions.value.unshift(tx);
       connectState.transactionCount.value++;
-            const msg = `<div><span>Update grant success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+      const msg = `<div><span>Update grant success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
       element.elMessage('success', msg, true);        
     }else{
       const tx = await greengrant.mint(grantTitle.value, grantDescription.value, grantGitUrl.value, grantWebsite.value, grantToken.value, daoId.value, endTime);
@@ -622,7 +622,7 @@ const onDeleteGreenGrant = async (grantId:number) => {
     const tx = await greengrant.burn(grantId);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
-          const msg = `<div><span>Delete grant success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    const msg = `<div><span>Delete grant success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
     element.elMessage('success', msg, true);       
 
     handleClick();
@@ -671,7 +671,7 @@ const onSupportGrant = async (grantInfo:any) => {
     ]);
   }
 
-  element.elMessageBox('Please enter address to send the Token:', 'Send Token', opts, async (value:number) => {
+  element.elMessageBox('Please enter the token amount to support the grant:', 'Send Token', opts, async (value:number) => {
     if(value <= 0){
       element.alertMessage("support token value must large than zero!");
       return;

@@ -588,7 +588,7 @@ const confirmLearningUpdate = async () => {
     const tx = await greenlearning.mint(learningTitle.value, learningDescription.value, learningResource.value, daoId.value, learningType);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
-          const msg = `<div><span>Create new learning success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    const msg = `<div><span>Create new learning success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
     element.elMessage('success', msg, true);       
 
     showAddNewLearningVisiable.value = false;
@@ -607,7 +607,7 @@ const onDeleteGreenLearning = async (learningId:number) => {
     const tx = await greenlearning.burn(learningId);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
-          const msg = `<div><span>Delete learning success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    const msg = `<div><span>Delete learning success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
     element.elMessage('success', msg, true);       
 
     handleClick();
@@ -622,7 +622,7 @@ const onLikeLearning = async (learningId:number) => {
     const tx = await greenlearning.likeTheLearning(learningId);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
-          const msg = `<div><span>Like the learning success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    const msg = `<div><span>Like the learning success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
     element.elMessage('success', msg, true);       
 
     handleClick();
@@ -637,7 +637,7 @@ const onHateLearning = async (learningId:number) => {
     const tx = await greenlearning.hateTheLearning(learningId);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
-          const msg = `<div><span>Hate the learning success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    const msg = `<div><span>Hate the learning success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
     element.elMessage('success', msg, true);       
 
     handleClick();

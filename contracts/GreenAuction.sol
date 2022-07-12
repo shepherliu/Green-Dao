@@ -99,7 +99,7 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
         address payContract
     ) public returns (uint256) {
 
-        require(startPrice > 0 && reversePrice > 0, "price invalid");
+        require(startPrice > 0 && reversePrice > 0 && priceDelta > 0, "price invalid");
         //msg.sender must in the given dao
         require(GreenDao(_daoContract).checkInDao(daoId, msg.sender) == true, "not in dao!");
 

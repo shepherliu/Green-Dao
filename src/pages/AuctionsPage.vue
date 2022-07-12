@@ -3,8 +3,9 @@
     <el-container>
       <el-header style="background-color: #ffffff;">
         <el-tabs v-model="activeName" class="file-tabs" @tab-click="handleClick">
-          <el-tab-pane label="All" name="all"></el-tab-pane>
-          <el-tab-pane label="Mine" name="mine"></el-tab-pane>
+          <el-tab-pane label="Upcoming" name="upcoming"></el-tab-pane>
+          <el-tab-pane label="Ongoing" name="ongoing"></el-tab-pane>
+          <el-tab-pane label="Finished" name="finished"></el-tab-pane>
         </el-tabs>     
         <el-button type="primary" size="small" style="float: right;margin-right: 50px;" @click="showAddNewAuctionVisiable = true;">NEW+
         </el-button>    
@@ -307,6 +308,96 @@
           </template>
         </el-drawer>        
       </el-header>
+      <el-main
+        style="height: 450px;margin-top: 20px;" 
+        v-loading="loadStatus"
+        element-loading-text="Loading..."
+        :element-loading-spinner="svg"
+        element-loading-svg-view-box="-10, -10, 50, 50"
+        element-loading-background="#ffffff"
+      >
+        <el-row :gutter="20">
+          <template v-for="info in greenAuctionList" :key="info.aucId">
+            <el-col :span="8">
+              <el-card class="box-card">
+                <template #header>
+                  <div class="card-header">
+                    <el-popover placement="bottom-start" :width="230" title="Dao Info">
+                      <template #reference>
+                        <el-link type="success" target="_blank" :href="info.daoWebsite">
+                          <el-avatar :src="info.daoAvatar" size="small"></el-avatar>
+                        </el-link>
+                      </template>
+                      <h4>Name: {{info.daoName}}</h4>
+                      <h4>Id: 
+                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoId}}</el-link>
+                      </h4>
+                      <h4>Owner:
+                        <el-link type="success" target="_blank" :href="addressExplorerUrl(info.daoOwner)">{{info.daoOwner}}</el-link>
+                      </h4>
+                      <h4>Members: {{info.daoMembers}}</h4>
+                      <h4>Public: {{info.daoPublic}}</h4>
+                      <h4>Description: {{info.daoDesc}}</h4>
+                    </el-popover>
+                    <el-popover placement="bottom-start" :width="230" title="Auction Info">
+                      <template #reference>
+                        <span>
+                          <el-link type="success" target="_blank" :href="tokenExplorerUrl(info.nftContract,info.nftId)">
+                            {{info.nftSymbol + ' : ' + info.nftId}}
+                          </el-link>
+                        </span>
+                      </template>
+                      <h4>Auction Id:
+                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(info.greenAuctionContractAddress,info.aucId)">{{info.aucId}}</el-link>
+                      </h4>
+                      <h4>Auction Type: {{info.acuType === 0 ? 'English Auction' : 'Dutch Auction'}}</h4>
+                      <h4>Nft Name: {{info.nftName}}</h4>
+                      <h4>Nft Symbol: {{info.nftSymbol}}</h4>
+                      <h4>Nft Id:
+                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(info.nftContract,info.nftId)">{{info.nftId}}</el-link>
+                      </h4>
+                      <h4>Nft Owner:</h4>
+                      <el-link type="success" target="_blank" :href="addressExplorerUrl(info.nftOwner)">{{info.nftOwner}}</el-link>
+                      <h4>Bid Address:</h4>
+                      <el-link type="success" target="_blank" :href="addressExplorerUrl(info.bidAddress)">{{info.nftOwner}}</el-link>
+                      <h4 v-if="info.aucStatus <= 1">Start Price: {{info.startPrice + ' ' + info.tokenSymbol}}</h4>
+                      <h4 v-if="info.aucStatus >= 2">Reverse Price: {{info.reversePrice + ' ' + info.tokenSymbol}}</h4>
+                      <h4>Bid Price: {{info.bidPrice + ' ' + info.tokenSymbol}}</h4>
+                    </el-popover>
+                    <span>
+                      <el-button v-if="info.isOwner === true && info.aucStatus <= 1" type="danger" style="float: right;" size="small" @click="onCancelGreenAuction(info.aucId)"><el-icon><Delete /></el-icon></el-button>
+                    </span>  
+                  </div>
+                </template>
+                <el-row>
+                  <embed type="text/html" :src="info.nftUrl" style="width: 250px;height: 200px;" />
+                </el-row>
+                <el-row style="float: right;">
+                  <span>Starttime: {{(new Date(info.startTime*1000)).toLocaleString()}}</span>
+                </el-row>
+                <el-row style="float: right;">
+                  <span>Endtime: {{(new Date(info.endTime*1000)).toLocaleString()}}</span>
+                </el-row>
+                <el-row style="float: right;">
+                  <el-link type="success" style="float: right;" href="javascript:void(0);">
+                    Current Price: {{getCurrentPrice(info).toPrecision(4) + ' ' + info.tokenSymbol}}
+                  </el-link>
+                  <el-link v-if="info.aucStatus === 0 || info.aucStatus === 1" type="primary" style="float: right;" @click="onBidAuction(info)">Bid</el-link>
+                  <el-link v-if="info.aucStatus === 3 || info.aucStatus === 4" type="primary" style="float: right;" @click="onClaimAuction(info.aucId)">Claim</el-link>
+                </el-row>
+              </el-card>
+            </el-col>
+          </template>
+        </el-row>
+      </el-main>
+      <el-footer>
+        <div>
+          <el-button type="primary" style="margin-top: 10px;" @click="onHandlePrev">Prev
+          </el-button>
+          <el-button type="primary" style="margin-top: 10px;" @click="onHandleNext" :disabled="!hasMore">Next
+          </el-button>          
+      </div>
+      </el-footer>
     </el-container>
   </div>
 </template>
@@ -321,18 +412,22 @@ export default {
 
 <script setup lang="ts">
   
-import { ref } from "vue"
+import { ref, h } from "vue"
 import { connected, connectState } from "../libs/connect"
 import * as constant from "../constant"
 import * as element from "../libs/element"
 import * as tools from "../libs/tools"
 
+import { ERC20 } from "../libs/erc20"
 import { ERC721 } from "../libs/erc721";
 import { GreenDao } from "../libs/greendao"
 import { GreenAuction } from "../libs/greenauction"
 
 const greendao = new GreenDao();
 const greenauction = new GreenAuction();
+
+const greenDaoContractAddress = (constant.greenDaoContractAddress as any)[connectState.chainId];
+const greenAuctionContractAddress = (constant.greenAuctionContractAddress as any)[connectState.chainId];
 
 const activeName = connectState.activeName;
 const loadStatus = ref(false);
@@ -354,6 +449,11 @@ const auctionNftApproved = ref(false);
 const auctionPayToken = ref('');
 const auctionType = ref(0);
 
+const greenAuctionList = ref(new Array());
+const hasMore = ref(false);
+const pageSize = ref(6);
+const pageCount = ref(0);
+
 const zeroAddress = '0x0000000000000000000000000000000000000000';
 const timeFormat = "YYYY/MM/DD hh:mm:ss";
 
@@ -368,6 +468,31 @@ const svg = `
         " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
       `;
 
+//address explore url
+const tokenExplorerUrl = (address:string, tokenId:string = '') => {
+  for(const i in constant.chainList){
+    if(connectState.chainId === constant.chainList[i].chainId){
+      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+      if(tokenId != ''){
+        return `${blockExplorerUrls}/token/${address}?a=${tokenId}#inventory`
+      }
+      return `${blockExplorerUrls}/token/${address}`
+    }
+  }
+  return address;
+}
+
+//address explore url
+const addressExplorerUrl = (address:string) => {
+  for(const i in constant.chainList){
+    if(connectState.chainId === constant.chainList[i].chainId){
+      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+      return `${blockExplorerUrls}/address/${address}`
+    }
+  }
+  return address;
+}      
+
 //transaction explore url
 const transactionExplorerUrl = (transaction:string) => {
   for(const i in constant.chainList){
@@ -377,6 +502,20 @@ const transactionExplorerUrl = (transaction:string) => {
     }
   }
   return transaction;
+}
+
+//get block chain native currency
+const getTokenCurencyName = async (token:string) => {
+  if(token === zeroAddress){
+    for(const i in constant.chainList){
+      if(constant.chainList[i].chainId === connectState.chainId){
+        return constant.chainList[i].nativeCurrency;
+      }
+    }
+  }else{
+    const erc20 = new ERC20(token);
+    return await erc20.symbol();
+  }
 }
 
 //on click to copy address
@@ -486,6 +625,172 @@ const confirmAuctionUpdate = async () => {
   }
 }
 
+//click to cancel a green auction
+const onCancelGreenAuction = async (auctionId:number) => {
+  try{
+    const tx = await greenauction.cancelAuction(auctionId);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
+    const msg = `<div><span>Cancel auction success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    element.elMessage('success', msg, true);       
+
+    handleClick();
+  }catch(e){
+    element.alertMessage(e);
+  }
+}
+
+const getCurrentPrice = (auctionInfo:any) => {
+  let currentPrice;
+
+  if(auctionInfo.acuType === 0){
+    if(auctionInfo.bidPrice === 0){
+      currentPrice = auctionInfo.startPrice;
+    }else{
+      currentPrice = auctionInfo.bidPrice + auctionInfo.priceDelta;
+    }
+  }else{
+    const timeDelta = (new Date()).getTime()/1000 - auctionInfo.startTime;
+    currentPrice = auctionInfo.startPrice - (parseInt(timeDelta/86400))*auctionInfo.priceDelta;
+  }
+
+  return currentPrice;
+}
+
+//click to bid a price for the auction
+const onBidAuction = async (auctionInfo:any) => {
+  const currentPrice = getCurrentPrice(auctionInfo);
+
+  const opts = {
+    message: '',
+    confirmButtonText: 'Send',
+    cancelButtonText: 'Cancel',
+    inputType: 'number',
+    inputValue: String(currentPrice),
+    inputValidator: (value:number) => {return value >= currentPrice},
+    inputErrorMessage: 'bid price must large than current price',
+  };
+
+  const erc20 = new ERC20(auctionInfo.payContract);
+
+  const tokenBalance = await erc20.balanceOf(connectState.userAddr.value);
+
+  if(auctionInfo.payContract === zeroAddress){
+    opts.message =  h('p', null, [
+      h('p', null, 'Please enter the token amount for the auction:'),
+      h('p', { style: 'color: teal' }, `dao id: ${auctionInfo.daoId}`),
+      h('p', { style: 'color: teal' }, `dao name: ${auctionInfo.daoName}`),
+      h('p', { style: 'color: teal' }, `auction id: ${auctionInfo.aucId}`),
+      h('p', { style: 'color: teal' }, `token name: ${auctionInfo.tokenSymbol}`),
+      h('p', { style: 'color: teal' }, `token balance: ${tokenBalance}`),
+    ]);
+  }else{
+    opts.message =  h('p', null, [
+      h('p', null, 'Please enter the token amount for the auction:'),
+      h('p', { style: 'color: teal' }, `dao id: ${auctionInfo.daoId}`),
+      h('p', { style: 'color: teal' }, `dao name: ${auctionInfo.daoName}`),
+      h('p', { style: 'color: teal' }, `auction id: ${auctionInfo.aucId}`),
+      h('p', { style: 'color: teal' }, `token name: ${auctionInfo.tokenSymbol}`),
+      h('p', { style: 'color: teal' }, `token contract: ${auctionInfo.payContract}`),
+      h('p', { style: 'color: teal' }, `token balance: ${tokenBalance}`),
+    ]);
+  }
+
+  element.elMessageBox('Please enter the token amount for the auction:', 'Send Token', opts, async (value:number) => {
+    if(value < currentPrice){
+      element.alertMessage(`bid price must large than current price: ${currentPrice}!`);
+    }
+
+    try{
+      if(auctionInfo.payContract != zeroAddress){
+        const tx = await erc20.approve(greenAuctionContractAddress, value);
+        connectState.transactions.value.unshift(tx);
+        connectState.transactionCount.value++;
+        const msg = `<div><span>Approve token success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+      }
+
+      const tx = await greenauction.bidForNft(auctionInfo.aucId, value);
+      connectState.transactions.value.unshift(tx);
+      connectState.transactionCount.value++;
+      const msg = `<div><span>Bid price for the auction success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    }catch(e){
+      element.alertMessage(e);
+    }
+
+  });    
+}
+
+//click to claim the auction treassure
+const onClaimAuction = async (auctionId: number) => {
+  try{
+    const tx = await greenauction.claimAuction(auctionId);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
+    const msg = `<div><span>Claim auction success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+    element.elMessage('success', msg, true);       
+
+    handleClick();
+  }catch(e){
+    element.alertMessage(e);
+  }
+}
+
+//on click for prev page
+const onHandlePrev = async () => {
+  if(pageCount.value > 0){
+    pageCount.value--;
+  }
+  handleClick();
+}
+
+//on click for next page
+const onHandleNext = async () => {
+  if(hasMore.value){
+    pageCount.value++;
+  }
+  handleClick();
+}
+
+//get green auctions infos by page size and page count
+const getGreenAuctionCount = async (onlyOwner:boolean) => {
+  daoId.value = getDaoId();
+
+  const auctionStatus = 1;
+
+  const indexs = await greenauction.getAuctionIndexsByPage(pageSize.value, pageCount.value, daoId.value, auctionStatus, onlyOwner);
+
+  if(indexs.length < pageSize.value){
+    hasMore.value = false;
+  }else{
+    hasMore.value = true;
+  }
+
+  const infoList = new Array();
+  for(const i in indexs){
+    const res = await greenauction.getAuctionInfoById(indexs[i]);
+    const erc721 = new ERC721(res.nftContract);
+
+    res.tokenSymbol = await getTokenCurencyName(res.payContract);
+    res.nftUrl = await erc721.tokenURI(res.nftId);
+    res.nftName = await erc721.name();
+    res.nftSymbol = await erc721.symbol();
+    res.isOwner = res.nftOwner.toLowerCase() === connectState.userAddr.value.toLowerCase();
+
+    const daoInfo = await greendao.getDaoInfoById(res.daoId);
+    res.daoName = daoInfo.daoName;
+    res.daoAvatar = daoInfo.daoAvatar;
+    res.daoWebsite = daoInfo.daoWebsite;
+    res.daoDesc = daoInfo.daoDesc;
+    res.daoOwner = daoInfo.daoOwner;
+    res.daoPublic = daoInfo.daoPublic;
+    res.daoMembers = daoInfo.daoMembers;
+
+    infoList.push(res);
+  }
+
+  greenAuctionList.value = infoList;  
+}
+
 //handle page refresh
 const handleClick = async () => {
   //wait for the active name change
@@ -496,8 +801,20 @@ const handleClick = async () => {
   try{
     loadStatus.value = true;
     if (!(await connected())){
+      greenAuctionList.value = new Array();
       return;
     }
+
+    if(pageCount.value < 0){
+      pageCount.value = 0;
+    }
+
+    const onlyOwner = false;
+
+    await getGreenAuctionCount(onlyOwner);
+
+  }catch(e){
+    greenAuctionList.value = new Array();
   }finally{
     loadStatus.value = false;
   }
@@ -509,12 +826,13 @@ connectState.searchCallback = handleClick;
 //try get activeName from the url paramter
 try{
   activeName.value = tools.getUrlParamter('activeName');
-  if(activeName.value != 'all' && 
-    activeName.value != 'mine'){
-    activeName.value = 'all';
+  if(activeName.value != 'upcoming' && 
+    activeName.value != 'ongoing' &&
+    activeName.value != 'finished'){
+    activeName.value = 'ongoing';
   }
 }catch(e){
-  activeName.value = 'all';
+  activeName.value = 'ongoing';
 }
 //update page size
 handleClick();
