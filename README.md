@@ -2,11 +2,35 @@
 
 Green-Dao is a web3 dao paltform for the public goods that make the world more green and sustainable.
 
- green daos
- green auctions
- green grants
- green votes
- green learnings
+There are five parts now for this dapp.
+
+ 1. green daos
+ 
+    (1). eveny body can create a green dao to some public good for the world. 
+    (2). you can create a public dao that means every one can join it.
+    (3). you can also create a private dao that means only the dao onwer can add dao members.
+    
+ 2. green auctions
+ 
+    (1). dao members can sell their erc721 tokens as an auction to earn some cryptos.
+    (2). both english auction and dutch auction are supported.
+    (3). the dao will receive the payment through the dao treassure contract, then they can create a vote to use the dao treassures.
+ 
+ 3. green grants
+    
+    (1). dao members also can create a grant to build a project for the public good to make the world green.
+    (2). eveny body can send some crpptos to support the grant.
+    (3). the dao will receive the payment through the dao treassure contract, then they can create a vote to use the dao treassures.
+ 
+ 4. green votes
+
+    (1). manage the dao treassures. all the cryptos received from the auctions and grants will send to this contract.
+    (2). the dao members can create a vote to withdraw the dao treassure for the public goods or vote to do something else.
+
+ 5. green learnings
+
+    (1). the dao members can publish some learning resources for public goods to make the world green.
+    (2). the more learning resources will make the dao more reliable for the people.
  
  ***How to run:***
  
