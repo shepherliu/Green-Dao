@@ -70,7 +70,7 @@ There are five parts now for this dapp.
         
  6. see our daemon website: https://green-dao-orcin.vercel.app
 
- 7. see our daemon video: 
+ 7. see our daemon video: https://youtu.be/KZevWy_uPI8
  
  ***Future Plans:***
  
