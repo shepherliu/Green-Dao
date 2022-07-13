@@ -157,7 +157,7 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
 
         require(bytes(name).length > 0, "invalid vote name!");
 
-        require(endTime <= block.timestamp + 86400, "invalid end time!");
+        require(endTime >= block.timestamp + 86400, "invalid end time!");
 
         _voteInfos[voteId].voteName = name;
 

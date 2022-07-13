@@ -139,7 +139,7 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
 
         require(bytes(name).length > 0, "invalid grant name!");
 
-        require(endTime <= block.timestamp + 86400, "invalid end time!");
+        require(endTime >= block.timestamp + 86400, "invalid end time!");
 
         _grantInfos[grantId].grantName = name;
 
