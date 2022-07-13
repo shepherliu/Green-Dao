@@ -286,12 +286,6 @@
                   <span>{{info.voteDesc}}</span>
                 </el-row>
                 <el-row style="float: right;">
-                  <span style="float: right;">Request Token: {{info.voteValue + ' ' + info.tokenSymbol}}</span>
-                </el-row>
-                <el-row style="float: right;">
-                  <span style="float: right;">Endtime: {{(new Date(info.endTime*1000)).toLocaleString()}}</span>
-                </el-row>
-                <el-row style="float: right;">
                   <el-progress
                     style="width: 220px;float: right;"
                     :text-inside="true"
@@ -312,6 +306,15 @@
                   >
                     <span>Against: {{info.voteAgainst + '/' + info.daoMembers}}</span>
                   </el-progress>
+                </el-row>
+                <el-row style="float: right;">
+                  <span style="float: right;">Request Token: {{info.voteValue + ' ' + info.tokenSymbol}}</span>
+                </el-row>
+                <el-row v-if="info.voteEnded === false && info.votePayed === false" style="float: right;">
+                  <span style="float: right;">Endtime: {{(new Date(info.endTime*1000)).toLocaleString()}}</span>
+                </el-row>
+                <el-row v-if="info.voteEnded === true || info.votePayed === true" style="float: right;">
+                  <span style="float: right;">Vote Result: {{info.voteSuccess ? 'pass' : 'fail'}}</span>
                 </el-row>
                 <el-row style="float: right;">
                   <el-link v-if="info.voteEnded === false && info.votePayed === false" type="primary" style="float: right;" @click="onVote(info.voteId, 'aggree')">Aggree</el-link>

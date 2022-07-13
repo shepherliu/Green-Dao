@@ -375,8 +375,20 @@
                 <el-row v-if="info.aucStatus === 0" style="float: right;">
                   <span>Starttime: {{(new Date(info.startTime*1000)).toLocaleString()}}</span>
                 </el-row>
-                <el-row v-if="info.aucStatus > 0" style="float: right;">
+                <el-row v-if="info.aucStatus === 1" style="float: right;">
                   <span>Endtime: {{(new Date(info.endTime*1000)).toLocaleString()}}</span>
+                </el-row>
+                <el-row v-if="info.aucStatus === 2" style="float: right;">
+                  <span>Auction Result: fail</span>
+                </el-row>
+                <el-row v-if="info.aucStatus === 3" style="float: right;">
+                  <span>Auction Result: success</span>
+                </el-row>
+                <el-row v-if="info.aucStatus === 4" style="float: right;">
+                  <span>Auction Result: success</span>
+                </el-row>
+                <el-row v-if="info.aucStatus === 5" style="float: right;">
+                  <span>Auction Result: fail</span>
                 </el-row>
                 <el-row style="float: right;">
                   <el-link type="success" style="float: right;" href="javascript:void(0);">

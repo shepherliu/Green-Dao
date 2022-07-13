@@ -251,6 +251,12 @@ export class GreenVote {
 			throw new Error("invalid grant end time!");
 		}		
 
+		if(amount > 0){
+			if(amount > await this.getDaoTreassure(daoId, token)){
+				throw new Error("invalid amount, large than the dao treassure balance!");
+			}
+		}
+
 		const contract = await this.getContract();
 
 		let value;
