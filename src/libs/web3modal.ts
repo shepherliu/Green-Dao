@@ -17,7 +17,7 @@ const getChainRpcInfos = () => {
 }
 
 export const uauthOptions: UAuthWeb3Modal.IUAuthOptions = {
-  clientID: '66d805ed-73b5-49fd-9cdd-7f1919537896',
+  clientID: '4a30c025-04ee-40f2-ae8c-e48dfc7af4ca',
   redirectUri: (window as any).location.origin,
   scope: 'openid wallet',
 }
