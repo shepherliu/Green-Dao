@@ -377,10 +377,10 @@
                   <el-link v-if="info.daoPublic && !info.daoIn && !info.isOwner" type="success" href="javascript:void(0);" @click="onJoinDao(info.daoId)">Join</el-link>
                   <el-link v-if="info.daoPublic && info.daoIn && !info.isOwner" type="success" href="javascript:void(0);" @click="onLeaveDao(info.daoId)">Leave</el-link>
                   <el-link v-if="!info.daoPublic && info.isOwner" type="success" href="javascript:void(0);" @click="onManageDao(info)">Manage</el-link>
-                  <el-link type="success" :href="redirectUrl(`?activeIndex=2&activeName=all&daoId=${info.daoId}`)">Learn</el-link>
-                  <el-link type="success" :href="redirectUrl(`?activeIndex=3&activeName=all&daoId=${info.daoId}`)">Auction</el-link>
-                  <el-link type="success" :href="redirectUrl(`?activeIndex=4&activeName=all&daoId=${info.daoId}`)">Grant</el-link>
-                  <el-link type="success" :href="redirectUrl(`?activeIndex=5&activeName=all&daoId=${info.daoId}`)">Vote</el-link>
+                  <el-link type="success" href="javascript:void(0);" @click="redirectUrl('2', info.daoId)">Learn</el-link>
+                  <el-link type="success" href="javascript:void(0);" @click="redirectUrl('3', info.daoId)">Auction</el-link>
+                  <el-link type="success" href="javascript:void(0);" @click="redirectUrl('4', info.daoId)">Grant</el-link>
+                  <el-link type="success" href="javascript:void(0);" @click="redirectUrl('5', info.daoId)">Vote</el-link>
                 </el-row>
               </el-card>
             </el-col>
@@ -505,10 +505,12 @@ const transactionExplorerUrl = (transaction:string) => {
 }
 
 //parse the redirect url
-const redirectUrl = (path:string) => {
-  const origin = (window as any).location.origin;
+const redirectUrl = (index:string, id:number) => {
 
-  return `${origin}/${path}`;
+  connectState.activeIndex.value = index;
+
+  tools.setUrlParamter('activeIndex', index);  
+  tools.setUrlParamter('daoId', id);
 }
 
 //on click to copy address
