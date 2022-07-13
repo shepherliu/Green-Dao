@@ -54,7 +54,7 @@ export class ERC20 {
 
 		const res = await contract.decimals();
 
-		return res.toNumber();
+		return res;
 	}
 
 	public totalSupply = async () => {
