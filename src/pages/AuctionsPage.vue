@@ -383,7 +383,7 @@
                     Current Price: {{getCurrentPrice(info).toPrecision(4) + ' ' + info.tokenSymbol}}
                   </el-link>
                   <el-link v-if="info.aucStatus === 0 || info.aucStatus === 1" type="primary" style="float: right;" @click="onBidAuction(info)">Bid</el-link>
-                  <el-link v-if="info.aucStatus === 3 || info.aucStatus === 4" type="primary" style="float: right;" @click="onClaimAuction(info.aucId)">Claim</el-link>
+                  <el-link v-if="info.aucStatus === 2 || info.aucStatus === 3" type="primary" style="float: right;" @click="onClaimAuction(info.aucId)">Claim</el-link>
                 </el-row>
               </el-card>
             </el-col>
@@ -768,11 +768,6 @@ const getGreenAuctionCount = async (aucStatus:number, onlyOwner:boolean) => {
     const res = await greenauction.getAuctionInfoById(indexs[i]);
     const erc721 = new ERC721(res.nftContract);
 
-    //canceled, skip it
-    if(res.aucStatus === 2){
-      continue;
-    }
-
     res.tokenSymbol = await getTokenCurencyName(res.payContract);
     res.nftUrl = await erc721.tokenURI(res.nftId);
     res.nftName = await erc721.name();
@@ -820,7 +815,7 @@ const handleClick = async () => {
     }else if(activeName.value === 'ongoing'){
       aucStatus = 1;
     }else{
-      aucStatus = 7;
+      aucStatus = 6;
     }
 
     await getGreenAuctionCount(aucStatus, onlyOwner);

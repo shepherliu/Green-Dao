@@ -10,12 +10,11 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 enum Status {
     UPCOMING, //0
     ONGOING, //1
-    CANCELED, //2   
-    FAILED, //3     
-    SUCCESS, //4
-    CLAIMED, //5
-    RETURNBACK, //6
-    FINISHED //7
+    FAILED, //2  
+    SUCCESS, //3
+    CLAIMED, //4
+    RETURNBACK, //5
+    FINISHED //6
 }
 
 enum AucType{
@@ -145,10 +144,7 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
         require(auc.status == Status.UPCOMING || auc.status == Status.ONGOING, "auction finished!");
 
         //check the auction owner
-        require(msg.sender == auc.nftOwner, "only owner allowed!");
-
-        //set auction to canceled;
-        _aucInfos[aucId].status = Status.CANCELED;           
+        require(msg.sender == auc.nftOwner, "only owner allowed!");         
 
         //transfer the nft to the owner
         ERC721(auc.nftContract).transferFrom(address(this), auc.nftOwner, auc.nftId);
@@ -161,6 +157,12 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
                 ERC20(auc.payContract).transferFrom(address(this), auc.bidAddress, auc.bidPrice);
             }
         }        
+
+        //delete auc info;
+        delete _aucInfos[aucId];  
+        
+        //burn token
+        _burn(aucId);
 
         return true;
     }

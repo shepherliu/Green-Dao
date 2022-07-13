@@ -70,7 +70,7 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
     event sendTreassure(uint256 daoId, uint256 voteId, address to, address token, uint256 amount);
 
     //send dao treassure when vote success
-    function _sendDaoTreassure(uint256 daoId, uint256 voteId, address to, address token, uint256 amount) internal nonReentrant returns (bool){
+    function _sendDaoTreassure(uint256 daoId, uint256 voteId, address to, address token, uint256 amount) internal returns (bool){
         require(_voteInfos[voteId].voteSuccess == true, "vote not success!");
         require(_daoTreassures[daoId][token] > amount, "invalid transfer amount!");        
 

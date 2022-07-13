@@ -711,22 +711,6 @@ const onClaimGrant = async (grantId: number) => {
   }
 }
 
-//on click for prev page
-const onHandlePrev = async () => {
-  if(pageCount.value > 0){
-    pageCount.value--;
-  }
-  handleClick();
-}
-
-//on click for next page
-const onHandleNext = async () => {
-  if(hasMore.value){
-    pageCount.value++;
-  }
-  handleClick();
-}
-
 //get green grant infos by page size and page count
 const getGreenGrantCount = async (onlyOwner:boolean) => {
   daoId.value = getDaoId();
@@ -761,6 +745,22 @@ const getGreenGrantCount = async (onlyOwner:boolean) => {
   }
 
   greenGrantList.value = infoList;
+}
+
+//on click for prev page
+const onHandlePrev = async () => {
+  if(pageCount.value > 0){
+    pageCount.value--;
+  }
+  handleClick();
+}
+
+//on click for next page
+const onHandleNext = async () => {
+  if(hasMore.value){
+    pageCount.value++;
+  }
+  handleClick();
 }
 
 //handle page refresh
