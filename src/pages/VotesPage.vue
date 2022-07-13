@@ -607,14 +607,19 @@ const getGreenVoteCount = async (onlyOwner:boolean) => {
     res.tokenSymbol = await getTokenCurencyName(res.voteToken);
     res.isOwner = res.voteOwner.toLowerCase() === connectState.userAddr.value.toLowerCase();
 
-    const daoInfo = await greendao.getDaoInfoById(res.daoId);
-    res.daoName = daoInfo.daoName;
-    res.daoAvatar = daoInfo.daoAvatar;
-    res.daoWebsite = daoInfo.daoWebsite;
-    res.daoDesc = daoInfo.daoDesc;
-    res.daoOwner = daoInfo.daoOwner;
-    res.daoPublic = daoInfo.daoPublic;
-    res.daoMembers = daoInfo.daoMembers;
+    //if dao not exists, skip
+    try{
+      const daoInfo = await greendao.getDaoInfoById(res.daoId);
+      res.daoName = daoInfo.daoName;
+      res.daoAvatar = daoInfo.daoAvatar;
+      res.daoWebsite = daoInfo.daoWebsite;
+      res.daoDesc = daoInfo.daoDesc;
+      res.daoOwner = daoInfo.daoOwner;
+      res.daoPublic = daoInfo.daoPublic;
+      res.daoMembers = daoInfo.daoMembers;
+    }catch(e){
+      continue;
+    }
 
     infoList.push(res);
   }
