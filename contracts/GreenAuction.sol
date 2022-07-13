@@ -160,7 +160,6 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
 
         //delete auc info;
         delete _aucInfos[aucId];  
-        
         //burn token
         _burn(aucId);
 
@@ -210,6 +209,9 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
                 //set status to failed
                 _aucInfos[aucId].status = Status.FAILED;
             }
+
+            //set endtime to current time
+            _aucInfos[aucId].endTime = block.timestamp;
         }      
 
         //set new highest bid price and bid address

@@ -44,9 +44,6 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
     //vote infos
     mapping(uint256 => VoteInfo) private _voteInfos;
 
-    //vote names
-    mapping(string => bool) private _voteNames;    
-
     //contract owner
     address private _owner;
 
@@ -146,8 +143,6 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
 
         require(_voteInfos[voteId].endTime > block.timestamp && _voteInfos[voteId].votePayed == false, "vote ended!");
 
-        //delete grant name
-        delete _voteNames[_voteInfos[voteId].voteName];
         //delete grant info
         delete _voteInfos[voteId];
         //burn token
@@ -162,13 +157,9 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
 
         require(bytes(name).length > 0, "invalid vote name!");
 
-        require(endTime >= block.timestamp + 86400, "invalid end time!");
+        require(endTime <= block.timestamp + 86400, "invalid end time!");
 
-        if(_voteNames[name] == false){
-            delete _voteNames[_voteInfos[voteId].voteName];
-            _voteNames[name] = true;
-            _voteInfos[voteId].voteName = name;
-        }
+        _voteInfos[voteId].voteName = name;
 
         if(bytes(desc).length > 0){
             _voteInfos[voteId].voteDesc = desc;

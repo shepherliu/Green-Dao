@@ -34,10 +34,7 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
     Counters.Counter private _grantId;
 
     //grant infos
-    mapping(uint256 => GrantInfo) private _grantInfos;
-
-    //grant names
-    mapping(string => bool) private _grantNames;   
+    mapping(uint256 => GrantInfo) private _grantInfos; 
 
     //owner address
     address private _owner;
@@ -121,9 +118,6 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
             }
         }
 
-        //delete grant name
-        delete _grantNames[_grantInfos[grantId].grantName];
-
         //delete grant info
         delete _grantInfos[grantId];        
 
@@ -145,13 +139,9 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
 
         require(bytes(name).length > 0, "invalid grant name!");
 
-        require(endTime >= block.timestamp + 86400, "invalid end time!");
+        require(endTime <= block.timestamp + 86400, "invalid end time!");
 
-        if(_grantNames[name] == false){
-            delete _grantNames[_grantInfos[grantId].grantName];
-            _grantNames[name] = true;
-            _grantInfos[grantId].grantName = name;
-        }
+        _grantInfos[grantId].grantName = name;
 
         if(bytes(desc).length > 0){
             _grantInfos[grantId].grantDesc = desc;

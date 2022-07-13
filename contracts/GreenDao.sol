@@ -51,6 +51,8 @@ contract GreenDao is ERC721Enumerable, ERC721URIStorage {
 
     //mint nft as a new dao
     function mint(string memory name, string memory desc, string memory website, string memory url, bool isPublic) public returns (uint256) {
+        require(_daoNames[name] == false, "name exists!");
+
         _daoId.increment();
         uint256 newId = _daoId.current();
         //mint nft as a new dao
