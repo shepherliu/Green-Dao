@@ -638,6 +638,8 @@ const confirmDaoMemberUpdate = async () => {
         element.alertMessage("invalid operator type!");
       }
 
+      handleClick();
+
   }catch(e){
     element.alertMessage(e);
   }finally{

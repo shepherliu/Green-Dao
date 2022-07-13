@@ -244,6 +244,11 @@ export class GreenDao {
 			throw new Error("invalid dao id!");
 		}
 
+		const check = await this.checkInDao(daoId, user);
+		if(check === true){
+			throw new Error("already join the dao!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.joinDao(daoId, user);
@@ -257,6 +262,11 @@ export class GreenDao {
 		if(daoId <= 0){
 			throw new Error("invalid dao id!");
 		}
+
+		const check = await this.checkInDao(daoId, user);
+		if(check === false){
+			throw new Error("already leave the dao!");
+		}		
 
 		const contract = await this.getContract();
 

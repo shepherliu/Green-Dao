@@ -689,6 +689,8 @@ const onSupportGrant = async (grantInfo:any) => {
       connectState.transactions.value.unshift(tx);
       connectState.transactionCount.value++;
       const msg = `<div><span>Support the grant success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+
+      handleClick();
     }catch(e){
       element.alertMessage(e);
     }

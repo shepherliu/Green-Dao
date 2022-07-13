@@ -725,6 +725,8 @@ const onBidAuction = async (auctionInfo:any) => {
       connectState.transactions.value.unshift(tx);
       connectState.transactionCount.value++;
       const msg = `<div><span>Bid price for the auction success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
+
+      handleClick();
     }catch(e){
       element.alertMessage(e);
     }
