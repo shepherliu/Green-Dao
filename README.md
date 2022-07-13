@@ -18,7 +18,9 @@ There are five parts now for this dapp.
     
     (2). both english auction and dutch auction are supported.
     
-    (3). the dao will receive the payment through the dao treassure contract, then they can create a vote to use the dao treassures.
+    (3). both blockchain native token and erc20 tokens are supported as the pay token.
+    
+    (4). the dao will receive the payment through the dao treassure contract, then they can create a vote to use the dao treassures.
  
  3. green grants
     
@@ -26,7 +28,9 @@ There are five parts now for this dapp.
     
     (2). eveny body can send some crpptos to support the grant.
     
-    (3). the dao will receive the payment through the dao treassure contract, then they can create a vote to use the dao treassures.
+    (3). both blockchain native token and erc20 tokens are supported as the pay token.
+    
+    (4). the dao will receive the payment through the dao treassure contract, then they can create a vote to use the dao treassures.
  
  4. green votes
 
@@ -79,7 +83,11 @@ There are five parts now for this dapp.
  
  <img width="627" alt="snapshot" src="https://user-images.githubusercontent.com/84829620/178649437-73d63478-8307-4257-a70d-40226903f724.png">
  
- 1. All the functions are based on the dao, user must join one of the dao or create their own dao. Then they can publish auctions, grants, learnings and votes.
+ 1. All the functions are based on the dao, user must join one of the dao or create their own dao. Then they can publish auctions, grants, learnings and votes under the dao.
+ 
+ 2. The dao can be public that every one can join it. And it also can be private that only the owner can add dao members.
+
+ 3. All the payments of the dao will send to the vote contract address as the dao treassure address, the dao must create a vote to use their dao treassures.
  
 ***Resources:***
 
