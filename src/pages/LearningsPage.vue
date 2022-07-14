@@ -243,7 +243,7 @@
                       </template>
                       <h4>Name: {{info.daoName}}</h4>
                       <h4>Id: 
-                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoId}}</el-link>
+                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greendao.getAddress(),info.daoId)">{{info.daoId}}</el-link>
                       </h4>
                       <h4>Owner:
                         <el-link type="success" target="_blank" :href="addressExplorerUrl(info.daoOwner)">{{info.daoOwner}}</el-link>
@@ -255,7 +255,7 @@
                     <el-popover placement="bottom-start" :width="230" title="Learning Info">
                       <template #reference>
                         <span>
-                          <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenLearningContractAddress,info.learningId)">{{info.learningName}}
+                          <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenlearning.getAddress(),info.learningId)">{{info.learningName}}
                           </el-link>
                         </span>
                       </template>
@@ -328,9 +328,6 @@ const loadResourceStatus = ref(false);
 
 const greendao = new GreenDao();
 const greenlearning = new GreenLearning();
-
-const greenDaoContractAddress = (constant.greenDaoContractAddress as any)[connectState.chainId];
-const greenLearningContractAddress = (constant.greenLearningContractAddress as any)[connectState.chainId];
 
 const multiple = ref(false);
 const limits = ref(1);

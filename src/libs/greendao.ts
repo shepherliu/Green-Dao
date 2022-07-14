@@ -37,14 +37,22 @@ const abi = [
 export class GreenDao {
 	private contractAddress: string;
 
-	constructor(contractAddress:string = (greenDaoContractAddress as any)[connectState.chainId]){
+	constructor(contractAddress:string = ''){
 		this.contractAddress = contractAddress;
 	}
 
 	private getContract = async () => {
 		await networkConnect();
 
-		return new Contract(this.contractAddress, abi, connectState.signer);		
+		return new Contract(this.getAddress(), abi, connectState.signer);		
+	}	
+
+	public getAddress = () => {
+		if(this.contractAddress != ''){
+			return this.contractAddress;
+		}else{
+			return (greenDaoContractAddress as any)[connectState.chainId];
+		}
 	}	
 
 	public isApprovedForAll = async (owner:string, operator:string) => {

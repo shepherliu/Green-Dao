@@ -344,12 +344,12 @@
                 <template #header>
                   <el-popover placement="bottom-start" :width="230" title="Dao Info">
                     <template #reference>
-                      <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoName}}
+                      <el-link type="success" target="_blank" :href="tokenExplorerUrl(greendao.getAddress(),info.daoId)">{{info.daoName}}
                       </el-link>
                     </template>
                     <h4>Name: {{info.daoName}}</h4>
                     <h4>Id: 
-                      <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoId}}</el-link>
+                      <el-link type="success" target="_blank" :href="tokenExplorerUrl(greendao.getAddress(),info.daoId)">{{info.daoId}}</el-link>
                     </h4>
                     <h4>Owner:
                       <el-link type="success" target="_blank" :href="addressExplorerUrl(info.daoOwner)">{{info.daoOwner}}</el-link>
@@ -449,8 +449,6 @@ const loadStatus = ref(false);
 const loadAvatarStatus = ref(false);
 const loadWebsiteStatus = ref(false);
 const loadDrawerStatus = ref(false);
-
-const greenDaoContractAddress = (constant.greenDaoContractAddress as any)[connectState.chainId];
 
 const greenDaoList = ref(new Array());
 const hasMore = ref(false);

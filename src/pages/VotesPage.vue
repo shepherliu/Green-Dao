@@ -251,7 +251,7 @@
                       </template>
                       <h4>Name: {{info.daoName}}</h4>
                       <h4>Id: 
-                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoId}}</el-link>
+                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greendao.getAddress(),info.daoId)">{{info.daoId}}</el-link>
                       </h4>
                       <h4>Owner:
                         <el-link type="success" target="_blank" :href="addressExplorerUrl(info.daoOwner)">{{info.daoOwner}}</el-link>
@@ -263,7 +263,7 @@
                     <el-popover placement="bottom-start" :width="230" title="Vote Info">
                       <template #reference>
                         <span>
-                          <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenVoteContractAddress,info.voteId)">{{info.voteName}}
+                          <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenvote.getAddress(),info.voteId)">{{info.voteName}}
                           </el-link>
                         </span>
                       </template>
@@ -360,9 +360,6 @@ import { GreenVote } from "../libs/greenvote"
 
 const greendao = new GreenDao();
 const greenvote = new GreenVote();
-
-const greenDaoContractAddress = (constant.greenDaoContractAddress as any)[connectState.chainId];
-const greenVoteContractAddress = (constant.greenVoteContractAddress as any)[connectState.chainId];
 
 const activeName = connectState.activeName;
 const loadStatus = ref(false);

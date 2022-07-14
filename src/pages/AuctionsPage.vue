@@ -330,7 +330,7 @@
                       </template>
                       <h4>Name: {{info.daoName}}</h4>
                       <h4>Id: 
-                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoId}}</el-link>
+                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greendao.getAddress(),info.daoId)">{{info.daoId}}</el-link>
                       </h4>
                       <h4>Owner:
                         <el-link type="success" target="_blank" :href="addressExplorerUrl(info.daoOwner)">{{info.daoOwner}}</el-link>
@@ -348,7 +348,7 @@
                         </span>
                       </template>
                       <h4>Auction Id:
-                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(info.greenAuctionContractAddress,info.aucId)">{{info.aucId}}</el-link>
+                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenauction.getAddress(),info.aucId)">{{info.aucId}}</el-link>
                       </h4>
                       <h4>Auction Type: {{info.acuType === 0 ? 'English Auction' : 'Dutch Auction'}}</h4>
                       <h4>Nft Name: {{info.nftName}}</h4>
@@ -437,9 +437,6 @@ import { GreenAuction } from "../libs/greenauction"
 
 const greendao = new GreenDao();
 const greenauction = new GreenAuction();
-
-const greenDaoContractAddress = (constant.greenDaoContractAddress as any)[connectState.chainId];
-const greenAuctionContractAddress = (constant.greenAuctionContractAddress as any)[connectState.chainId];
 
 const activeName = connectState.activeName;
 const loadStatus = ref(false);
@@ -715,7 +712,7 @@ const onBidAuction = async (auctionInfo:any) => {
 
     try{
       if(auctionInfo.payContract != zeroAddress){
-        const tx = await erc20.approve(greenAuctionContractAddress, value);
+        const tx = await erc20.approve(greenauction.getAddress(), value);
         connectState.transactions.value.unshift(tx);
         connectState.transactionCount.value++;
         const msg = `<div><span>Approve token success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;

@@ -280,7 +280,7 @@
                       </template>
                       <h4>Name: {{info.daoName}}</h4>
                       <h4>Id: 
-                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenDaoContractAddress,info.daoId)">{{info.daoId}}</el-link>
+                        <el-link type="success" target="_blank" :href="tokenExplorerUrl(greendao.getAddress(),info.daoId)">{{info.daoId}}</el-link>
                       </h4>
                       <h4>Owner:
                         <el-link type="success" target="_blank" :href="addressExplorerUrl(info.daoOwner)">{{info.daoOwner}}</el-link>
@@ -292,7 +292,7 @@
                     <el-popover placement="bottom-start" :width="230" title="Grant Info">
                       <template #reference>
                         <span>
-                          <el-link type="success" target="_blank" :href="tokenExplorerUrl(greenGrantContractAddress,info.grantId)">{{info.grantName}}
+                          <el-link type="success" target="_blank" :href="tokenExplorerUrl(greengrant.getAddress(),info.grantId)">{{info.grantName}}
                           </el-link>
                         </span>
                       </template>
@@ -369,9 +369,6 @@ const uploadWebsite = ref<UploadInstance>();
 
 const greendao = new GreenDao();
 const greengrant = new GreenGrant();
-
-const greenDaoContractAddress = (constant.greenDaoContractAddress as any)[connectState.chainId];
-const greenGrantContractAddress = (constant.greenGrantContractAddress as any)[connectState.chainId];
 
 const zeroAddress = '0x0000000000000000000000000000000000000000';
 const timeFormat = "YYYY/MM/DD hh:mm:ss";
@@ -679,7 +676,7 @@ const onSupportGrant = async (grantInfo:any) => {
 
     try{
       if(grantInfo.grantToken != zeroAddress){
-        const tx = await erc20.approve(greenGrantContractAddress, value);
+        const tx = await erc20.approve(greengrant.getAddress(), value);
         connectState.transactions.value.unshift(tx);
         connectState.transactionCount.value++;
         const msg = `<div><span>Approve token success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
