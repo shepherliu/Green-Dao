@@ -30,6 +30,7 @@ const abi = [
 	"function getLearningIndexsByPageCount(uint pageSize, uint pageCount, uint256 daoId, bool onlyOwner) public view returns(uint256[])",
 ];
 
+const zeroAddress = '0x0000000000000000000000000000000000000000';
 
 export class GreenLearning {
 	private contractAddress: string;
