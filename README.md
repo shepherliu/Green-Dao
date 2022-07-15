@@ -21,6 +21,8 @@ There are five parts now for this dapp.
     (3). both blockchain native token and erc20 tokens are supported as the pay token.
     
     (4). the dao will receive the payment through the dao treassure contract, then they can create a vote to use the dao treassures.
+    
+    (5). use chainlink keeper that can auto send the payment to the dao treassure contract when the auction finished.
  
  3. green grants
     
@@ -31,6 +33,8 @@ There are five parts now for this dapp.
     (3). both blockchain native token and erc20 tokens are supported as the pay token.
     
     (4). the dao will receive the payment through the dao treassure contract, then they can create a vote to use the dao treassures.
+    
+    (5). use chainlink keeper that can auto send the payment to the dao treassure contract when the grant finished.
  
  4. green votes
 
@@ -79,6 +83,18 @@ There are five parts now for this dapp.
  3. add smart contract marketplace that can auto execute green tasks. for example auto buy and burn the carbon emission tokens.
  4. ui/ux degsign for more user friendly.
  
+ ***How it use chainlink:***
+ 
+ 1. we use the chainlink keeper functions in our smart contracts, these smart contracts are Keepers-compatible Contracts:
+ 
+        contracts/GreenAuction.sol
+      
+        contracts/GreenGrant.sol
+ 
+ 2. the checkUpkeep function will check if the auction/grant ended or not.
+ 
+ 3. the performUpkeep function will automaticly execute the claim functions when the auction/grant is ended. And send the payment to the dao treassure contract, then set the auction/grant status to payed.
+ 
  ***How it works:***
  
  <img width="627" alt="snapshot" src="https://user-images.githubusercontent.com/84829620/178649437-73d63478-8307-4257-a70d-40226903f724.png">
@@ -103,27 +119,41 @@ getting started with Meter Network: https://docs.meter.io/developer-documentatio
 
 *2. Distributed Storage Resource Docs:*
 
-getting started wit IPFS & Filecoin: https://bitly.protocol.ai/IPFS_Filecoin_Get_Started
+getting started with IPFS & Filecoin: https://bitly.protocol.ai/IPFS_Filecoin_Get_Started
 
-getting started wit Web3Storage: https://web3.storage/docs/
+getting started with Web3Storage: https://web3.storage/docs/
 
-*3. Covalent Resource Docs:*
+*3. Chainlink Resource Docs*
+
+getting started with Chainlink: https://docs.chain.link/
+
+getting started with Chainlink Keeper: https://docs.chain.link/docs/chainlink-keepers/compatible-contracts/
+
+register Chainlink upkeep: https://docs.chain.link/docs/chainlink-keepers/register-upkeep/
+
+*4. Fluence Resource Docs*
+
+getting started with Fluence: https://doc.fluence.dev/docs/
+
+getting started with Fluence Examples: https://github.com/fluencelabs/examples 
+
+*5. Covalent Resource Docs:*
 
 getting started with Covalent: https://www.covalenthq.com/
 
 getting started with Covalent apis: https://www.covalenthq.com/docs/api/#/
 
-*4. Gitcoin Passport Resource Docs:*
+*6. Gitcoin Passport Resource Docs:*
 
 getting started with gitcoin passport: https://docs.passport.gitcoin.co/gitcoin-passport-sdk/getting-started
 
 github resources: https://github.com/gitcoinco/passport-sdk
 
-*5. Transak Docs:*
+*7. Transak Docs:*
 
 getting started wit Transak: https://integrate.transak.com/
 
-*6. Unstoppable Domains:*
+*8. Unstoppable Domains:*
 
 unstoppable Domains Resolution API: https://docs.alchemy.com/alchemy/enhanced-apis/unstoppable-domains-apis
 
@@ -135,7 +165,7 @@ how to resolve domains using direct blockchain call (without SDK): https://docs.
 
 crypto payments integration guide: https://docs.unstoppabledomains.com/send-and-receive-crypto-payments/crypto-payments
 
-*7. Smart contract Resource Docs:*
+*9. Smart contract Resource Docs:*
 
 online solidity compilier: https://chainide.com/, https://remix.ethereum.org/
 
@@ -143,11 +173,13 @@ getting started with ethers.js: https://docs.ethers.io/v5/
 
 getting started with solidity: https://docs.soliditylang.org/en/latest/
 
-*8. Fronted Resource Docs:*
+*10. Fronted Resource Docs:*
 
 getting started with Vue3: https://vuejs.org/guide/introduction.html
 
 getting started with Element Ui: https://element-plus.org/en-US/component/menu.html
+
+
 
 ***Contract Me:***
 
