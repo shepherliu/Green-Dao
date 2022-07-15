@@ -72,12 +72,10 @@ contract GreenLearning is ERC721Enumerable, ERC721URIStorage {
     }                 
 
     //update contracts address, only owner support
-    function updateContracts(address dao) public returns (bool){
-        require(msg.sender == _owner, "only owner allowed!");
+    function updateContracts(address dao) public {
+        require(msg.sender == _owner);
 
         _daoContract = dao;
-
-        return true;
     }        
 
     //mint nft as a new learning

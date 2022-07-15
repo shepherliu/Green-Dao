@@ -59,7 +59,6 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
     //init owner address and dao address
     constructor() ERC721("Green Vote", "GRVote") {
         _owner = msg.sender;
-        _daoContract = address(this);
     } 
 
     //events for receive and send tokens
@@ -69,7 +68,7 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
     //send dao treassure when vote success
     function _sendDaoTreassure(uint256 daoId, uint256 voteId, address to, address token, uint256 amount) internal returns (bool){
         require(_voteInfos[voteId].voteSuccess == true, "vote not success!");
-        require(_daoTreassures[daoId][token] > amount, "invalid transfer amount!");        
+        require(_daoTreassures[daoId][token] > amount, "invalid amount!");        
 
         _daoTreassures[daoId][token] -= amount;
 
@@ -85,21 +84,19 @@ contract GreenVote is ERC721Enumerable, ReentrancyGuard {
     }
 
     //update contracts address, only owner support
-    function updateContracts(address dao) public returns (bool){
-        require(msg.sender == _owner, "only owner allowed!");
+    function updateContracts(address dao) public {
+        require(msg.sender == _owner);
 
         _daoContract = dao;
-
-        return true;
     }
 
     //add dao treassure
     function addDaoTreassure(uint256 daoId, address from, address token, uint256 amount) public payable nonReentrant returns (bool){
         if(token == address(0x0)){
-            require(msg.value > 0, "invalid transfer amount!");
+            require(msg.value > 0, "invalid amount!");
             amount = msg.value;
         }else{
-            require(amount > 0, "invalid transfer amount!");
+            require(amount > 0, "invalid amount!");
             ERC20(token).transferFrom(msg.sender, address(this), amount);
         }
 

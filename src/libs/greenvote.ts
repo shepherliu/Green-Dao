@@ -22,7 +22,7 @@ const abi = [
 	"function safeTransferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function transferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function setApprovalForAll(address operator, bool approved) public returns (bool)",
-	"function updateContracts(address dao) public returns (bool)",
+	"function updateContracts(address dao) public",
 	"function addDaoTreassure(uint256 daoId, address from, address token, uint256 amount) public payable returns (bool)",
 	"function mint(string name, string desc, uint256 daoId, uint256 value, address token, address to, uint endTime) public returns (uint256)",
 	"function burn(uint256 voteId) public returns (bool)",
@@ -198,6 +198,10 @@ export class GreenVote {
 	}
 
 	public updateContracts = async (dao:string) => {
+		if(dao === zeroAddress || dao === this.contractAddress){
+			throw new Error("invalid dao address!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.updateContracts(dao);

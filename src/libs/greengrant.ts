@@ -22,7 +22,7 @@ const abi = [
 	"function safeTransferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function transferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function setApprovalForAll(address operator, bool approved) public returns (bool)",
-	"function updateContracts(address dao, address treassure) public returns (bool)",
+	"function updateContracts(address dao, address treassure, address chainlink) public",
 	"function mint(string name, string desc, string git, string website, address token, uint256 daoId, uint endTime) public returns (uint256)",
 	"function burn(uint256 grantId) public payable returns (bool)",
 	"function updateGrant(uint256 grantId, string name, string desc, string git, string website, uint endTime) public returns (bool)",
@@ -197,10 +197,18 @@ export class GreenGrant {
 		return tx.hash;		
 	}
 
-	public updateContracts = async (dao:string, treassure:string) => {
+	public updateContracts = async (dao:string, treassure:string, chainlink:string) => {
+		if(dao === zeroAddress || dao === this.contractAddress){
+			throw new Error("invalid dao address!");
+		}
+
+		if(treassure === zeroAddress || dao === this.contractAddress){
+			throw new Error("invalid treassure address!");
+		}
+				
 		const contract = await this.getContract();
 
-		const tx = await contract.updateContracts(dao, treassure);
+		const tx = await contract.updateContracts(dao, treassure, chainlink);
 
 		await tx.wait();
 

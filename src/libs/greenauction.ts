@@ -23,7 +23,7 @@ const abi = [
 	"function safeTransferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function transferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function setApprovalForAll(address operator, bool approved) public returns (bool)",
-	"function updateContracts(address dao, address treassure) public returns (bool)",
+	"function updateContracts(address dao, address treassure, address chainlink) public",
 	"function mint(uint startTime, uint endTime, uint256 startPrice, uint256 reversePrice, uint256 priceDelta, uint8 aucType, uint256 daoId, uint256 nftId, address nftContract, address payContract) public returns (uint256)",
 	"function cancelAuction(uint256 aucId) public payable returns(bool)",
 	"function bidForNft(uint256 aucId, uint256 amount) public payable returns(bool)",
@@ -196,7 +196,7 @@ export class GreenAuction {
 		return tx.hash;		
 	}
 
-	public updateContracts = async (dao:string, treassure:string) => {
+	public updateContracts = async (dao:string, treassure:string, chainlink:string) => {
 		if(dao === zeroAddress || dao === this.contractAddress){
 			throw new Error("invalid dao address!");
 		}
@@ -207,7 +207,7 @@ export class GreenAuction {
 
 		const contract = await this.getContract();
 
-		const tx = await contract.updateContracts(dao, treassure);
+		const tx = await contract.updateContracts(dao, treassure, chainlink);
 
 		await tx.wait();
 

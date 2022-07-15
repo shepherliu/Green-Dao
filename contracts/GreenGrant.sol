@@ -55,20 +55,21 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInterf
     //treassure contract
     address private _treassureContract;     
 
+    //chainlink contract
+    address private _chainlinkContract;
+
     constructor() ERC721("Green Grant", "GRANT") {
         _owner = msg.sender;
-        _daoContract = address(this);
-        _treassureContract = address(this);
     } 
 
     //update contracts address, only owner support
-    function updateContracts(address dao, address treassure) public returns (bool){
-        require(msg.sender == _owner, "only owner allowed!");
+    function updateContracts(address dao, address treassure, address chainlink) public{
+        require(msg.sender == _owner);
 
         _daoContract = dao;
         _treassureContract = treassure;
+        _chainlinkContract = chainlink;
 
-        return true;
     }  
 
     //check up keep for chainlink
@@ -90,7 +91,7 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInterf
     function performUpkeep(bytes calldata performData) external override {
         uint aucId = abi.decode(performData, (uint));
 
-        _claimGrant(aucId);
+        claimGrant(aucId);
     }                
 
     //mint nft as a new grant
@@ -210,7 +211,8 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInterf
     }
 
     //claim the grant values to the treassure address
-    function _claimGrant(uint256 grantId) internal returns (bool){
+    function claimGrant(uint256 grantId) internal returns (bool){
+        require(msg.sender == ownerOf(grantId) || msg.sender == _chainlinkContract, "only owner alowed!");
         require(_grantInfos[grantId].endTime < block.timestamp, "grant not ended!");
         require(_grantInfos[grantId].grantPayed == false, "grant already claimed!");
 
@@ -228,13 +230,6 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInterf
         }
 
         return true;
-    }
-
-    //claim the grant values to the treassure address
-    function claimGrant(uint256 grantId) public payable nonReentrant returns (bool){
-        require(ownerOf(grantId) == msg.sender, "only owner alowed!");
-
-        return _claimGrant(grantId);
     }
 
     //get grant treassure

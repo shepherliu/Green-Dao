@@ -20,7 +20,7 @@ const abi = [
 	"function safeTransferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function transferFrom(address from, address to, uint256 tokenId) public returns (bool)",
 	"function setApprovalForAll(address operator, bool approved) public returns (bool)",
-	"function updateContracts(address dao) public returns (bool)",
+	"function updateContracts(address dao) public",
 	"function mint(string name, string desc, string url, uint256 daoId, uint8 learningType) public returns (uint256)",
 	"function burn(uint256 learningId) public returns (bool)",
 	"function likeTheLearning(uint256 learningId) public returns (bool)",
@@ -193,6 +193,10 @@ export class GreenLearning {
 	}
 
 	public updateContracts = async (dao:string) => {
+		if(dao === zeroAddress || dao === this.contractAddress){
+			throw new Error("invalid dao address!");
+		}
+
 		const contract = await this.getContract();
 
 		const tx = await contract.updateContracts(dao);

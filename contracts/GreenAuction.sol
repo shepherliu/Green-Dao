@@ -66,23 +66,23 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInte
     //treassure contract
     address private _treassureContract;
 
+    //chainlink contract
+    address private _chainlinkContract;
+
     //auctionInfo
     mapping(uint256 => AucInfo) private _aucInfos;      
 
     constructor() ERC721("Green Auction", "GRAUC") {
         _owner = msg.sender;
-        _daoContract = address(this);
-        _treassureContract = address(this);
     } 
 
     //update contracts address, only owner support
-    function updateContracts(address dao, address treassure) public returns (bool){
-        require(msg.sender == _owner, "only owner allowed!");
+    function updateContracts(address dao, address treassure, address chainlink) public {
+        require(msg.sender == _owner);
 
         _daoContract = dao;
         _treassureContract = treassure;
-
-        return true;
+        _chainlinkContract = chainlink;
     }  
 
     //check up keep for chainlink
@@ -104,7 +104,7 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInte
     function performUpkeep(bytes calldata performData) external override {
         uint aucId = abi.decode(performData, (uint));
 
-        _claimAuction(aucId);
+        claimAuction(aucId);
     }
 
     //mint as a nft, and start a new auction
@@ -245,8 +245,11 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInte
     }
 
     //claim the auction by the nft owner or the bid address
-    function _claimAuction(uint256 aucId) internal returns(bool){      
+    function claimAuction(uint256 aucId) internal returns(bool){      
         AucInfo memory auc = _getAucInfoById(aucId);
+
+        //only nft owner and bid address can be claimed
+        require(msg.sender == _aucInfos[aucId].bidAddress || msg.sender == _aucInfos[aucId].nftOwner || msg.sender == _chainlinkContract, "invalid user!");
 
         //only success status can be claimed
         require(auc.status == Status.SUCCESS || auc.status == Status.FAILED, "invalid status!");
@@ -285,14 +288,6 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInte
         }             
 
         return true;
-    }
-
-    //claim the auction by the nft owner or the bid address
-    function claimAuction(uint256 aucId) public nonReentrant payable returns(bool){      
-        //only nft owner and bid address can be claimed
-        require(msg.sender == _aucInfos[aucId].bidAddress || msg.sender == _aucInfos[aucId].nftOwner, "invalid user!");
-
-        return _claimAuction(aucId);
     }
 
     //get auction info by id

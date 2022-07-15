@@ -23,12 +23,16 @@ contract GreenFactory {
         _greenAuction = address(new GreenAuction());
         _greenGrant = address(new GreenGrant());
         _greenLearning = address(new GreenLearning());
+    }
+
+    function updateContracts(address chainlink) public {
+        require(msg.sender == _owner);
 
         _greenVote.call(abi.encodeWithSignature("updateContracts(address)", _greenDao));
 
-        _greenAuction.call(abi.encodeWithSignature("updateContracts(address,address)", _greenDao, _greenVote));
+        _greenAuction.call(abi.encodeWithSignature("updateContracts(address,address,address)", _greenDao, _greenVote, chainlink));
 
-        _greenGrant.call(abi.encodeWithSignature("updateContracts(address,address)", _greenDao, _greenVote));
+        _greenGrant.call(abi.encodeWithSignature("updateContracts(address,address,address)", _greenDao, _greenVote, chainlink));
         
         _greenLearning.call(abi.encodeWithSignature("updateContracts(address)", _greenDao));
     }
