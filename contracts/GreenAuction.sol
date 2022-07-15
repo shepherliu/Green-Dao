@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
+import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -49,7 +50,7 @@ interface GreenDao {
     function checkInDao(uint256 daoId, address user) external view returns (bool);
 }
 
-contract GreenAuction is ERC721Enumerable, ReentrancyGuard {   
+contract GreenAuction is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInterface {   
 
     using Counters for Counters.Counter;
 
@@ -82,7 +83,29 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
         _treassureContract = treassure;
 
         return true;
-    }    
+    }  
+
+    //check up keep for chainlink
+    function checkUpkeep(bytes calldata /* checkData */) external view override returns (bool upkeepNeeded, bytes memory) {
+       uint total = totalSupply();
+       for(uint i = 0; i < total; i++){
+           uint256 aucId = tokenByIndex(i);
+           AucInfo memory auc = _getAucInfoById(aucId);
+
+           if(auc.status == Status.FAILED || auc.status == Status.SUCCESS){
+               return (true, abi.encode(aucId));
+           }
+       }
+
+       return (false, abi.encode(0));
+    }
+
+    //perform up keep for chainlink
+    function performUpkeep(bytes calldata performData) external override {
+        uint aucId = abi.decode(performData, (uint));
+
+        _claimAuction(aucId);
+    }
 
     //mint as a nft, and start a new auction
     function mint(
@@ -222,14 +245,11 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
     }
 
     //claim the auction by the nft owner or the bid address
-    function claimAuction(uint256 aucId) public nonReentrant payable returns(bool){      
+    function _claimAuction(uint256 aucId) internal returns(bool){      
         AucInfo memory auc = _getAucInfoById(aucId);
 
         //only success status can be claimed
         require(auc.status == Status.SUCCESS || auc.status == Status.FAILED, "invalid status!");
-
-        //only nft owner and bid address can be claimed
-        require(msg.sender == auc.bidAddress || msg.sender == auc.nftOwner, "invalid user!");
 
         if(auc.status == Status.SUCCESS){
             //set auction status to success
@@ -265,6 +285,14 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard {
         }             
 
         return true;
+    }
+
+    //claim the auction by the nft owner or the bid address
+    function claimAuction(uint256 aucId) public nonReentrant payable returns(bool){      
+        //only nft owner and bid address can be claimed
+        require(msg.sender == _aucInfos[aucId].bidAddress || msg.sender == _aucInfos[aucId].nftOwner, "invalid user!");
+
+        return _claimAuction(aucId);
     }
 
     //get auction info by id

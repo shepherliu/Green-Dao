@@ -1,6 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
+import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -27,7 +28,7 @@ interface GreenDao {
     function checkInDao(uint256 daoId, address user) external view returns (bool);
 }
 
-contract GreenGrant is ERC721Enumerable, ReentrancyGuard {  
+contract GreenGrant is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInterface {  
     using Counters for Counters.Counter;
 
     //grant id
@@ -68,7 +69,29 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
         _treassureContract = treassure;
 
         return true;
-    }        
+    }  
+
+    //check up keep for chainlink
+    function checkUpkeep(bytes calldata /* checkData */) external view override returns (bool upkeepNeeded, bytes memory) {
+       uint total = totalSupply();
+       for(uint i = 0; i < total; i++){
+           uint256 grantId = tokenByIndex(i);
+           GrantInfo memory  info = _grantInfos[grantId];
+
+           if(info.endTime <= block.timestamp && !info.grantPayed){
+               return (true, abi.encode(grantId));
+           }
+       }
+
+       return (false, abi.encode(0));
+    }
+
+    //perform up keep for chainlink
+    function performUpkeep(bytes calldata performData) external override {
+        uint aucId = abi.decode(performData, (uint));
+
+        _claimGrant(aucId);
+    }                
 
     //mint nft as a new grant
     function mint(string memory name, string memory desc, string memory git, string memory website, address token, uint256 daoId, uint endTime) public returns (uint256){
@@ -161,7 +184,7 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
     }        
 
     //support the grant for the token amount
-    function supportGrant(uint256 grantId, uint256 amount)public payable nonReentrant returns (bool){
+    function supportGrant(uint256 grantId, uint256 amount) public payable nonReentrant returns (bool){
         require(_grantInfos[grantId].endTime > block.timestamp && _grantInfos[grantId].grantPayed == false, "grant ended!");
 
         address token = _grantInfos[grantId].grantToken;
@@ -187,8 +210,7 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
     }
 
     //claim the grant values to the treassure address
-    function claimGrant(uint256 grantId) public payable nonReentrant returns (bool){
-        require(ownerOf(grantId) == msg.sender, "only owner alowed!");
+    function _claimGrant(uint256 grantId) internal returns (bool){
         require(_grantInfos[grantId].endTime < block.timestamp, "grant not ended!");
         require(_grantInfos[grantId].grantPayed == false, "grant already claimed!");
 
@@ -206,6 +228,13 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard {
         }
 
         return true;
+    }
+
+    //claim the grant values to the treassure address
+    function claimGrant(uint256 grantId) public payable nonReentrant returns (bool){
+        require(ownerOf(grantId) == msg.sender, "only owner alowed!");
+
+        return _claimGrant(grantId);
     }
 
     //get grant treassure
