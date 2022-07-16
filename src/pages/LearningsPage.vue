@@ -271,7 +271,7 @@
                   <img v-if="info.learningType === 0" :src="info.learningUrl" style="width: 250px;height: 200px;" />
                   <audio v-if="info.learningType === 1" :src="info.learningUrl" controls preload style="width: 250px;height: 200px;" />
                   <video v-if="info.learningType === 2" :src="info.learningUrl" controls preload style="width: 250px;height: 200px;" />
-                  <embed v-if="info.learningType === 3" type="text/html" :src="info.learningUrl" style="width: 250px;height: 200px;" />
+                  <iframe frameborder="0" v-if="info.learningType === 3" sandbox="allow-scripts allow-same-origin allow-popups" :src="info.learningUrl" style="width: 250px;height: 200px;" />
                 </el-row>
                 <el-row style="margin-top: 5px;float: right;">
                   <el-link type="primary" style="float: right;" @click="onLikeLearning(info.learningId)">Likes : {{info.learningLikes}}</el-link>

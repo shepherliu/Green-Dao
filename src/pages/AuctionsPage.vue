@@ -370,7 +370,7 @@
                   </div>
                 </template>
                 <el-row>
-                  <embed type="text/html" :src="info.nftUrl" style="width: 250px;height: 200px;" />
+                  <iframe frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" :src="info.nftUrl" style="width: 250px;height: 200px;" />
                 </el-row>
                 <el-row v-if="info.aucStatus === 0" style="float: right;">
                   <span>Starttime: {{(new Date(info.startTime*1000)).toLocaleString()}}</span>
@@ -780,7 +780,12 @@ const getGreenAuctionCount = async (aucStatus:number, onlyOwner:boolean) => {
     const erc721 = new ERC721(res.nftContract);
 
     res.tokenSymbol = await getTokenCurencyName(res.payContract);
-    res.nftUrl = await erc721.tokenURI(res.nftId);
+    try{
+      res.nftUrl = await erc721.tokenURI(res.nftId);
+    }catch(e){
+      res.nftUrl = '';
+    }
+    
     res.nftName = await erc721.name();
     res.nftSymbol = await erc721.symbol();
     res.isOwner = res.nftOwner.toLowerCase() === connectState.userAddr.value.toLowerCase();
@@ -798,7 +803,6 @@ const getGreenAuctionCount = async (aucStatus:number, onlyOwner:boolean) => {
     }catch(e){
       continue;
     }
-
 
     infoList.push(res);
   }

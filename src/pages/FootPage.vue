@@ -2,7 +2,7 @@
 	<el-link type="success" @click="onClickTransak">Buy Cryptos @<el-image :src="transak" style="height: 25px;"/></el-link>
 	<el-drawer v-model="buyCrypto" direction="rtl" destroy-on-close @open="onTransakOpen">
       <template #default>
-        <embed type="text/html" :src="transakUrl" style="height:100%;width: 100%;" />		
+        <iframe frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" :src="transakUrl" style="height:100%;width: 100%;" />		
       </template>  
 	</el-drawer>
 	<div class="copyright mt-1" style="padding-bottom: 10px">

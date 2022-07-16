@@ -309,7 +309,7 @@
                   </div>
                 </template>
                 <el-row>
-                  <embed type="text/html" :src="info.grantWebsite" style="width: 250px;height: 200px;" />
+                  <iframe frameborder="0" sandbox="allow-scripts allow-same-origin allow-popups" :src="info.grantWebsite" style="width: 250px;height: 200px;" />
                 </el-row>
                 <el-row style="float: right;">
                   <span>Endtime: {{(new Date(info.endTime*1000)).toLocaleString()}}</span>
