@@ -28,13 +28,11 @@ contract GreenFactory {
     function updateContracts(address chainlink) public {
         require(msg.sender == _owner);
 
-        _greenVote.call(abi.encodeWithSignature("updateContracts(address)", _greenDao));
-
-        _greenAuction.call(abi.encodeWithSignature("updateContracts(address,address,address)", _greenDao, _greenVote, chainlink));
-
-        _greenGrant.call(abi.encodeWithSignature("updateContracts(address,address,address)", _greenDao, _greenVote, chainlink));
-        
-        _greenLearning.call(abi.encodeWithSignature("updateContracts(address)", _greenDao));
+        GreenVote(_greenVote).updateContracts(_greenDao);
+        GreenLearning(_greenLearning).updateContracts(_greenDao);
+        GreenAuction(_greenAuction).updateContracts(_greenDao, _greenVote, chainlink);
+        GreenGrant(_greenGrant).updateContracts(_greenDao, _greenVote, chainlink);
+    
     }
 
     function getFactoryInfo() public view returns(address,address,address,address,address,address){
