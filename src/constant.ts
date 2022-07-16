@@ -82,7 +82,7 @@ export const greenGrantContractAddress = {
 
 //green learning contract address
 export const greenLearningContractAddress = {
-  4: "0x8385AD71f3C869C56841ec11224971dd680d7686",
+  4: "0x9386EFeCCa5d0d9Cb7aDd2404F8130351d4e5d61",
   5: "0xF6A9b8A3aFB714478996D418E6AD75e23C0FA7E6",
   80001: "0xE6630439f0C0f2446092FfD1a2dd5FC623713E22",
 };

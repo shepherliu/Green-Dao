@@ -52,7 +52,6 @@ contract GreenLearning is ERC721Enumerable, ERC721URIStorage {
 
     constructor() ERC721("Green Learning", "GRLearn") {
         _owner = msg.sender;
-        _daoContract = address(this);
     } 
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal override (ERC721, ERC721Enumerable) {
