@@ -123,7 +123,6 @@
                 :teleported="false"
                 @change="onNetworkSelected"
                 filterable
-                disabled
               >
                 <el-option
                   v-for="item in networkOptions"
