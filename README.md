@@ -51,6 +51,7 @@ There are five parts now for this dapp.
  6. green chat
 
     (1). use the Fluence Project to build a browser to browser chat that help the online people comunicate with each other.
+    
     (2). people can save the chat history messages to the the filcoin.
  
  ***How to run:***
