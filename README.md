@@ -69,15 +69,21 @@ There are five parts now for this dapp.
  
         npm install
         
- 4. run it on https://localhost:8080/
+ 4. update fluence service if you modify the aqua/greenchat.aqua file
+
+       npm run compile-aqua
+
+       sed -i "" "s/let script =/const script =/g" ./src/\_aqua/greenchat.ts
+
+ 5. run it on https://localhost:8080/
 
         npm run serve
         
- 5. build it for production
+ 6. build it for production
  
         npm run build
         
- 6. see our daemon website: https://green-dao-orcin.vercel.app
+ 7. see our daemon website: https://green-dao-orcin.vercel.app
 
        build on blockchains now: 
 
@@ -87,7 +93,7 @@ There are five parts now for this dapp.
 
               polygon mumbai network
 
- 7. see our daemon video: https://youtu.be/KZevWy_uPI8
+ 8. see our daemon video: https://youtu.be/KZevWy_uPI8
  
  ***Future Plans:***
  

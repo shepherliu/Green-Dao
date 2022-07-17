@@ -100,7 +100,16 @@ export const makeFileObject = (filename:string, fileType:string, content:string)
 
   const file = new File([blob], filename);
 
-  file.raw = file;
+  const rawFile = {
+    name: file.name,
+    size: file.size,
+    type: file.type,
+    webkitRelativePath: file.webkitRelativePath,
+    text: file.text,
+    stream: file.stream,
+    slice: file.slice,
+    arrayBuffer: file.arrayBuffer,
+  };
 
-  return file;
+  return rawFile;
 }
