@@ -296,7 +296,6 @@ const onChatDrawerOpen = async () => {
       "method": "GET",
       "credentials": "omit",
       "redirect": "follow",
-      "credentials": "omit",
     });
   
     if (res.status >= 200 && res.status <= 299){
