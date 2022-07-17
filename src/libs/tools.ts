@@ -93,3 +93,14 @@ export const setUrlParamter = (name:string, value:string) => {
 
   (window as any).history.pushState(null, null, newUrl);
 }
+
+//make file object
+export const makeFileObject = (filename:string, fileType:string, content:string) => {
+  const blob = new Blob([content], { type: fileType })
+
+  const file = new File([blob], filename);
+
+  file.raw = file;
+
+  return file;
+}

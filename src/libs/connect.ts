@@ -34,6 +34,10 @@ export const connectState = {
   chainChanged: async () => {},
   transactions: ref(new Array()),
   transactionCount: ref(0),
+  fluenceId: '',
+  fluenceRelayId: '',
+  fluenceChatMessages: ref(new Array()),
+  fluenceChatNewMessages: ref(new Array()),
 };
 
 //detect currency

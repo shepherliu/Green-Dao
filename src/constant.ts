@@ -87,6 +87,13 @@ export const greenLearningContractAddress = {
   80001: "0xE6630439f0C0f2446092FfD1a2dd5FC623713E22",
 };
 
+//green chat contract address
+export const greenChatContractAddress = {
+  4: "0x70ee0B3123ec846eD7bb71b1E233a09458D47F2c",
+  5: "0xa49f29884d40e17ca2108D3367359a61ddb8E369",
+  80001: "0x62c87Ba81268B5A77cBb9356813aC35302DfB8cf",
+}
+
 //token List
 export const tokenList = {
   1: ['ETH'],

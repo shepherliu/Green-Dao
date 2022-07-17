@@ -47,6 +47,11 @@ There are five parts now for this dapp.
     (1). the dao members can publish some learning resources for public goods to make the world green.
     
     (2). the more learning resources will make the dao more reliable for the people.
+
+ 6. green chat
+
+    (1). use the Fluence Project to build a browser to browser chat that help the online people comunicate with each other.
+    (2). people can save the chat history messages to the the filcoin.
  
  ***How to run:***
  
@@ -74,6 +79,14 @@ There are five parts now for this dapp.
         
  6. see our daemon website: https://green-dao-orcin.vercel.app
 
+       build on blockchains now: 
+
+              rinkeby test network
+
+              goerli test network
+
+              polygon mumbai network
+
  7. see our daemon video: https://youtu.be/KZevWy_uPI8
  
  ***Future Plans:***
@@ -81,7 +94,8 @@ There are five parts now for this dapp.
  1. add page to show dao treassure balance and track the event log of the use of dao treassure.
  2. integrated with the gitcoin passport identity platform to verify the dao members identities.
  3. add smart contract marketplace that can auto execute green tasks. for example auto buy and burn the carbon emission tokens.
- 4. ui/ux degsign for more user friendly.
+ 4. more functions upgrade to the green chat using fluence project. such as optimize the user check online and add function to send message to offline people.
+ 5. ui/ux degsign for more user friendly.
  
  ***How it use chainlink:***
  

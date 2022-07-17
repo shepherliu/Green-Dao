@@ -26,6 +26,7 @@
         <el-menu-item index="3">Auctions</el-menu-item>
         <el-menu-item index="4">Grants</el-menu-item>
         <el-menu-item index="5">Votes</el-menu-item>
+        <el-menu-item index="6">Chats</el-menu-item>
       </el-menu>
     </el-col>
     <!-- notify component -->
@@ -450,7 +451,8 @@ try{
     activeIndex.value != '2' && 
     activeIndex.value != '3' &&
     activeIndex.value != '4' &&
-    activeIndex.value != '5'){
+    activeIndex.value != '5' &&
+    activeIndex.value != '6'){
     activeIndex.value = '1';
   }
 }catch(e){
