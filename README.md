@@ -71,9 +71,9 @@ There are five parts now for this dapp.
         
  4. update fluence service if you modify the aqua/greenchat.aqua file
 
-       npm run compile-aqua
+        npm run compile-aqua
 
-       sed -i "" "s/let script =/const script =/g" ./src/\_aqua/greenchat.ts
+        sed -i "" "s/let script =/const script =/g" ./src/\_aqua/greenchat.ts
 
  5. run it on https://localhost:8080/
 
