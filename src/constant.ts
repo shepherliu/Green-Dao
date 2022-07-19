@@ -56,6 +56,7 @@ export const bobaTestContractAddress = "0xF5B97a4860c1D81A1e915C40EcCB5E4a5E6b83
 export const greenDaoContractAddress = {
   4: "0x23fFb93fA95FA1234C6eB5d09C269DC9645eB5d3",
   5: "0x88013788939E2E0ffA612cEBb572C36b677FdA75",
+  2828: '0x67E843E19F82f0367105e1CB47E0608a6cbCD1c6',
   80001: "0x7a14d82Dd58681a69dc1949cDDeE10c591C193E3",
 };
 
@@ -63,6 +64,7 @@ export const greenDaoContractAddress = {
 export const greenVoteContractAddress = {
   4: "0x210dC51c17d3E76D4831f1d701e52FA3eace2477",
   5: "0xE24f5a927A7502Bf85766873A6D0D149b2b69755",
+  2828: '0x3F0298D5D908cAAe25F87096582cF4De3eDf4E3A',
   80001: "0xAfDFc17A327269d1aDeE4E737CA6b91B669ddfa8",
 };
 
@@ -70,6 +72,7 @@ export const greenVoteContractAddress = {
 export const greenAuctionContractAddress = {
   4: "0x90a9B5FD86D2A373BC1D6786f12f086B9F82F372",
   5: "0x250F881751805c169605aC2A95eF84ddf3cb87b7",
+  2828: '0xcc477D30287A3f27f9c70A57f71De9caA0b49c09',
   80001: "0x2cEaB43754E3d27cF6B965d75167656a988fB59C",
 };
 
@@ -77,6 +80,7 @@ export const greenAuctionContractAddress = {
 export const greenGrantContractAddress = {
   4: "0xa70386D4291fD2A3640Ff9E692Fe5354E0016cCe",  
   5: "0x23c2cFb2B9cc9C68c7a91f1a017b7162446F3F54",
+  2828: '0x052a185E581514344657a4bDF3500865f5520503',
   80001: "0x7823Fd479e19569647B38449fe2A8AA1061Fef34",
 };
 
@@ -84,6 +88,7 @@ export const greenGrantContractAddress = {
 export const greenLearningContractAddress = {
   4: "0x9386EFeCCa5d0d9Cb7aDd2404F8130351d4e5d61",
   5: "0xF6A9b8A3aFB714478996D418E6AD75e23C0FA7E6",
+  2828: '0xcC5E3F778D10b0dA5a8cA99d312798188c120F1a',
   80001: "0xE6630439f0C0f2446092FfD1a2dd5FC623713E22",
 };
 
@@ -91,6 +96,7 @@ export const greenLearningContractAddress = {
 export const greenChatContractAddress = {
   4: "0x70ee0B3123ec846eD7bb71b1E233a09458D47F2c",
   5: "0xa49f29884d40e17ca2108D3367359a61ddb8E369",
+  2828: '0x9aD8d42FF933F684aa64455d4f18E20F24a4a5C2',
   80001: "0x62c87Ba81268B5A77cBb9356813aC35302DfB8cf",
 }
 
@@ -115,6 +121,7 @@ export const tokenList = {
   288: ['BOBA', 'ETH'],
   588: ['METIS', 'ETH'],
   1088: ['METIS', 'ETH'],
+  2828: ['LYXT'],
   4689: ['IOTX'],
   42161: ['ETH'],
   43114: ['AVAX'],
@@ -256,6 +263,13 @@ export const chainList = [
     rpcUrls: 'https://andromeda.metis.io/?owner=1088',
     blockExplorerUrls: 'https://andromeda-explorer.metis.io',
   },    
+  {
+    chainId: 2828,
+    chainName: 'KUKSO Test network',
+    nativeCurrency: 'LYXT',
+    rpcUrls: 'https://rpc.l16.lukso.network',
+    blockExplorerUrls: 'https://explorer.execution.l16.lukso.network',
+  },
   {
     chainId: 4689,
     chainName: 'IoTex Chain Mainnet',
