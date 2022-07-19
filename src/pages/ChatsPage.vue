@@ -86,7 +86,7 @@
             </thead>
             <tbody>
               <template v-for="info in chatToNewMessages" :key="info.from">
-                <tr v-if="info.to===userAddr.toLowerCase()">
+                <tr v-if="info.to===userAddr.toLowerCase()&&(searchAddress===''||searchAddress===info.from)">
                   <td style="width:400px">
                     <el-link type="success" target="_blank" :href="addressExplorerUrl(info.from)">{{info.from}}</el-link>
                     <el-icon @click="onClickToCopy(info.from)"><document-copy /></el-icon>
@@ -107,10 +107,12 @@
       </el-main>
       <el-footer>
         <div>
-          <el-button type="primary" style="margin-top: 10px;" @click="onHandlePrev">Prev
+          <el-button v-if="activeName==='chat'" type="primary" style="margin-top: 10px;" @click="onHandlePrev">Prev
           </el-button>
-          <el-button type="primary" style="margin-top: 10px;" @click="onHandleNext" :disabled="!hasMore">Next
-          </el-button>          
+          <el-button v-if="activeName==='chat'" type="primary" style="margin-top: 10px;" @click="onHandleNext" :disabled="!hasMore">Next
+          </el-button>     
+          <el-button v-if="activeName==='message'" type="primary" style="margin-top: 10px;" @click="onCleanNewMessages">Clean
+          </el-button>
       </div>
       </el-footer>
     </el-container>
@@ -337,6 +339,12 @@ const onChatDrawerOpen = async () => {
       }
     }
   }
+}
+
+//click to clean new messages
+const onCleanNewMessages = async () => {
+  searchAddress.value = '';
+  chatToMessageList.value = new Array();
 }
 
 //click to clean chat history
