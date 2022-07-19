@@ -43,7 +43,7 @@ export const connectFluence = async () => {
 					//push message to cache
 					connectState.fluenceChatMessages.value.push(info);
 
-					connectState.fluenceChatNewMessages.value.push(info);
+					connectState.fluenceChatNewMessages.value.unshift(info);
 
 					return [from, address, msg, timestamp];
 				},
