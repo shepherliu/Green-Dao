@@ -237,6 +237,8 @@ const onLoginChat = async () => {
       element.elMessage('success', msg, true);
 
       await onCheckUserOnline();
+
+      chatOnline.value = true;
     }catch(e){
       element.alertMessage(e);
     }finally{
@@ -262,7 +264,6 @@ const onCheckUserOnline = async () => {
     element.alertMessage("target user is not online now!");
   }else{
     element.elMessage('success', 'login success, you can chat with the user now!', true);
-    chatOnline.value = true;
   }
 
 }
