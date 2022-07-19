@@ -16,12 +16,12 @@
           <template #default>
             <template v-for="info in chatToMessageList" :key="info.timestamp">
               <el-card class="box-card" v-if="info.peer === true && info.from === chatToAddress.toLowerCase() && info.to === userAddr.toLowerCase()" style="float: left;width: 200px;color: #409EFF;">
-                <span style="float: left;">{{(new Date(info.timestamp)).toLocaleString()}}</span>
+                <span style="float: left;">{{(new Date(info.timestamp)).toLocaleString()}}</span><br/>
                 <span style="float: left;">{{info.msg}}</span>
               </el-card>
 
               <el-card class="box-card" v-if="info.peer === false && info.from === userAddr.toLowerCase() && info.to === chatToAddress.toLowerCase()" style="float: right;width: 200px;color: #67C23A;">
-                <span style="float: right;">{{(new Date(info.timestamp)).toLocaleString()}}</span>
+                <span style="float: right;">{{(new Date(info.timestamp)).toLocaleString()}}</span><br/>
                 <span style="float: right;">{{info.msg}}</span>
               </el-card>
 
@@ -260,7 +260,6 @@ const onCheckUserOnline = async () => {
 
   if(connectState.fluenceOnline[chatToPeerId.value] === false){
     element.alertMessage("target user is not online now!");
-    chatOnline.value = false;
   }else{
     element.elMessage('success', 'login success, you can chat with the user now!', true);
     chatOnline.value = true;
@@ -277,8 +276,8 @@ const onSendChatMessage = async () => {
   }
 
   chatToMessage.value = chatToMessage.value.trim();
-  if(chatToMessage.value === ''){
-    element.alertMessage("can not send empty message!");
+  if(chatToMessage.value.length < 3){
+    element.alertMessage("invalid !");
     return;
   }
 
