@@ -11,7 +11,7 @@
         </el-button>   
         <el-drawer v-model="showChatShowVisiable" direction="rtl" destroy-on-close @opened="onChatDrawerOpen">
           <template #header>
-            <h4>To: {{chatToAddress}}</h4>   
+            <h4>Chat With: {{chatToAddress}}</h4>   
           </template>
           <template #default>
             <template v-for="info in chatToMessageList" :key="info.timestamp">
@@ -204,55 +204,51 @@ const changeChatAddress = async (address:string, peerId:string = '') => {
   address = address.trim();
   peerId = peerId.trim();
 
+  const fluenceId = await greenchat.getPeerId(connectState.userAddr.value);
+
   if(peerId === ''){
     peerId = await greenchat.getPeerId(address);
-  }  
+  }
 
   chatToAddress.value = address;
   chatToPeerId.value = peerId;
 
   showChatShowVisiable.value = true;
 
-  const fluenceId = await greenchat.getPeerId(connectState.userAddr.value);
   if(fluenceId === '' || fluenceId != connectState.fluenceId){
     chatOnline.value = false;
+    onLoginChat();
   }else{
+    loadDrawerStatus.value = true;
     await onCheckUserOnline();
+    loadDrawerStatus.value = false;
   }
   
 }
 
 //on click to login chat
 const onLoginChat = async () => {
-  const fluenceId = await greenchat.getPeerId(connectState.userAddr.value);
+  try{
+    loadDrawerStatus.value = true;
 
-  if(fluenceId === '' || fluenceId != connectState.fluenceId){
-    try{
-      loadDrawerStatus.value = true;
-      const tx = await greenchat.updatePeerId();
+    const tx = await greenchat.updatePeerId();
 
-      connectState.transactions.value.unshift(tx);
-      connectState.transactionCount.value++;
-      const msg = `<div><span>Update peerId success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
-      element.elMessage('success', msg, true);
+    connectState.transactions.value.unshift(tx);
+    connectState.transactionCount.value++;
 
-      await onCheckUserOnline();
-
-      chatOnline.value = true;
-    }catch(e){
-      element.alertMessage(e);
-    }finally{
-      loadDrawerStatus.value = false;
-    }
-  }else{
     await onCheckUserOnline();
+
+    chatOnline.value = true;
+  }catch(e){
+    element.alertMessage(e);
+  }finally{
+    loadDrawerStatus.value = false;
   }
 }
 
 //check user online or not
 const onCheckUserOnline = async () => {
   try{
-    loadDrawerStatus.value = true;
 
     checkOnline(chatToPeerId.value);
 
@@ -271,8 +267,6 @@ const onCheckUserOnline = async () => {
 
   }catch(e){
     element.alertMessage("target user is not online now!");
-  }finally{
-    loadDrawerStatus.value = false;
   }
 
 }
