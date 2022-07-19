@@ -31,7 +31,7 @@
             <div 
               style="flex: auto"
               v-loading="loadDrawerStatus" 
-              element-loading-text="Submitting..."
+              element-loading-text="Checking..."
               :element-loading-spinner="svg"
               element-loading-svg-view-box="-10, -10, 50, 50"
               element-loading-background="#ffffff"
@@ -251,19 +251,28 @@ const onLoginChat = async () => {
 
 //check user online or not
 const onCheckUserOnline = async () => {
-  checkOnline(chatToPeerId.value);
+  try{
+    loadDrawerStatus.value = true;
 
-  for(let i = 0; i < 100; i++){
-    await tools.sleep(100);
-    if(connectState.fluenceOnline[chatToPeerId.value] === true){
-      break;
+    checkOnline(chatToPeerId.value);
+
+    for(let i = 0; i < 100; i++){
+      await tools.sleep(100);
+      if(connectState.fluenceOnline[chatToPeerId.value] === true){
+        break;
+      }
     }
-  }
 
-  if(connectState.fluenceOnline[chatToPeerId.value] === false){
+    if(connectState.fluenceOnline[chatToPeerId.value] === false){
+      element.alertMessage("target user is not online now!");
+    }else{
+      element.elMessage('success', 'login success, you can chat with the user now!', true);
+    }    
+
+  }catch(e){
     element.alertMessage("target user is not online now!");
-  }else{
-    element.elMessage('success', 'login success, you can chat with the user now!', true);
+  }finally{
+    loadDrawerStatus.value = false;
   }
 
 }
