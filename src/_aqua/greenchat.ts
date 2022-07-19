@@ -18,7 +18,8 @@ import {
 
 export interface GreenChatDef {
     ping: (from: string, callParams: CallParams<'from'>) => string | Promise<string>;
-    send: (from: string, address: string, msg: string, callParams: CallParams<'from' | 'address' | 'msg'>) => string[] | Promise<string[]>;
+    reply: (from: string, callParams: CallParams<'from'>) => string | Promise<string>;
+    send: (from: string, address: string, msg: string, timestamp: string, callParams: CallParams<'from' | 'address' | 'msg' | 'timestamp'>) => string[] | Promise<string[]>;
 }
 export function registerGreenChat(service: GreenChatDef): void;
 export function registerGreenChat(serviceId: string, service: GreenChatDef): void;
@@ -55,6 +56,27 @@ export function registerGreenChat(...args: any) {
                     ]
                 }
             },
+            "reply" : {
+                "tag" : "arrow",
+                "domain" : {
+                    "tag" : "labeledProduct",
+                    "fields" : {
+                        "from" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    }
+                },
+                "codomain" : {
+                    "tag" : "unlabeledProduct",
+                    "items" : [
+                        {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        }
+                    ]
+                }
+            },
             "send" : {
                 "tag" : "arrow",
                 "domain" : {
@@ -69,6 +91,10 @@ export function registerGreenChat(...args: any) {
                             "name" : "string"
                         },
                         "msg" : {
+                            "tag" : "scalar",
+                            "name" : "string"
+                        },
+                        "timestamp" : {
                             "tag" : "scalar",
                             "name" : "string"
                         }
@@ -94,6 +120,108 @@ export function registerGreenChat(...args: any) {
 }
       
 // Functions
+ 
+
+export function reply(
+    targetPeerId: string,
+    targetRelayPeerId: string,
+    config?: {ttl?: number}
+): Promise<string>;
+
+export function reply(
+    peer: FluencePeer,
+    targetPeerId: string,
+    targetRelayPeerId: string,
+    config?: {ttl?: number}
+): Promise<string>;
+
+export function reply(...args: any) {
+
+    const script = `
+                    (xor
+                     (seq
+                      (seq
+                       (seq
+                        (seq
+                         (seq
+                          (seq
+                           (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                           (call %init_peer_id% ("getDataSrv" "targetPeerId") [] targetPeerId)
+                          )
+                          (call %init_peer_id% ("getDataSrv" "targetRelayPeerId") [] targetRelayPeerId)
+                         )
+                         (call -relay- ("op" "noop") [])
+                        )
+                        (call targetRelayPeerId ("op" "noop") [])
+                       )
+                       (xor
+                        (seq
+                         (seq
+                          (call targetPeerId ("GreenChat" "ping") [%init_peer_id%] res)
+                          (call targetRelayPeerId ("op" "noop") [])
+                         )
+                         (call -relay- ("op" "noop") [])
+                        )
+                        (seq
+                         (seq
+                          (call targetRelayPeerId ("op" "noop") [])
+                          (call -relay- ("op" "noop") [])
+                         )
+                         (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 1])
+                        )
+                       )
+                      )
+                      (xor
+                       (call %init_peer_id% ("callbackSrv" "response") [res])
+                       (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 2])
+                      )
+                     )
+                     (call %init_peer_id% ("errorHandlingSrv" "error") [%last_error% 3])
+                    )
+    `
+    return callFunction(
+        args,
+        {
+    "functionName" : "reply",
+    "arrow" : {
+        "tag" : "arrow",
+        "domain" : {
+            "tag" : "labeledProduct",
+            "fields" : {
+                "targetPeerId" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "targetRelayPeerId" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                }
+            }
+        },
+        "codomain" : {
+            "tag" : "unlabeledProduct",
+            "items" : [
+                {
+                    "tag" : "scalar",
+                    "name" : "string"
+                }
+            ]
+        }
+    },
+    "names" : {
+        "relay" : "-relay-",
+        "getDataSrv" : "getDataSrv",
+        "callbackSrv" : "callbackSrv",
+        "responseSrv" : "callbackSrv",
+        "responseFnName" : "response",
+        "errorHandlingSrv" : "errorHandlingSrv",
+        "errorFnName" : "error"
+    }
+},
+        script
+    )
+}
+
  
 
 export function ping(
@@ -203,6 +331,7 @@ export function send(
     targetRelayPeerId: string,
     address: string,
     msg: string,
+    timestamp: string,
     config?: {ttl?: number}
 ): Promise<string[]>;
 
@@ -212,6 +341,7 @@ export function send(
     targetRelayPeerId: string,
     address: string,
     msg: string,
+    timestamp: string,
     config?: {ttl?: number}
 ): Promise<string[]>;
 
@@ -227,14 +357,17 @@ export function send(...args: any) {
                           (seq
                            (seq
                             (seq
-                             (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
-                             (call %init_peer_id% ("getDataSrv" "targetPeerId") [] targetPeerId)
+                             (seq
+                              (call %init_peer_id% ("getDataSrv" "-relay-") [] -relay-)
+                              (call %init_peer_id% ("getDataSrv" "targetPeerId") [] targetPeerId)
+                             )
+                             (call %init_peer_id% ("getDataSrv" "targetRelayPeerId") [] targetRelayPeerId)
                             )
-                            (call %init_peer_id% ("getDataSrv" "targetRelayPeerId") [] targetRelayPeerId)
+                            (call %init_peer_id% ("getDataSrv" "address") [] address)
                            )
-                           (call %init_peer_id% ("getDataSrv" "address") [] address)
+                           (call %init_peer_id% ("getDataSrv" "msg") [] msg)
                           )
-                          (call %init_peer_id% ("getDataSrv" "msg") [] msg)
+                          (call %init_peer_id% ("getDataSrv" "timestamp") [] timestamp)
                          )
                          (call -relay- ("op" "noop") [])
                         )
@@ -243,7 +376,7 @@ export function send(...args: any) {
                        (xor
                         (seq
                          (seq
-                          (call targetPeerId ("GreenChat" "send") [%init_peer_id% address msg] res)
+                          (call targetPeerId ("GreenChat" "send") [%init_peer_id% address msg timestamp] res)
                           (call targetRelayPeerId ("op" "noop") [])
                          )
                          (call -relay- ("op" "noop") [])
@@ -287,6 +420,10 @@ export function send(...args: any) {
                     "name" : "string"
                 },
                 "msg" : {
+                    "tag" : "scalar",
+                    "name" : "string"
+                },
+                "timestamp" : {
                     "tag" : "scalar",
                     "name" : "string"
                 }

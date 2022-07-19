@@ -36,6 +36,7 @@ export const connectState = {
   transactionCount: ref(0),
   fluenceId: '',
   fluenceRelayId: '',
+  fluenceOnline: Object(),
   fluenceChatMessages: ref(new Array()),
   fluenceChatNewMessages: ref(new Array()),
 };

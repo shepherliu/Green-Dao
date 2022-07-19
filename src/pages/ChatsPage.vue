@@ -15,12 +15,12 @@
           </template>
           <template #default>
             <template v-for="info in chatToMessageList" :key="info.timestamp">
-              <el-card class="box-card" v-if="info.peer === true && (info.from === userAddr.toLowerCase() || info.to === userAddr.toLowerCase())" style="float: left;width: 200px;color: #409EFF;">
+              <el-card class="box-card" v-if="info.peer === true && info.from === chatToAddress.toLowerCase() && info.to === userAddr.toLowerCase()" style="float: left;width: 200px;color: #409EFF;">
                 <span style="float: left;">{{(new Date(info.timestamp)).toLocaleString()}}</span>
                 <span style="float: left;">{{info.msg}}</span>
               </el-card>
 
-              <el-card class="box-card" v-if="info.peer === false && (info.from === userAddr.toLowerCase() || info.to === userAddr.toLowerCase())" style="float: right;width: 200px;color: #67C23A;">
+              <el-card class="box-card" v-if="info.peer === false && info.from === userAddr.toLowerCase() && info.to === chatToAddress.toLowerCase()" style="float: right;width: 200px;color: #67C23A;">
                 <span style="float: right;">{{(new Date(info.timestamp)).toLocaleString()}}</span>
                 <span style="float: right;">{{info.msg}}</span>
               </el-card>
@@ -217,7 +217,7 @@ const changeChatAddress = async (address:string, peerId:string = '') => {
   if(fluenceId === '' || fluenceId != connectState.fluenceId){
     chatOnline.value = false;
   }else{
-    chatOnline.value = true;
+    await onCheckUserOnline();
   }
   
 }
@@ -236,44 +236,66 @@ const onLoginChat = async () => {
       const msg = `<div><span>Update peerId success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
       element.elMessage('success', msg, true);
 
-      chatOnline.value = true;
+      await onCheckUserOnline();
     }catch(e){
       element.alertMessage(e);
     }finally{
       loadDrawerStatus.value = false;
     }
   }else{
+    await onCheckUserOnline();
+  }
+}
+
+//check user online or not
+const onCheckUserOnline = async () => {
+  checkOnline(chatToPeerId.value);
+
+  for(let i = 0; i < 100; i++){
+    await tools.sleep(100);
+    if(connectState.fluenceOnline[chatToPeerId.value] === true){
+      break;
+    }
+  }
+
+  if(connectState.fluenceOnline[chatToPeerId.value] === false){
+    element.alertMessage("target user is not online now!");
+    chatOnline.value = false;
+  }else{
+    element.elMessage('success', 'login success, you can chat with the user now!', true);
     chatOnline.value = true;
   }
 
-  try{
-    const res = await checkOnline(chatToPeerId.value);
-    if(res === false){
-      element.alertMessage("user is not online now!");
-      return;
-    }
-  }catch(e){
-    element.alertMessage("user is not online now!");
-    return;
-  }
 }
 
 //on click to send message
 const onSendChatMessage = async () => {
-  chatToMessage.value = chatToMessage.value.trim();
-  if(chatToMessage.value === ''){
+  
+  if(connectState.fluenceOnline[chatToPeerId.value] === false){
+    element.alertMessage("target user is not online now!");
     return;
   }
+
+  chatToMessage.value = chatToMessage.value.trim();
+  if(chatToMessage.value === ''){
+    element.alertMessage("can not send empty message!");
+    return;
+  }
+
+  const timestamp = (new Date()).getTime();
 
   chatToMessageList.value.push({
     from: userAddr.value.toLowerCase(),
     to: chatToAddress.value.toLowerCase(),
     msg: chatToMessage.value,
-    timestamp: (new Date()).getTime(),
+    timestamp: timestamp,
     peer: false,
   });
 
-  const res = await sendMessage(chatToPeerId.value, userAddr.value, chatToMessage.value);
+  const res = await sendMessage(chatToPeerId.value, userAddr.value, chatToMessage.value, String(timestamp));
+
+  //reset chat message
+  chatToMessage.value = '';
 }
 
 //when chat drawer open
