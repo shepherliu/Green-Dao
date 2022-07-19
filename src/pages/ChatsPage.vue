@@ -497,7 +497,9 @@ const handleClick = async () => {
       pageCount.value = 0;
     }
 
-    await getGreenChatCount(searchAddress.value);
+    if(activeName.value === 'chat'){
+      await getGreenChatCount(searchAddress.value);
+    }
 
   }catch(e){
     greenChatList.value = new Array();
