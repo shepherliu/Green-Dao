@@ -108,6 +108,7 @@ export const makeFileObject = (filename:string, fileType:string, content:string)
     text: file.text,
     stream: file.stream,
     slice: file.slice,
+    raw: file,
     arrayBuffer: file.arrayBuffer,
   };
 
