@@ -94,22 +94,21 @@ export const setUrlParamter = (name:string, value:string) => {
   (window as any).history.pushState(null, null, newUrl);
 }
 
-//make file object
-export const makeFileObject = (filename:string, fileType:string, content:string) => {
-  const blob = new Blob([content], { type: fileType })
+class UploadFile extends Blob {
+  name:string = '';
+  webkitRelativePath:string='';
+}
 
-  const file = new File([blob], filename);
+//make file object
+export const makeFileObject = (filename:string, content:string, fileType:string = 'text/plain', webkitRelativePath:string = '') => {
+  
+  const file = new UploadFile([content], { type: fileType });
+  file.name = filename;
+  file.webkitRelativePath = webkitRelativePath;
 
   const rawFile = {
-    name: file.name,
-    size: file.size,
-    type: file.type,
-    webkitRelativePath: file.webkitRelativePath,
-    text: file.text,
-    stream: file.stream,
-    slice: file.slice,
-    raw: file,
-    arrayBuffer: file.arrayBuffer,
+    ...file,
+    raw:file,
   };
 
   return rawFile;

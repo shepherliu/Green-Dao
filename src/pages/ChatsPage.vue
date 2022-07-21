@@ -406,7 +406,7 @@ const onSaveChatHistory = async () => {
   const content = JSON.stringify(chatList);
   const contentType = 'application/json';
 
-  const file = tools.makeFileObject(name, contentType, content);
+  const file = tools.makeFileObject(name, content, contentType);
 
   const reference = await storage.uploadFile(file);
 
