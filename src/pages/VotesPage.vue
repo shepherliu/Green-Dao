@@ -353,6 +353,7 @@ import { connected, connectState } from "../libs/connect"
 import * as constant from "../constant"
 import * as element from "../libs/element"
 import * as tools from "../libs/tools"
+import { resolveName } from "../libs/resolution"
 
 import { ERC20 } from "../libs/erc20"
 import { GreenDao } from "../libs/greendao"
@@ -526,7 +527,8 @@ const confirmVoteUpdate = async () => {
       const msg = `<div><span>Update vote success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
       element.elMessage('success', msg, true);   
     }else{
-      const tx = await greenvote.mint(voteTitle.value, voteDescription.value, daoId.value, voteValue.value, voteToken.value, voteTo.value, endTime);
+      const newAddress = await resolveName(voteTo.value);
+      const tx = await greenvote.mint(voteTitle.value, voteDescription.value, daoId.value, voteValue.value, voteToken.value, newAddress, endTime);
       connectState.transactions.value.unshift(tx);
       connectState.transactionCount.value++;
       const msg = `<div><span>Create vote success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;

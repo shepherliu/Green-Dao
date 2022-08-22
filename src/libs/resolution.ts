@@ -10,7 +10,7 @@ export const resolveName = async (name:string) => {
   let address = null;
 
   try{
-  	//resolve by unstoppable
+    //resolve by unstoppable
     address = await resolution.addr(name, "ETH");
   }catch(e){
 
@@ -20,10 +20,10 @@ export const resolveName = async (name:string) => {
     }catch(e){
 
       try{
-      	//resolve by default provider
-      	address = await getDefaultProvider().resolveName(name);
+        //resolve by default provider
+        address = await getDefaultProvider().resolveName(name);
       }catch(e){
-      	address = null;
+        address = null;
       }
     }
   }

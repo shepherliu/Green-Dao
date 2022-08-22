@@ -420,6 +420,7 @@ import * as constant from "../constant"
 import * as tools from "../libs/tools"
 import * as storage from '../libs/storage'
 import * as element from "../libs/element"
+import { resolveName } from "../libs/resolution"
 import {GreenDao} from "../libs/greendao"
 
 const { proxy } = getCurrentInstance() as ComponentInternalInstance;
@@ -628,10 +629,12 @@ const confirmDaoMemberUpdate = async () => {
 
       loadDrawerStatus.value = true;
 
+      const newAddress = await resolveName(daoMemberAddress.value);
+
       if(daoMemberOperator.value === 'add'){
-        await onJoinDao(daoId.value, daoMemberAddress.value);
+        await onJoinDao(daoId.value, newAddress);
       }else if(daoMemberOperator.value === 'delete'){
-        await onLeaveDao(daoId.value, daoMemberAddress.value);
+        await onLeaveDao(daoId.value, newAddress);
       }else{
         element.alertMessage("invalid operator type!");
       }
