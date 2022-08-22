@@ -96,6 +96,10 @@ There are five parts now for this dapp.
 
  8. see our daemon video: https://youtu.be/KZevWy_uPI8
 
+ 9. see our daemon Integrating Login With Unstoppable: https://youtu.be/uHB7szEifoY
+
+ 10. see our daemon Integrating NFT Domain Resolution: https://youtu.be/eTm2cq5IP-o
+
  9. see our daemon video for green chat build with fluence project: https://youtu.be/8w2pv0gsNR4
  
  ***Future Plans:***
