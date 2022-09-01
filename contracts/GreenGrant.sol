@@ -211,7 +211,7 @@ contract GreenGrant is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInterf
     }
 
     //claim the grant values to the treassure address
-    function claimGrant(uint256 grantId) internal returns (bool){
+    function claimGrant(uint256 grantId) public returns (bool){
         require(msg.sender == ownerOf(grantId) || msg.sender == _chainlinkContract, "only owner alowed!");
         require(_grantInfos[grantId].endTime < block.timestamp, "grant not ended!");
         require(_grantInfos[grantId].grantPayed == false, "grant already claimed!");

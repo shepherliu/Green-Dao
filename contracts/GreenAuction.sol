@@ -245,7 +245,7 @@ contract GreenAuction is ERC721Enumerable, ReentrancyGuard, KeeperCompatibleInte
     }
 
     //claim the auction by the nft owner or the bid address
-    function claimAuction(uint256 aucId) internal returns(bool){      
+    function claimAuction(uint256 aucId) public returns(bool){      
         AucInfo memory auc = _getAucInfoById(aucId);
 
         //only nft owner and bid address can be claimed
