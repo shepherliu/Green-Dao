@@ -120,9 +120,11 @@ export const tokenList = {
   250: ['FTM'],
   288: ['BOBA', 'ETH'],
   588: ['METIS', 'ETH'],
+  1001: ['KLAY'],
   1088: ['METIS', 'ETH'],
   2828: ['LYXT'],
   4689: ['IOTX'],
+  8217: ['KLAY'],
   42161: ['ETH'],
   43114: ['AVAX'],
   80001: ['MATIC'],
@@ -218,8 +220,8 @@ export const chainList = [
     chainId: 100,
     chainName: "Gnosis Chain Mainnet",
     nativeCurrency: "xDAI",
-    rpcUrls: 'https://rpc.xdaichain.com',
-    blockExplorerUrls: 'https://blockscout.com/poa/xdai',
+    rpcUrls: 'https://rpc.gnosischain.com',
+    blockExplorerUrls: 'https://blockscout.com/xdai/mainnet',
   },
   {
     chainId: 128,
@@ -232,7 +234,7 @@ export const chainList = [
     chainId: 137,
     chainName: 'Polygon Chain Mainnet',
     nativeCurrency: 'MATIC',
-    rpcUrls: 'https://rpc-mainnet.matic.network',
+    rpcUrls: 'https://polygon-rpc.com',
     blockExplorerUrls: 'https://polygonscan.com',
   },  
   {
@@ -257,6 +259,13 @@ export const chainList = [
     blockExplorerUrls: 'https://stardust-explorer.metis.io',
   },
   {
+    chainId: 1001,
+    chainName: 'Klaytn Baobab Testnet',
+    nativeCurrency: 'KLAY',
+    rpcUrls: 'https://api.baobab.klaytn.net:8651',
+    blockExplorerUrls: 'https://www.klaytn.com/',
+  },      
+  {
     chainId: 1088,
     chainName: 'Metis Andromeda Mainnet',
     nativeCurrency: 'METIS',
@@ -269,7 +278,7 @@ export const chainList = [
     nativeCurrency: 'LYXT',
     rpcUrls: 'https://rpc.l16.lukso.network',
     blockExplorerUrls: 'https://explorer.execution.l16.lukso.network',
-  },
+  },  
   {
     chainId: 4689,
     chainName: 'IoTex Chain Mainnet',
@@ -277,6 +286,13 @@ export const chainList = [
     rpcUrls: 'https://babel-api.mainnet.iotex.io',
     blockExplorerUrls: 'https://iotexscan.io',
   },  
+  {
+    chainId: 8217,
+    chainName: 'Klaytn Cypress Mainnet',
+    nativeCurrency: 'KLAY',
+    rpcUrls: 'https://public-node-api.klaytnapi.com/v1/cypress',
+    blockExplorerUrls: 'https://scope.klaytn.com',
+  },    
   {
     chainId: 42161,
     chainName: 'Arbitrum Chain Mainnet',
