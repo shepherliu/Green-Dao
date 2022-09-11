@@ -58,6 +58,7 @@ export const greenDaoContractAddress = {
   5: "0x88013788939E2E0ffA612cEBb572C36b677FdA75",
   1001: "0xc8814e6358Cc29938DC47b5a1A0e417F3C9B3FF4",
   2828: '0x67E843E19F82f0367105e1CB47E0608a6cbCD1c6',
+  9001: '0x417eEffa6af9907103596168B93179D99BBeCF51',
   80001: "0x7a14d82Dd58681a69dc1949cDDeE10c591C193E3",
 };
 
@@ -67,6 +68,7 @@ export const greenVoteContractAddress = {
   5: "0xE24f5a927A7502Bf85766873A6D0D149b2b69755",
   1001: "0x850cb8117336eeeF5AA2eAE8623843A821725Ac7",
   2828: '0x3F0298D5D908cAAe25F87096582cF4De3eDf4E3A',
+  9001: '0xd50239e3BaCcA51C8d7f99A3A08a6D25feef971C',
   80001: "0xAfDFc17A327269d1aDeE4E737CA6b91B669ddfa8",
 };
 
@@ -76,6 +78,7 @@ export const greenAuctionContractAddress = {
   5: "0x250F881751805c169605aC2A95eF84ddf3cb87b7",
   1001: "0xf035Df6b019fa29081E85126480037b44238f912",
   2828: '0xcc477D30287A3f27f9c70A57f71De9caA0b49c09',
+  9001: '0x4CFb63d2C40fedc02f95938d326b3D21255E5e62',
   80001: "0x2cEaB43754E3d27cF6B965d75167656a988fB59C",
 };
 
@@ -85,6 +88,7 @@ export const greenGrantContractAddress = {
   5: "0x23c2cFb2B9cc9C68c7a91f1a017b7162446F3F54",
   1001: "0xBC2C5d2eCEd4823FE4eEB3296C337058893F4FC2",
   2828: '0x052a185E581514344657a4bDF3500865f5520503',
+  9001: '0x8edcDa958E12CC095EF84499455A0280FE35F4EA',
   80001: "0x7823Fd479e19569647B38449fe2A8AA1061Fef34",
 };
 
@@ -94,6 +98,7 @@ export const greenLearningContractAddress = {
   5: "0xF6A9b8A3aFB714478996D418E6AD75e23C0FA7E6",
   1001: "0x63009D3A71bC03EEdD6B03a364328d11c758a94a",
   2828: '0xcC5E3F778D10b0dA5a8cA99d312798188c120F1a',
+  9001: '0x5ADFCd8037DA1B4d309E075f8FB2CF20B2E3fB69',
   80001: "0xE6630439f0C0f2446092FfD1a2dd5FC623713E22",
 };
 
@@ -103,6 +108,7 @@ export const greenChatContractAddress = {
   5: "0xa49f29884d40e17ca2108D3367359a61ddb8E369",
   1001: "0x8a19Fe77193451Dc95f658e76dBEac95dC499f94",
   2828: '0x9aD8d42FF933F684aa64455d4f18E20F24a4a5C2',
+  9001: '0x1de8d4Bc27a8B9baB9b90c8561277B09f9cbf4BC',
   80001: "0x62c87Ba81268B5A77cBb9356813aC35302DfB8cf",
 }
 
@@ -131,6 +137,8 @@ export const tokenList = {
   2828: ['LYXT'],
   4689: ['IOTX'],
   8217: ['KLAY'],
+  9000: ['tEVMOS'],
+  9001: ['EVMOS'],
   42161: ['ETH'],
   43114: ['AVAX'],
   80001: ['MATIC'],
@@ -299,6 +307,20 @@ export const chainList = [
     rpcUrls: 'https://public-node-api.klaytnapi.com/v1/cypress',
     blockExplorerUrls: 'https://scope.klaytn.com',
   },    
+  {
+    chainId: 9000,
+    chainName: 'Evmos Chain Testnet',
+    nativeCurrency: 'tEVMOS',
+    rpcUrls: 'https://eth.bd.evmos.dev:8545',
+    blockExplorerUrls: 'https://evm.evmos.dev',
+  },
+  {
+    chainId: 9001,
+    chainName: 'Evmos Chain Mainnet',
+    nativeCurrency: 'EVMOS',
+    rpcUrls: 'https://eth.bd.evmos.org:8545',
+    blockExplorerUrls: 'https://mintscan.io/evmos',
+  },  
   {
     chainId: 42161,
     chainName: 'Arbitrum Chain Mainnet',
