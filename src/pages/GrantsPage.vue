@@ -358,6 +358,7 @@ import * as constant from "../constant"
 import * as element from "../libs/element"
 import * as tools from "../libs/tools"
 import * as storage from '../libs/storage'
+import * as passport from "../libs/passport"
 
 import { ERC20 } from "../libs/erc20"
 import { GreenDao } from "../libs/greendao"
@@ -442,6 +443,19 @@ const transactionExplorerUrl = (transaction:string) => {
     }
   }
   return transaction;
+}
+
+//check passport
+const checkPassport = async () => {
+  const pass = await passport.getPassport(connectState.userAddr.value);
+
+  if(pass.length === 0){
+    const msg = `<div><span>You need verify your account address </span><a href="https://passport.gitcoin.co" target="_blank">here</a><span> first!</span></div>`;
+
+    element.elMessage('warning', msg, true);  
+  }
+  
+  return pass.length > 0;
 }
 
 //get block chain native currency
@@ -585,6 +599,10 @@ const confirmGrantUpdate = async () => {
 
   try{
     loadDrawerStatus.value = true;
+
+    if(!await checkPassport()){
+      return;
+    }
 
     const endTime = new Date(grantEndTime.value).getTime()/1000;
 

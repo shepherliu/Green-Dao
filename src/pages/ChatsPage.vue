@@ -136,6 +136,7 @@ import { connected, connectState } from "../libs/connect"
 import * as constant from "../constant"
 import * as element from "../libs/element"
 import * as storage from '../libs/storage'
+import * as passport from "../libs/passport"
 import { checkOnline, sendMessage} from '../libs/fluence'
 
 const greenchat = new GreenChat();
@@ -201,8 +202,25 @@ const onClickToCopy = async (content:string) => {
   element.elMessage('success', 'Copy ' + content + ' to clipboard success.');     
 };
 
+//check passport
+const checkPassport = async () => {
+  const pass = await passport.getPassport(connectState.userAddr.value);
+
+  if(pass.length === 0){
+    const msg = `<div><span>You need verify your account address </span><a href="https://passport.gitcoin.co" target="_blank">here</a><span> first!</span></div>`;
+
+    element.elMessage('warning', msg, true);  
+  }
+  
+  return pass.length > 0;
+}
+
 //on click to chat with someone
 const changeChatAddress = async (address:string, peerId:string = '') => {
+  if(!await checkPassport()){
+    return;
+  }  
+
   address = address.trim();
   peerId = peerId.trim();
 

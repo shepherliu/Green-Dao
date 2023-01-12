@@ -353,6 +353,7 @@ import { connected, connectState } from "../libs/connect"
 import * as constant from "../constant"
 import * as element from "../libs/element"
 import * as tools from "../libs/tools"
+import * as passport from "../libs/passport"
 import { resolveName } from "../libs/resolution"
 
 import { ERC20 } from "../libs/erc20"
@@ -431,6 +432,19 @@ const transactionExplorerUrl = (transaction:string) => {
     }
   }
   return transaction;
+}
+
+//check passport
+const checkPassport = async () => {
+  const pass = await passport.getPassport(connectState.userAddr.value);
+
+  if(pass.length === 0){
+    const msg = `<div><span>You need verify your account address </span><a href="https://passport.gitcoin.co" target="_blank">here</a><span> first!</span></div>`;
+
+    element.elMessage('warning', msg, true);  
+  }
+  
+  return pass.length > 0;
 }
 
 //get block chain native currency
@@ -518,6 +532,10 @@ const confirmVoteUpdate = async () => {
   try{
     loadDrawerStatus.value = true;
 
+    if(!await checkPassport()){
+      return;
+    }
+
     const endTime = new Date(voteEndTime.value).getTime()/1000;
 
     if(voteId.value > 0){
@@ -573,6 +591,10 @@ const onVote = async (voteId:number, voteType:string) => {
   }
 
   try{
+    if(!await checkPassport()){
+      return;
+    }
+
     const tx = await greenvote.vote(voteId, status);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;

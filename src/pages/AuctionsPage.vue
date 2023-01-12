@@ -429,6 +429,7 @@ import { connected, connectState } from "../libs/connect"
 import * as constant from "../constant"
 import * as element from "../libs/element"
 import * as tools from "../libs/tools"
+import * as passport from "../libs/passport"
 
 import { ERC20 } from "../libs/erc20"
 import { ERC721 } from "../libs/erc721";
@@ -511,6 +512,19 @@ const transactionExplorerUrl = (transaction:string) => {
     }
   }
   return transaction;
+}
+
+//check passport
+const checkPassport = async () => {
+  const pass = await passport.getPassport(connectState.userAddr.value);
+
+  if(pass.length === 0){
+    const msg = `<div><span>You need verify your account address </span><a href="https://passport.gitcoin.co" target="_blank">here</a><span> first!</span></div>`;
+
+    element.elMessage('warning', msg, true);  
+  }
+  
+  return pass.length > 0;
 }
 
 //get block chain native currency
@@ -615,6 +629,10 @@ const confirmAuctionUpdate = async () => {
   try{
     loadDrawerStatus.value = true;
 
+    if(!await checkPassport()){
+      return;
+    }
+
     const startTime = new Date(auctionStartTime.value).getTime()/1000;
     const endTime = new Date(auctionEndTime.value).getTime()/1000;
 
@@ -668,6 +686,10 @@ const getCurrentPrice = (auctionInfo:any) => {
 
 //click to bid a price for the auction
 const onBidAuction = async (auctionInfo:any) => {
+  if(!await checkPassport()){
+    return;
+  }
+
   const currentPrice = getCurrentPrice(auctionInfo);
 
   const opts = {

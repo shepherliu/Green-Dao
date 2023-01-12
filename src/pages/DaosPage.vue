@@ -420,6 +420,7 @@ import * as constant from "../constant"
 import * as tools from "../libs/tools"
 import * as storage from '../libs/storage'
 import * as element from "../libs/element"
+import * as passport from "../libs/passport"
 import { resolveName } from "../libs/resolution"
 import {GreenDao} from "../libs/greendao"
 
@@ -518,6 +519,19 @@ const onClickToCopy = async (content:string) => {
   
   element.elMessage('success', 'Copy ' + content + ' to clipboard success.');     
 };
+
+//check passport
+const checkPassport = async () => {
+  const pass = await passport.getPassport(connectState.userAddr.value);
+
+  if(pass.length === 0){
+    const msg = `<div><span>You need verify your account address </span><a href="https://passport.gitcoin.co" target="_blank">here</a><span> first!</span></div>`;
+
+    element.elMessage('warning', msg, true);  
+  }
+  
+  return pass.length > 0;
+}
 
 //on website folder change
 const onChangeSelectWebsiteFolder = async (uploadFile: UploadFile, uploadFiles: UploadFiles) => {
@@ -692,6 +706,9 @@ const confirmDaoUpdate = async () => {
   try{
     loadDrawerStatus.value = true;
 
+    if(!await checkPassport()){
+      return;
+    }
 
     if(daoId.value > 0){
       const tx = await greendao.updateDao(daoId.value, daoName.value, daoDesc.value, daoWebsite.value, daoAvatarUrl.value);
@@ -736,6 +753,10 @@ const onDeleteGreenDao = async (daoId:number) => {
 //click to join a green dao
 const onJoinDao = async (daoId:number, address:string = connectState.userAddr.value) => {
   try{
+    if(!await checkPassport()){
+      return;
+    }
+
     const tx = await greendao.joinDao(daoId, address);
     connectState.transactions.value.unshift(tx);
     connectState.transactionCount.value++;
