@@ -31,7 +31,7 @@
             <div 
               style="flex: auto"
               v-loading="loadDrawerStatus" 
-              element-loading-text="Checking..."
+              element-loading-text="Waiting..."
               :element-loading-spinner="svg"
               element-loading-svg-view-box="-10, -10, 50, 50"
               element-loading-background="#ffffff"
@@ -261,23 +261,25 @@ const onLoginChat = async () => {
 
 //on click to send message
 const onSendChatMessage = async () => {
-  let peerId = '';
-  if(peerId === ''){
-    const publicKey = await greenchat.getPublicKey(chatToAddress.value);
-    const name = await w3name.parseName(publicKey);
-    if(name === null){
-      peerId = '';
-    }else{
-      try{
-        const vals = await w3name.resolveName(name);
-        peerId = (JSON.parse(vals)).fluenceId;
-      }catch(e){
+  try{
+    loadDrawerStatus.value = true;
+
+    let peerId = '';
+    if(peerId === ''){
+      const publicKey = await greenchat.getPublicKey(chatToAddress.value);
+      const name = await w3name.parseName(publicKey);
+      if(name === null){
         peerId = '';
+      }else{
+        try{
+          const vals = await w3name.resolveName(name);
+          peerId = (JSON.parse(vals)).fluenceId;
+        }catch(e){
+          peerId = '';
+        }
       }
     }
-  }
 
-  if(chatToPeerId.value !== peerId){
     chatToPeerId.value = peerId;  
 
     try{
@@ -300,28 +302,33 @@ const onSendChatMessage = async () => {
       element.alertMessage("target user is not online now!");
       return;
     }    
+
+    chatToMessage.value = chatToMessage.value.trim();
+    if(chatToMessage.value.length < 1){
+      element.alertMessage("invalid !");
+      return;
+    }
+
+    const timestamp = (new Date()).getTime();
+
+    chatToMessageList.value.push({
+      from: userAddr.value.toLowerCase(),
+      to: chatToAddress.value.toLowerCase(),
+      msg: chatToMessage.value,
+      timestamp: timestamp,
+      peer: false,
+    });
+
+    const res = await sendMessage(chatToPeerId.value, userAddr.value, chatToMessage.value, String(timestamp));
+
+    //reset chat message
+    chatToMessage.value = '';    
+  }catch(e){
+    loadDrawerStatus.value = false;
+  }finally{
+    loadDrawerStatus.value = false;
   }
 
-  chatToMessage.value = chatToMessage.value.trim();
-  if(chatToMessage.value.length < 1){
-    element.alertMessage("invalid !");
-    return;
-  }
-
-  const timestamp = (new Date()).getTime();
-
-  chatToMessageList.value.push({
-    from: userAddr.value.toLowerCase(),
-    to: chatToAddress.value.toLowerCase(),
-    msg: chatToMessage.value,
-    timestamp: timestamp,
-    peer: false,
-  });
-
-  const res = await sendMessage(chatToPeerId.value, userAddr.value, chatToMessage.value, String(timestamp));
-
-  //reset chat message
-  chatToMessage.value = '';
 }
 
 //when chat drawer open
