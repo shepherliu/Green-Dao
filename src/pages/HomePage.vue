@@ -4,7 +4,8 @@
   <AuctionsPage v-if="activeIndex==='3'"/>  
   <GrantsPage v-if="activeIndex==='4'"/>  
   <VotesPage v-if="activeIndex==='5'"/>  
-  <ChatsPage v-if="activeIndex==='6'"/>
+  <TreassuresPage v-if="activeIndex==='6'"/>  
+  <ChatsPage v-if="activeIndex==='7'"/>
 </template>
 
 <script lang="ts">
@@ -14,6 +15,7 @@ import LearningsPage from './LearningsPage.vue';
 import AuctionsPage from './AuctionsPage.vue';
 import GrantsPage from './GrantsPage.vue';
 import VotesPage from './VotesPage.vue';
+import TreassuresPage from './TreassuresPage.vue';
 import ChatsPage from './ChatsPage.vue';
 
 export default {
