@@ -5,11 +5,11 @@ contract GreenChat {
     //contract owner
     address private _owner;
 
-    //map for address fluence peer id
-    mapping(address => string) private _peerIds;
+    //map for web3 name public key
+    mapping(address => string) private _publicKeys;
 
-    //map for address chat history ipfs link
-    mapping(address => mapping(address => string)) private _chatHistory;
+    //map for web3 name private key
+    mapping(address => string) private _privateKeys;
 
     //address list
     address[] _addressLists;
@@ -18,34 +18,37 @@ contract GreenChat {
         _owner = msg.sender;
     }
 
-    //update address peer id
-    function updatePeerId(string memory peerId) public {
-        require(bytes(peerId).length > 0, "invalid peer id!");
+    //update address web3 name keys
+    function updateKeys(string memory publicKey, string memory privateKey) public {
+        require(bytes(publicKey).length > 0, "invalid public key!");
+        require(bytes(privateKey).length > 0, "invalid private key!");
 
-        if(bytes(_peerIds[msg.sender]).length == 0){
+        if(bytes(_publicKeys[msg.sender]).length == 0){
             _addressLists.push(msg.sender);
         }
 
-        _peerIds[msg.sender] = peerId;
+        _publicKeys[msg.sender] = publicKey;
+        _privateKeys[msg.sender] = privateKey;
     } 
 
-    //update chat history link
-    function updateChatHistory(address to, string memory link) public {
-        _chatHistory[msg.sender][to] = link;
+    //get address public key
+    function getPublicKey(address to) public view returns (string memory) {
+        return _publicKeys[to];
     }
 
-    //get address peer id
-    function getPeerId(address to) public view returns (string memory) {
-        return _peerIds[to];
-    }
+    //get address private key
+    function getPrivateKey(address to) public view returns (string memory) {
+        return _privateKeys[to];
+    }    
 
     //get address and peer id list for page size and page count
-    function getPeerList(uint pageSize, uint pageCount) public view returns (address[] memory, string[] memory) {
+    function getPeerList(uint pageSize, uint pageCount) public view returns (address[] memory, string[] memory, string[] memory) {
         address[] memory addressList;
-        string[] memory peersList;
+        string[] memory publicList;
+        string[] memory privateList;
 
         if(pageSize == 0){
-            return (addressList, peersList);
+            return (addressList, publicList, privateList);
         }
 
         if(pageSize > 100) {
@@ -56,7 +59,7 @@ contract GreenChat {
         uint end = start + pageSize;
 
         if(start > _addressLists.length){
-            return (addressList, peersList);
+            return (addressList, publicList, privateList);
         }
 
         if(end > _addressLists.length){
@@ -66,28 +69,27 @@ contract GreenChat {
         uint count;
         address[] memory tmp1 = new address[](pageSize);
         string[] memory tmp2 = new string[](pageSize);
+        string[] memory tmp3 = new string[](pageSize);
 
         for(uint i = start; i < end; i++){
             tmp1[count] = _addressLists[i];
-            tmp2[count] = _peerIds[_addressLists[i]];
+            tmp2[count] = _publicKeys[_addressLists[i]];
+            tmp3[count] = _privateKeys[_addressLists[i]];
             count += 1;
         }
 
         if(tmp1.length > 0){
             addressList = new address[](count);
-            peersList = new string[](count);
+            publicList = new string[](count);
+            privateList = new string[](count);
 
             for(uint i = 0; i < count; i++){
                 addressList[i] = tmp1[i];
-                peersList[i] = tmp2[i];
+                publicList[i] = tmp2[i];
+                privateList[i] = tmp3[i];
             }
         }
 
-        return (addressList, peersList);
-    }
-
-    //get chat history link
-    function getChatHistory(address to) public view returns (string memory) {
-        return _chatHistory[msg.sender][to];
+        return (addressList, publicList, privateList);
     }
 }

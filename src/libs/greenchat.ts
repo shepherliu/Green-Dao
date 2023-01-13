@@ -7,12 +7,15 @@ import {networkConnect, connectState} from "./connect"
 
 import { connectFluence } from "./fluence"
 
+import * as w3name from "./w3name"
+import * as crypto from "./crypto"
+import * as tools from "./tools"
+
 const abi = [
-	"function updatePeerId(string peerId) public",
-	"function updateChatHistory(address to, string link) public",
-	"function getPeerId(address to) public view returns (string)",
-	"function getPeerList(uint pageSize, uint pageCount) public view returns (address[], string[])",
-	"function getChatHistory(address to) public view returns (string)",
+	"function updateKeys(string publicKey, string privateKey) public",
+	"function getPublicKey(address to) public view returns (string)",
+	"function getPrivateKey(address to) public view returns (string)",
+	"function getPeerList(uint pageSize, uint pageCount) public view returns (address[], string[], string[])",
 ];
 
 export class GreenChat {
@@ -36,7 +39,7 @@ export class GreenChat {
 		}
 	}	
 
-	public updatePeerId = async () => {
+	public updateKeys = async () => {
 
 		if(connectState.fluenceId === ''){
 			const fluenceId = await connectFluence();
@@ -48,33 +51,62 @@ export class GreenChat {
 			}
 		}
 
-		const contract = await this.getContract();
+		let privateKey = null;
+		try{
+			privateKey = await crypto.decryptPasswordWithWallet(JSON.parse(await this.getPrivateKey(connectState.userAddr.value)));
+		}catch(e){
+			privateKey = null;
+		}
 
-		const tx = await contract.updatePeerId(connectState.fluenceId);
+		let name = await w3name.parseFrom(privateKey);
+		if(name === null){
+			name = await w3name.createNewName();
+		}
 
-		await tx.wait();
+		let jsonData;
+		try{
+			jsonData = JSON.parse(await w3name.resolveName(name));
+		}catch(e){
+			jsonData = {fluenceId: connectState.fluenceId};
+		}
 
-		return tx.hash;
+		jsonData.fluenceId = connectState.fluenceId;
+
+		name = await w3name.updateName(name, JSON.stringify(jsonData));
+		if(name === null){
+			return '';
+		}
+
+		//if keys change then update to smart contract
+		const publicKey = await this.getPublicKey(connectState.userAddr.value);
+		if(publicKey !== name.toString()){
+			const newKey = await crypto.encryptPasswordWithWallet(tools.uint8ToString(name.key.bytes));
+
+			if(newKey === null || newKey.sign_data === null || newKey.sign_data === '' || newKey.signature === null || newKey.signature === ''){
+			return '';
+			}
+
+			const contract = await this.getContract();
+			const tx = await contract.updateKeys(name.toString(), JSON.stringify(newKey));
+			await tx.wait();
+			return tx.hash;
+		}
+
+		return 'success';
 	}
 
-	public updateChatHistory = async (to:string, link:string) => {
+	public getPublicKey = async (to:string) => {
 		to = to.trim();
 		if(to.length === 0){
 			throw new Error("invalid address to!");
 		}
 
-		link = link.trim();
-
 		const contract = await this.getContract();
 
-		const tx = await contract.updateChatHistory(to, link);
-
-		await tx.wait();
-
-		return tx.hash;
+		return await contract.getPublicKey(to);
 	}
 
-	public getPeerId = async (to:string) => {
+	public getPrivateKey = async (to:string) => {
 		to = to.trim();
 		if(to.length === 0){
 			throw new Error("invalid address to!");
@@ -82,8 +114,8 @@ export class GreenChat {
 
 		const contract = await this.getContract();
 
-		return await contract.getPeerId(to);
-	}
+		return await contract.getPrivateKey(to);
+	}	
 
 	public getPeerList = async (pageSize:number, pageCount:number) => {
 		if(pageSize <= 0 || pageSize > 100){
@@ -102,27 +134,16 @@ export class GreenChat {
 
 		for(const i in res[0]){
 			const address = res[0][i].toLowerCase();
-			const peerId = res[1][i];
 
 			peerList.push({
 				address: address,
-				peerId: peerId,
+				publicKey: res[1][i],
+				privateKey: res[2][i],
 				isOwner: address === connectState.userAddr.value.toLowerCase(),
-				isOffline: peerId === '',
+				isOffline: res[1][i] === '',
 			});
 		}
 
 		return peerList;
-	}
-
-	public getChatHistory = async (to:string) => {
-		to = to.trim();
-		if(to.length === 0){
-			throw new Error("invalid address to!");
-		}
-
-		const contract = await this.getContract();
-
-		return await contract.getChatHistory(to);
 	}
 }

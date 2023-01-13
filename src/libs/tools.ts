@@ -1,4 +1,43 @@
 import mime from "mime-types"
+
+//return a clean buffer
+const clean = (length: number) => {
+	const buffer = new Uint8Array(length);
+	for (let i = 0; i < length; i += 1) {
+		buffer[i] = 0;
+	}
+	return buffer;
+}
+
+//string to uint8
+export const stringToUint8 = (input: string, offset = 0) => {
+	let i, length = 0;
+
+	const buffer = new Uint8Array(input.length);
+	for (let i = 0; i < length; i += 1) {
+		buffer[i] = 0;
+	}
+
+	offset = offset || 0;
+	for (i = 0, length = input.length; i < length; i += 1) {
+		buffer[offset] = input.charCodeAt(i);
+		offset += 1;
+	}
+
+	return buffer;
+}
+
+//uint8 to string
+export const uint8ToString = (input: Uint8Array) => {
+	let data = '';
+
+	for(let i = 0; i < input.length; i++){
+		data += String.fromCharCode(input[i]);
+	}
+
+	return data;
+}
+
 //copy string to clipboard
 export const clickToCopy = (content:string) => {
 	const textarea = document.createElement('textarea');

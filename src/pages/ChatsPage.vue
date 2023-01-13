@@ -54,24 +54,20 @@
         element-loading-background="#ffffff"
       >
         <el-row :gutter="20">
-          <table v-if="activeName === 'chat'">
+          <table v-if="activeName === 'chat'" style="margin-left:250px">
             <thead>
-              <th style="width:400px">Address</th>
-              <th style="width:550px">PeerId</th>
-              <th style="width:50px">Chat</th>
+              <th style="width:500px">Address</th>
+              <th style="width:100px">Chat</th>
             </thead>
             <tbody>
               <template v-for="info in greenChatList" :key="info.address">
                 <tr>
-                  <td style="width:400px">
+                  <td style="width:500px">
                     <el-link type="success" target="_blank" :href="addressExplorerUrl(info.address)">{{info.address}}</el-link>
                     <el-icon @click="onClickToCopy(info.address)"><document-copy /></el-icon>
                   </td>
-                  <td style="width:550px">{{info.peerId}}
-                    <el-icon @click="onClickToCopy(info.peerId)"><document-copy /></el-icon>
-                  </td>
-                  <td style="width:50px">
-                    <el-icon @click="changeChatAddress(info.address, info.peerId)"><ChatLineSquare /></el-icon>
+                  <td style="width:100px">
+                    <el-icon @click="changeChatAddress(info.address)"><ChatLineSquare /></el-icon>
                   </td>
                 </tr>
               </template>
@@ -136,7 +132,9 @@ import { connected, connectState } from "../libs/connect"
 import * as constant from "../constant"
 import * as element from "../libs/element"
 import * as storage from '../libs/storage'
-import * as passport from "../libs/passport"
+import * as w3name from "../libs/w3name"
+import * as crypto from "../libs/crypto"
+
 import { checkOnline, sendMessage} from '../libs/fluence'
 
 const greenchat = new GreenChat();
@@ -185,15 +183,15 @@ const addressExplorerUrl = (address:string) => {
 }
 
 //transaction explore url
-const transactionExplorerUrl = (transaction:string) => {
-  for(const i in constant.chainList){
-    if(connectState.chainId === constant.chainList[i].chainId){
-      const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
-      return blockExplorerUrls + '/tx/' + transaction;
-    }
-  }
-  return transaction;
-}
+// const transactionExplorerUrl = (transaction:string) => {
+//   for(const i in constant.chainList){
+//     if(connectState.chainId === constant.chainList[i].chainId){
+//       const blockExplorerUrls = constant.chainList[i].blockExplorerUrls;
+//       return blockExplorerUrls + '/tx/' + transaction;
+//     }
+//   }
+//   return transaction;
+// }
 
 //on click to copy address
 const onClickToCopy = async (content:string) => {
@@ -202,36 +200,27 @@ const onClickToCopy = async (content:string) => {
   element.elMessage('success', 'Copy ' + content + ' to clipboard success.');     
 };
 
-//check passport
-const checkPassport = async () => {
-  const pass = await passport.getPassport(connectState.userAddr.value);
-
-  if(pass.length === 0){
-    const msg = `<div><span>You need verify your account address </span><a href="https://passport.gitcoin.co" target="_blank">here</a><span> first!</span></div>`;
-
-    element.elMessage('warning', msg, true);  
-  }
-  
-  return pass.length > 0;
-}
-
 //on click to chat with someone
-const changeChatAddress = async (address:string, peerId:string = '') => {
-  if(!await checkPassport()){
-    return;
-  }  
+const changeChatAddress = async (address:string) => {
 
   address = address.trim();
-  peerId = peerId.trim();
-
-  const fluenceId = await greenchat.getPeerId(connectState.userAddr.value);
-
-  if(peerId === ''){
-    peerId = await greenchat.getPeerId(address);
-  }
 
   chatToAddress.value = address;
-  chatToPeerId.value = peerId;
+
+  let fluenceId = '';
+
+  let publicKey = await greenchat.getPublicKey(connectState.userAddr.value);
+  let name = await w3name.parseName(publicKey);
+  if(name === null){
+    fluenceId = '';
+  }else{
+    try{
+      const vals = await w3name.resolveName(name);
+      fluenceId = (JSON.parse(vals)).fluenceId;
+    }catch(e){
+      fluenceId = '';
+    }
+  }
 
   showChatShowVisiable.value = true;
 
@@ -239,8 +228,6 @@ const changeChatAddress = async (address:string, peerId:string = '') => {
     chatOnline.value = false;
     onLoginChat();
   }else{
-    loadDrawerStatus.value = true;
-    await onCheckUserOnline();
     loadDrawerStatus.value = false;
   }
   
@@ -251,12 +238,18 @@ const onLoginChat = async () => {
   try{
     loadDrawerStatus.value = true;
 
-    const tx = await greenchat.updatePeerId();
+    const tx = await greenchat.updateKeys();
 
-    connectState.transactions.value.unshift(tx);
-    connectState.transactionCount.value++;
-
-    await onCheckUserOnline();
+    if(tx === ''){
+      loadDrawerStatus.value = false;
+      element.alertMessage("update fluence id failed!");
+      return;
+    }else{
+      if(tx != 'success'){
+        connectState.transactions.value.unshift(tx);
+        connectState.transactionCount.value++;
+      }
+    }
 
     chatOnline.value = true;
   }catch(e){
@@ -266,41 +259,51 @@ const onLoginChat = async () => {
   }
 }
 
-//check user online or not
-const onCheckUserOnline = async () => {
-  try{
-
-    checkOnline(chatToPeerId.value);
-
-    for(let i = 0; i < 100; i++){
-      await tools.sleep(100);
-      if(connectState.fluenceOnline[chatToPeerId.value] === true){
-        break;
-      }
-    }
-
-    if(connectState.fluenceOnline[chatToPeerId.value] === false){
-      element.alertMessage("target user is not online now!");
-    }else{
-      element.elMessage('success', 'login success, you can chat with the user now!', true);
-    }    
-
-  }catch(e){
-    element.alertMessage("target user is not online now!");
-  }
-
-}
-
 //on click to send message
 const onSendChatMessage = async () => {
-  
-  if(connectState.fluenceOnline[chatToPeerId.value] === false){
-    element.alertMessage("target user is not online now!");
-    return;
+  let peerId = '';
+  if(peerId === ''){
+    const publicKey = await greenchat.getPublicKey(chatToAddress.value);
+    const name = await w3name.parseName(publicKey);
+    if(name === null){
+      peerId = '';
+    }else{
+      try{
+        const vals = await w3name.resolveName(name);
+        peerId = (JSON.parse(vals)).fluenceId;
+      }catch(e){
+        peerId = '';
+      }
+    }
+  }
+
+  if(chatToPeerId.value !== peerId){
+    chatToPeerId.value = peerId;  
+
+    try{
+
+      checkOnline(chatToPeerId.value);
+
+      for(let i = 0; i < 100; i++){
+        await tools.sleep(100);
+        if(connectState.fluenceOnline[chatToPeerId.value] === true){
+          break;
+        }
+      }
+
+      if(connectState.fluenceOnline[chatToPeerId.value] === false){
+        element.alertMessage("target user is not online now!");
+        return;
+      }
+
+    }catch(e){
+      element.alertMessage("target user is not online now!");
+      return;
+    }    
   }
 
   chatToMessage.value = chatToMessage.value.trim();
-  if(chatToMessage.value.length < 3){
+  if(chatToMessage.value.length < 1){
     element.alertMessage("invalid !");
     return;
   }
@@ -323,7 +326,23 @@ const onSendChatMessage = async () => {
 
 //when chat drawer open
 const onChatDrawerOpen = async () => {
-  const chatlink = await greenchat.getChatHistory(chatToAddress.value);
+  let chatlink = '';
+  const publicKey = await greenchat.getPublicKey(connectState.userAddr.value);
+  const name = await w3name.parseName(publicKey);
+  if(name === null){
+    chatlink = '';
+  }else{
+    const vals = await w3name.resolveName(name);
+    try{
+      chatlink = (JSON.parse(vals)).messages[chatToAddress.value];
+      if(chatlink === undefined || chatlink === null){
+        chatlink = '';
+      }
+    }catch(e){
+      chatlink = '';
+    }
+  }
+
   const chatList = new Array();
 
   for(const i in chatToMessageList.value){
@@ -344,7 +363,7 @@ const onChatDrawerOpen = async () => {
     });
   
     if (res.status >= 200 && res.status <= 299){
-      res = await res.json();
+      res = JSON.parse(await crypto.decryptPasswordWithWallet(await res.json()));
 
       for(const i in res){
         try{
@@ -380,11 +399,46 @@ const onClearChatHistory = async () => {
 
   try{
     loadDrawerStatus.value = true;
-    const tx = await greenchat.updateChatHistory(chatToAddress.value, '');
-    connectState.transactions.value.unshift(tx);
-    connectState.transactionCount.value++;
-    const msg = `<div><span>Clear chat success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
-    element.elMessage('success', msg, true);       
+    let privateKey = null;
+    try{
+      privateKey = await crypto.decryptPasswordWithWallet(JSON.parse(await greenchat.getPrivateKey(connectState.userAddr.value)));
+    }catch(e){
+      loadDrawerStatus.value = false;
+      element.alertMessage('Clear chat failed!');
+      return;
+    }    
+
+    let name = await w3name.parseFrom(privateKey);
+    if(name === null){
+      loadDrawerStatus.value = false;
+      element.alertMessage('Clear chat failed!');
+      return;
+    }
+
+    let jsonData;
+    try{
+      jsonData = JSON.parse(await w3name.resolveName(name));
+    }catch(e){
+      loadDrawerStatus.value = false;
+      element.alertMessage('Clear chat failed!');
+      return;
+    }
+
+    if(jsonData.messages === undefined || jsonData.messages === null){
+      jsonData.messages = {};
+    }
+
+    jsonData.messages[chatToAddress.value] = '';
+
+    name = await w3name.updateName(name, JSON.stringify(jsonData));
+    if(name === null){
+      loadDrawerStatus.value = false;
+      element.alertMessage('Clear chat failed!');
+      return;
+    }
+
+    const msg = `Clear chat success!`;
+    element.elMessage('success', msg, false);       
 
   }catch(e){
     element.alertMessage(e);
@@ -406,11 +460,45 @@ const onSaveChatHistory = async () => {
   if(chatList.length === 0){
     try{
       loadDrawerStatus.value = true;
-      const tx = await greenchat.updateChatHistory(chatToAddress.value, '');
-      connectState.transactions.value.unshift(tx);
-      connectState.transactionCount.value++;
-      const msg = `<div><span>Save chat success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
-      element.elMessage('success', msg, true);
+      let privateKey = null;
+      try{
+        privateKey = await crypto.decryptPasswordWithWallet(JSON.parse(await greenchat.getPrivateKey(connectState.userAddr.value)));
+      }catch(e){
+        loadDrawerStatus.value = false;
+        element.alertMessage('Save chat failed!');
+        return;
+      }    
+
+      let name = await w3name.parseFrom(privateKey);
+      if(name === null){
+        loadDrawerStatus.value = false;
+        element.alertMessage('Save chat failed!');
+        return;
+      }
+
+      let jsonData;
+      try{
+        jsonData = JSON.parse(await w3name.resolveName(name));
+      }catch(e){
+        loadDrawerStatus.value = false;
+        element.alertMessage('Save chat failed!');
+        return;
+      }
+
+      if(jsonData.messages === undefined || jsonData.messages === null){
+        jsonData.messages = {};
+      }
+
+      jsonData.messages[chatToAddress.value] = '';
+      name = await w3name.updateName(name, JSON.stringify(jsonData));
+      if(name === null){
+        loadDrawerStatus.value = false;
+        element.alertMessage('Save chat failed!');
+        return;
+      }
+
+      const msg = `Save chat success!`;
+      element.elMessage('success', msg, false);    
     }catch(e){
       element.alertMessage(e);
     }finally{
@@ -420,26 +508,60 @@ const onSaveChatHistory = async () => {
     return; 
   }
 
-  const name = userAddr.value.toLowerCase() + chatToAddress.value.toLowerCase();
-  const content = JSON.stringify(chatList);
+  const fname = userAddr.value.toLowerCase() + chatToAddress.value.toLowerCase(); 
+  const content = await crypto.encryptPasswordWithWallet(JSON.stringify(chatList));
   const contentType = 'application/json';
 
-  const file = tools.makeFileObject(name, content, contentType);
+  const file = tools.makeFileObject(fname, JSON.stringify(content), contentType);
 
   const reference = await storage.uploadFile(file);
 
   if(reference === ''){
-    element.alertMessage('save chat history failed!');
+    element.alertMessage('Save chat history failed!');
     return;
   }
 
   try{
     loadDrawerStatus.value = true;
-    const tx = await greenchat.updateChatHistory(chatToAddress.value, reference);
-    connectState.transactions.value.unshift(tx);
-    connectState.transactionCount.value++;
-    const msg = `<div><span>Save chat success! Transaction: </span><a href="${transactionExplorerUrl(tx)}" target="_blank">${tx}</a></div>`;
-    element.elMessage('success', msg, true);
+    let privateKey = null;
+    try{
+      privateKey = await crypto.decryptPasswordWithWallet(JSON.parse(await greenchat.getPrivateKey(connectState.userAddr.value)));
+    }catch(e){
+      loadDrawerStatus.value = false;
+      element.alertMessage('Save chat failed!');
+      return;
+    }    
+
+    let name = await w3name.parseFrom(privateKey);
+    if(name === null){
+      loadDrawerStatus.value = false;
+      element.alertMessage('Save chat failed!');
+      return;
+    }
+
+    let jsonData;
+    try{
+      jsonData = JSON.parse(await w3name.resolveName(name));
+    }catch(e){
+      loadDrawerStatus.value = false;
+      element.alertMessage('Save chat failed!');
+      return;
+    }
+
+    if(jsonData.messages === undefined || jsonData.messages === null){
+      jsonData.messages = {};
+    }
+
+    jsonData.messages[chatToAddress.value] = reference;
+    name = await w3name.updateName(name, JSON.stringify(jsonData));
+    if(name === null){
+      loadDrawerStatus.value = false;
+      element.alertMessage('Save chat failed!');
+      return;
+    }
+
+    const msg = `Save chat success!`;
+    element.elMessage('success', msg, false);      
   }catch(e){
     element.alertMessage(e);
   }finally{
@@ -454,10 +576,8 @@ const getGreenChatCount = async (address:string) => {
   address = address.trim();
 
   if(address != ''){
-    const peerId = await greenchat.getPeerId(address);
     infoList.push({
       address: address,
-      peerId: peerId,
     });
   }else{
     const res = await greenchat.getPeerList(pageSize.value, pageCount.value);

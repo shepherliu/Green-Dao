@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^1.1.4",
-    "@fluencelabs/fluence": "^0.23.1",
+    "@fluencelabs/aqua": "^0.8.0-368",
+    "@fluencelabs/aqua-lib": "^0.6.0",
+    "@fluencelabs/fluence": "^0.27.5",
     "@fluencelabs/fluence-network-environment": "^1.0.13",
     "@gitcoinco/passport-sdk-reader": "^0.1.4",
     "@gitcoinco/passport-sdk-scorer": "^0.2.0",
+    "@metamask/eth-sig-util": "^5.0.2",
     "@types/mime-types": "^2.1.1",
     "@uauth/web3modal": "^2.2.0",
     "@unstoppabledomains/resolution": "^8.3.3",
@@ -42,6 +45,7 @@
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
     "vuex": "^4.0.2",
+    "w3name": "^1.0.7",
     "web3.storage": "^4.2.0",
     "web3modal": "^1.9.9",
     "webcrypto": "^0.1.1"
@@ -49,8 +53,6 @@
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
-    "@fluencelabs/aqua": "^0.7.2-314",
-    "@fluencelabs/aqua-lib": "^0.5.2",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-babel": "~5.0.0",

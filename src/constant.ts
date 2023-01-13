@@ -54,7 +54,6 @@ export const bobaTestContractAddress = "0xF5B97a4860c1D81A1e915C40EcCB5E4a5E6b83
 
 //green dao contract address
 export const greenDaoContractAddress = {
-  4: "0x23fFb93fA95FA1234C6eB5d09C269DC9645eB5d3",
   5: "0x88013788939E2E0ffA612cEBb572C36b677FdA75",
   1001: "0xc8814e6358Cc29938DC47b5a1A0e417F3C9B3FF4",
   2828: '0x67E843E19F82f0367105e1CB47E0608a6cbCD1c6',
@@ -64,7 +63,6 @@ export const greenDaoContractAddress = {
 
 //green vote contract address
 export const greenVoteContractAddress = {
-  4: "0x210dC51c17d3E76D4831f1d701e52FA3eace2477",
   5: "0xE24f5a927A7502Bf85766873A6D0D149b2b69755",
   1001: "0x850cb8117336eeeF5AA2eAE8623843A821725Ac7",
   2828: '0x3F0298D5D908cAAe25F87096582cF4De3eDf4E3A',
@@ -74,7 +72,6 @@ export const greenVoteContractAddress = {
 
 //green auction contract address
 export const greenAuctionContractAddress = {
-  4: "0x90a9B5FD86D2A373BC1D6786f12f086B9F82F372",
   5: "0x250F881751805c169605aC2A95eF84ddf3cb87b7",
   1001: "0xf035Df6b019fa29081E85126480037b44238f912",
   2828: '0xcc477D30287A3f27f9c70A57f71De9caA0b49c09',
@@ -84,7 +81,6 @@ export const greenAuctionContractAddress = {
 
 //green grant contract address
 export const greenGrantContractAddress = {
-  4: "0xa70386D4291fD2A3640Ff9E692Fe5354E0016cCe",  
   5: "0x23c2cFb2B9cc9C68c7a91f1a017b7162446F3F54",
   1001: "0xBC2C5d2eCEd4823FE4eEB3296C337058893F4FC2",
   2828: '0x052a185E581514344657a4bDF3500865f5520503',
@@ -94,7 +90,6 @@ export const greenGrantContractAddress = {
 
 //green learning contract address
 export const greenLearningContractAddress = {
-  4: "0x9386EFeCCa5d0d9Cb7aDd2404F8130351d4e5d61",
   5: "0xF6A9b8A3aFB714478996D418E6AD75e23C0FA7E6",
   1001: "0x63009D3A71bC03EEdD6B03a364328d11c758a94a",
   2828: '0xcC5E3F778D10b0dA5a8cA99d312798188c120F1a',
@@ -104,8 +99,7 @@ export const greenLearningContractAddress = {
 
 //green chat contract address
 export const greenChatContractAddress = {
-  4: "0x70ee0B3123ec846eD7bb71b1E233a09458D47F2c",
-  5: "0xa49f29884d40e17ca2108D3367359a61ddb8E369",
+  5: "0x4b75C7E98E240e27c7ff7d92398A29fa0f609872",
   1001: "0x8a19Fe77193451Dc95f658e76dBEac95dC499f94",
   2828: '0x9aD8d42FF933F684aa64455d4f18E20F24a4a5C2',
   9001: '0x1de8d4Bc27a8B9baB9b90c8561277B09f9cbf4BC',

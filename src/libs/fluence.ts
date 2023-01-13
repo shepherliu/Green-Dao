@@ -23,7 +23,6 @@ export const connectFluence = async () => {
 					connectState.fluenceOnline[from] = true;
 					//reply ping
 					reply(from, connectState.fluenceRelayId);
-					
 					return from;
 				},
 				reply: (from:string) => {
@@ -31,7 +30,6 @@ export const connectFluence = async () => {
 					return from;
 				},
 				send: (from:string, address:string, msg:string, timestamp:string) => {
-
 					const info = {
 						from: address.toLowerCase(),
 						to: connectState.userAddr.value.toLowerCase(),
@@ -59,6 +57,7 @@ export const connectFluence = async () => {
 }
 
 export const checkOnline = async (peerId:string) => {
+
 	try{
 		connectState.fluenceOnline[peerId] = false;
 		await ping(peerId, connectState.fluenceRelayId);
